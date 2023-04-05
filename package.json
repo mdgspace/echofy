@@ -1,5 +1,14 @@
 {
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
-    "clsx": "^1.2.1"
+    "next": "latest",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "start": "^5.1.0"
   }
 }
