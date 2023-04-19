@@ -38,7 +38,7 @@ func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTo
 				if isMessage && s.BotID == "" {
 					sender := utils.GetSlackUserInfo(s.User)
 					msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
-					db.AddMsgToDB(msg)
+					db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp)
 					utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
 				}
 			}

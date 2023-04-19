@@ -50,6 +50,12 @@ func PrivateChatsHandler(c echo.Context, name string) error {
 		}
 		fmt.Println("Received msg: ", string(msg))
 		SendMsg(channelTokens["private"], string(msg), name, ts)
+		newMsg := models.Message{
+			Text:      string(msg),
+			Sender:    name,
+			Timestamp: ts,
+		}
+		db.AddMsgToDB(newMsg, channelTokens["private"], ts)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			if err == websocket.ErrCloseSent {
@@ -73,7 +79,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 	defer ws.Close()
 	webSockets[channel] = append(webSockets[channel], ws)
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
-	prevMsgs, err := json.Marshal(db.RetrieveAllMessages())
+	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels("public"))
 	if (err != nil){
 		panic(err)
 	}
@@ -96,7 +102,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 			Timestamp: ts,
 		}
 		sendMsgToPublicUsers(newMsg, "public")
-		db.AddMsgToDB(newMsg)
+		db.AddMsgToDB(newMsg, channelTokens["public"], ts)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			fmt.Println("error: ", err)
