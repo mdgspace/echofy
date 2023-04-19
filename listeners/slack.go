@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"bot/api/utils"
+	"bot/db"
 	"bot/models"
 
 	"github.com/slack-go/slack"
@@ -36,7 +37,9 @@ func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTo
 				s, isMessage := eventsAPIEvent.InnerEvent.Data.(*slackevents.MessageEvent)
 				if isMessage && s.BotID == "" {
 					sender := utils.GetSlackUserInfo(s.User)
-					utils.SendMsgToFrontend(models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}, s.Channel, s.ThreadTimeStamp)
+					msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
+					db.AddMsgToDB(msg)
+					utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
 				}
 			}
 		}

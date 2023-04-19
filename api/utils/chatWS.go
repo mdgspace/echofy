@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
+	"bot/db"
 	"bot/models"
 
 	"github.com/gorilla/websocket"
@@ -71,6 +73,11 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 	defer ws.Close()
 	webSockets[channel] = append(webSockets[channel], ws)
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	prevMsgs, err := json.Marshal(db.RetrieveAllMessages())
+	if (err != nil){
+		panic(err)
+	}
+	ws.WriteMessage(websocket.TextMessage, prevMsgs)
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
@@ -89,6 +96,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 			Timestamp: ts,
 		}
 		sendMsgToPublicUsers(newMsg, "public")
+		db.AddMsgToDB(newMsg)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			fmt.Println("error: ", err)

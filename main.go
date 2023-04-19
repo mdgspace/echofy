@@ -7,6 +7,7 @@ import (
 	"bot/api/utils"
 	"bot/listeners"
 	"bot/route"
+	"bot/db"
 
 	"github.com/joho/godotenv"
 )
@@ -30,6 +31,7 @@ func main() {
 	utils.InitClient(token, appToken)
 	utils.InitChannelTokens()
 	listeners.InitSocketClient(utils.Client)
+	db.Init()
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
 	ctx, cancel := context.WithCancel(context.Background())
