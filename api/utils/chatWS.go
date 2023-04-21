@@ -28,16 +28,28 @@ func InitChannelTokens() {
 }
 
 // handler for private chats
-func PrivateChatsHandler(c echo.Context, name string) error {
+func PrivateChatsHandler(c echo.Context, name, id string) error {
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
 		panic(err)
 	}
 	defer ws.Close()
 	// send a hello message in the channel and create a new thread corresponding to the user
-	ts := SendMsg(channelTokens["private"], string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
-	privateChatWS[ts] = ws
+	var ts string
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	history := db.RetrieveAllMessagesPrivateUser(id)
+	if (len(history) == 0){
+		ts = SendMsg(channelTokens["private"], string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
+	} else {
+		SendMsg(channelTokens["private"], "User has re-entered the private chat", name, id)
+		ts = id
+	}
+	privateChatWS[ts] = ws
+	entryInfo, err := json.Marshal(map[string]interface{}{"history":history, "id":ts})
+	if (err != nil){
+		panic(err)
+	}
+	ws.WriteMessage(websocket.TextMessage, entryInfo)
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {

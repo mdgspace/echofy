@@ -57,15 +57,16 @@ Will be required in case some kind of auth is integrated into the platform
 
 Returns a string of marshalled messages
 */
-func RetrieveAllMessagesPrivateUser(userName, arrivalTimeStamp string) map[string]string {
+func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 	// iterate over all message keys and get their values
 	messages := make(map[string]string)
-	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("private:%v:*", arrivalTimeStamp), 0).Iterator()
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("private:*:%v", arrivalTimeStamp), numKeys).Iterator()
 	for iter.Next(ctx) {
 		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
-		messages[strings.Split(iter.Val(), ":")[2]] = str
+		messages[strings.Split(iter.Val(), ":")[1]] = str
 	}
 	if err := iter.Err(); err != nil {
 		panic(err)
@@ -81,7 +82,8 @@ returns a string of marshalled messages
 func RetrieveAllMessagesPublicChannels(channelName string) map[string]string {
 	// iterate over all message keys and get their values
 	messages := make(map[string]string)
-	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), 0).Iterator()
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), numKeys).Iterator()
 	for iter.Next(ctx) {
 		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()

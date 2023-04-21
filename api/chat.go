@@ -26,11 +26,12 @@ func JoinChat() echo.HandlerFunc {
 		if name == "" || !validChannel {
 			return c.String(http.StatusBadRequest, "Name and/or channel missing")
 		}
+		userID := c.FormValue("userID")
 		if channel != "private" {
 			go utils.PublicChatsHandler(c, c.FormValue("name"), channel) //this is done like this because there will be many public chat rooms in future
 		}
 		if channel == "private" {
-			go utils.PrivateChatsHandler(c, c.FormValue("name"))
+			go utils.PrivateChatsHandler(c, c.FormValue("name"), userID)
 		}
 		time.Sleep(time.Second)
 		return nil
