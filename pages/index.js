@@ -1,6 +1,7 @@
-import Head from 'next/head';
-import Layout, { siteTitle } from '../components/layout';
-import utilStyles from '../styles/utils.module.css';
+import Head from "next/head";
+import Layout, { siteTitle } from "../components/layout";
+import utilStyles from "../styles/utils.module.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -9,11 +10,18 @@ export default function Home() {
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <p>Save the Panda</p>
         <p>
-          (This is a sample website - you’ll be building a site like this on{' '}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
+          In the Private mode, you message will be visible to you and admin
+          only.
         </p>
+        <div>
+          <h1 className="title">
+            Go <Link href="/chat">Private</Link>
+          </h1>
+          <h1 className="title">
+          Go <Link href="/chat">Public</Link>
+        </h1>
+        </div>
       </section>
     </Layout>
   );
