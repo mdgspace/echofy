@@ -47,3 +47,11 @@ input {
   box-sizing: border-box;
 }
 
+.login-container {
+  max-width: 30rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+.container {
+  background-image: image("assets/background_login.png");
+}
