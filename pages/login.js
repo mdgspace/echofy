@@ -20,23 +20,23 @@ export default function LoginScreen() {
   };
 
   return (
-    // <div className="container">
-    <img src={background}/>
+    <div className="container">
+    // <img src={background}/>
     
-    //   <div className="login-container">
-    //     <h1>Login</h1>
-    //     <h2>.mdg</h2>
-    //     <input
-    //       id="usernameInput"
-    //       type="text"
-    //       placeholder="Username"
-    //       value={username}
-    //       onChange={handleUsernameChange}
-    //     />
-    //     <br></br>
-    //     <button onClick={handleLoginClick}>Chat with Us</button>
-    //     <button onClick={handleCancelClick}>FAQs</button>
-    //   </div>
-    // </div>
+      <div className="login-container">
+        <h1>Login</h1>
+        <h2>.mdg</h2>
+        <input
+          id="usernameInput"
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={handleUsernameChange}
+        />
+        <br></br>
+        <button onClick={handleLoginClick}>Chat with Us</button>
+        <button onClick={handleCancelClick}>FAQs</button>
+      </div>
+    </div>
   );
 }
