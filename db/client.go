@@ -95,3 +95,47 @@ func RetrieveAllMessagesPublicChannels(channelName string) map[string]string {
 	}
 	return messages
 }
+
+// function to add user to the db
+func AddPublicUser(name, userID string) {
+	_, err := redisClient.Set(ctx, fmt.Sprintf("user:%v",userID), name, 24*7*time.Hour).Result() // key = userID, value = name
+	if err != nil {
+		panic(err)
+	}
+}
+
+// function to check if a userID is valid or not
+func CheckValidUserID(userID string) bool {
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("user:%v",userID), numKeys).Iterator()
+	// if a valid key value pair with the userID as key exists then the userID is valid
+	for iter.Next(ctx) {
+		if (iter.Val() == userID){
+			return true;
+		}
+	}
+	return false;
+}
+
+// remove a public user from database; to be done when user exits public chat
+func RemovePublicUser(userID string) {
+	if (CheckValidUserID(userID)) {
+		_, err := redisClient.Del(ctx, fmt.Sprintf("user:%v",userID)).Result()
+		if (err != nil){
+			panic(err)
+		}
+	}
+}
+
+// to fetch all user names
+func GetActiveUsers() []string{
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	iter := redisClient.Scan(ctx, 0, "user:*", numKeys).Iterator()
+	var userNames[] string
+	for iter.Next(ctx){
+		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		fmt.Println("New name: ", name)
+		userNames = append(userNames, name)
+	}
+	return userNames
+}

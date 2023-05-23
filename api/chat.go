@@ -28,7 +28,7 @@ func JoinChat() echo.HandlerFunc {
 		}
 		userID := c.FormValue("userID")
 		if channel != "private" {
-			go utils.PublicChatsHandler(c, c.FormValue("name"), channel) //this is done like this because there will be many public chat rooms in future
+			go utils.PublicChatsHandler(c, c.FormValue("name"), channel, userID) //this is done like this because there will be many public chat rooms in future
 		}
 		if channel == "private" {
 			go utils.PrivateChatsHandler(c, c.FormValue("name"), userID)

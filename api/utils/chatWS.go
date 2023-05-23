@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
+	"strconv"
 
 	"bot/db"
 	"bot/models"
@@ -83,7 +85,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 }
 
 // handler for public chats
-func PublicChatsHandler(c echo.Context, name string, channel string) error {
+func PublicChatsHandler(c echo.Context, name string, channel string, userID string) error {
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
 		panic(err)
@@ -91,6 +93,11 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 	defer ws.Close()
 	webSockets[channel] = append(webSockets[channel], ws)
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	if (!db.CheckValidUserID(userID)){
+		userID = name + channel + strconv.Itoa(int(time.Now().Unix()))
+		ws.WriteJSON(map[string]string{"userID":userID})
+		db.AddPublicUser(name, userID)
+	}
 	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels("public"))
 	if (err != nil){
 		panic(err)
@@ -101,6 +108,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 		if err != nil {
 			fmt.Println("error: ", err)
 			if (err == &websocket.CloseError{}) {
+				db.RemovePublicUser(userID)
 				return nil
 			}
 			ws.Close()
@@ -112,6 +120,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string) error {
 			Text:      string(msg),
 			Sender:    name,
 			Timestamp: ts,
+			OutsiderUserID: userID,
 		}
 		sendMsgToPublicUsers(newMsg, "public")
 		db.AddMsgToDB(newMsg, channelTokens["public"], ts)
@@ -148,6 +157,7 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 		err := value.WriteJSON(msgObj)
 		if err != nil {
 			if err == websocket.ErrCloseSent {
+				db.RemovePublicUser(msgObj.OutsiderUserID)
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
 				fmt.Println("Unhandled exception while sending message to public chat users")
