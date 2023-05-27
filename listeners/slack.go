@@ -58,6 +58,10 @@ func commandListener(command, channelToken string) {
 		for _, name := range(userNames) {
 			names += name + ", "
 		}
+		if (names == ""){
+			utils.SendMsgAsBot(channelToken, "No active users as of now", "")
+			return
+		}
 		names = names[:len(names) - 2]
 		utils.SendMsgAsBot(channelToken, names, "")
 	} else if (strings.HasPrefix(command, "ban")){
