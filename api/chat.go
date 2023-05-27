@@ -2,10 +2,11 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"bot/api/utils"
-	
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,11 +14,13 @@ var channels = []string{"public", "private"}
 
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
+		if (utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0])){
+			return c.String(http.StatusForbidden, "You are banned as of now")
+		}
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
 		var validChannel bool = false
 		for _, ch := range channels {
-			print(ch)
 			if channel == ch {
 				validChannel = true
 				break

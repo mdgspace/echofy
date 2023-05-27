@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 	"strconv"
+	"strings"
+	"time"
 
 	"bot/db"
 	"bot/models"
@@ -19,6 +20,8 @@ var webSockets = make(map[string]([]*websocket.Conn))
 var privateChatWS = make(map[string]*websocket.Conn) //key - thread time stamp, value - websocket of that user
 var channelTokens = make(map[string]string)
 var channelNames = make(map[string]string)
+var userIDWebSockets = make(map[string]*websocket.Conn)
+var blacklistedIP = make(map[string]time.Time)
 var upgrader websocket.Upgrader
 
 func InitChannelTokens() {
@@ -98,6 +101,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		ws.WriteJSON(map[string]string{"userID":userID})
 		db.AddPublicUser(name, userID)
 	}
+	userIDWebSockets[userID] = ws;
 	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels("public"))
 	if (err != nil){
 		panic(err)
@@ -178,4 +182,29 @@ func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string)
 	} else {
 		sendMsgToPublicUsers(msgObj, channelNames[channelID])
 	}
+}
+
+func BanUser(username string) {
+	userID := db.GetUserID(username)
+	ws := userIDWebSockets[userID]
+	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
+	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
+	ws.WriteJSON(map[string]string{"Message":"You are banned now"})
+	SendMsgAsBot(channelTokens["public"], "User with id " + userID + " is banned successfully", "")
+	ws.Close()
+	db.RemovePublicUser(userID)
+}
+
+func IsUserBanned(ip string) bool {
+	for blackIP, banTime := range(blacklistedIP){
+		if (blackIP == ip){
+			if (banTime.After(time.Now())){
+				return true
+			} else {
+				delete(blacklistedIP, ip)
+				return false
+			}
+		}
+	}
+	return false
 }

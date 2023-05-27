@@ -117,7 +117,7 @@ func CheckValidUserID(userID string) bool {
 	return false;
 }
 
-// remove a public user from database; to be done when user exits public chat
+// remove a public user from database
 func RemovePublicUser(userID string) {
 	if (CheckValidUserID(userID)) {
 		_, err := redisClient.Del(ctx, fmt.Sprintf("user:%v",userID)).Result()
@@ -138,4 +138,17 @@ func GetActiveUsers() []string{
 		userNames = append(userNames, name)
 	}
 	return userNames
+}
+
+// To get user Id from user name
+func GetUserID(username string) string {
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	iter := redisClient.Scan(ctx, 0, "user:*", numKeys).Iterator()
+	for iter.Next(ctx){
+		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		if (name == username){
+			return strings.Split(iter.Val(), ":")[1]
+		}
+	}
+	return ""
 }

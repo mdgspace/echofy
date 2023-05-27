@@ -49,6 +49,7 @@ func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTo
 	}
 }
 
+// TODO: store users in such a way that we can access their websocket object from their user id
 // for commands like `!users`
 func commandListener(command, channelToken string) {
 	if (command == "users"){
@@ -59,5 +60,9 @@ func commandListener(command, channelToken string) {
 		}
 		names = names[:len(names) - 2]
 		utils.SendMsgAsBot(channelToken, names, "")
-	} 
+	} else if (strings.HasPrefix(command, "ban")){
+		// ip based blacklisting
+		username := strings.Split(command, " ")[1]
+		utils.BanUser(username)
+	}
 }
