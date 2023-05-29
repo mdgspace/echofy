@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bot/models"
 	"fmt"
 
 	"github.com/slack-go/slack"
@@ -73,6 +74,15 @@ func GetSlackUserInfo(userID string) *slack.User {
 		panic(err)
 	}
 	return user
+}
+
+func SendUserInfoToSlack(infoObj models.UserInfo) {
+	Client.PostMessage(
+		channelTokens[infoObj.Channel],
+		slack.MsgOptionAttachments(slack.Attachment{
+			Pretext: "Info for user " + infoObj.Username,
+			Text: fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),
+		}))
 }
 
 // func incomingMsgBroadcaster(ctx context.Context, client *slack.Client, socketClient *socketmode.Client, channelTokens map[string]string, channelNames map[string]string) {

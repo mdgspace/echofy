@@ -208,3 +208,14 @@ func IsUserBanned(ip string) bool {
 	}
 	return false
 }
+
+func RequestUserInfo(username string) map[string]string {
+	userID := db.GetUserID(username)
+	if (userID == ""){
+		return map[string]string{"Status":"Fail", "Error":"No user exists with given name"}
+	} else {
+		ws := userIDWebSockets[userID]
+		ws.WriteJSON(map[string]string{"Message":"Send user info"})
+		return map[string]string {"Status":"Request Sent"}
+	}
+}

@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"bot/api/utils"
+	"bot/db"
+	"bot/models"
 
 	"github.com/labstack/echo/v4"
 )
@@ -37,6 +39,23 @@ func JoinChat() echo.HandlerFunc {
 			go utils.PrivateChatsHandler(c, c.FormValue("name"), userID)
 		}
 		time.Sleep(time.Second)
+		return nil
+	}
+}
+
+func ReceivedFrontendUserInfo() echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		info := new(models.UserInfo)
+		e := c.Bind(info)
+		if (e != nil){
+			return c.String(http.StatusBadRequest, "Wrongly formatted info")
+		} else if (info.UserID != db.GetUserID(info.Username)){
+			return c.String(http.StatusBadRequest, "Wrong user id and/or username")
+		} else if (info.Channel != "public" && info.Channel != "private"){
+			return c.String(http.StatusBadRequest, "Wrong channel name")
+		}
+		//further processing
+		utils.SendUserInfoToSlack(*info)
 		return nil
 	}
 }

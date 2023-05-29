@@ -38,7 +38,7 @@ func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTo
 				s, isMessage := eventsAPIEvent.InnerEvent.Data.(*slackevents.MessageEvent)
 				if isMessage && s.BotID == "" {
 					if (strings.HasPrefix(s.Text, "!")){
-						commandListener(strings.Split(s.Text, "!")[1], s.Channel)
+						commandListener(strings.Split(s.Text, "!")[1], s.Channel, s.TimeStamp)
 					} else { sender := utils.GetSlackUserInfo(s.User)
 					msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
 					db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp)
@@ -51,7 +51,7 @@ func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTo
 
 // TODO: store users in such a way that we can access their websocket object from their user id
 // for commands like `!users`
-func commandListener(command, channelToken string) {
+func commandListener(command, channelToken, msgTS string) {
 	if (command == "users"){
 		userNames := db.GetActiveUsers()
 		names := ""
@@ -64,6 +64,15 @@ func commandListener(command, channelToken string) {
 		}
 		names = names[:len(names) - 2]
 		utils.SendMsgAsBot(channelToken, names, "")
+	} else if (strings.HasPrefix(command, "info")){
+		// send request to frontend for information
+		// receive information
+		// send information to slack
+		username := strings.Split(command, " ")[1]
+		reqInfo := utils.RequestUserInfo(username)
+		if (reqInfo["Status"] == "Fail"){
+			utils.SendMsgAsBot(channelToken, "Request for user info failed\nError msg: " + reqInfo["Error"], msgTS)
+		}
 	} else if (strings.HasPrefix(command, "ban")){
 		// ip based blacklisting
 		username := strings.Split(command, " ")[1]
