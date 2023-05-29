@@ -9,12 +9,12 @@ export default function LoginScreen() {
     setUsername(event.target.value);
   };
 
-  const handleLoginClick = () => {
+  const handleEnterClick = () => {
     console.log(`Logging in as ${username}...`);
     // Perform login logic here
   };
 
-  const handleCancelClick = () => {
+  const handleFAQsClick = () => {
     setUsername("");
     console.log("Login cancelled.");
   };
@@ -34,8 +34,8 @@ export default function LoginScreen() {
           onChange={handleUsernameChange}
         />
         <br></br>
-        <button onClick={handleLoginClick}>Chat with Us</button>
-        <button onClick={handleCancelClick}>FAQs</button>
+        <button onClick={handleEnterClick}>Chat with Us</button>
+        <button onClick={handleFAQsClick}>FAQs</button>
       </div>
     </div>
   );
