@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styles from "/home/panda/jinora-revamp-frontend/components/layout.module.css";
 import background from "./../assets/bg.jpg"
 
+export const UserContext = React.createContext()
+
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
 
