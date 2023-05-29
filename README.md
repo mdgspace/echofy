@@ -1,1 +1,5 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+# Jinora Revamp
+
+This repo is for the frontend of the project previousy named "Jinora"
+
+Framework Used: next.js
