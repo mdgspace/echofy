@@ -59,3 +59,16 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 		return nil
 	}
 }
+
+func LeaveChat() echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		userID := c.FormValue("userID")
+		if (db.CheckValidUserID(userID)){
+			db.RemovePublicUser(userID)
+		} else { 
+			return c.String(http.StatusBadRequest, "Wrong user ID")
+		}
+		// close web socket in sync with the chatWS functions
+		return nil;
+	}
+}
