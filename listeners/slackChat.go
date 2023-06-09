@@ -13,16 +13,17 @@ import (
 	"github.com/slack-go/slack/socketmode"
 )
 
-var SocketClient *socketmode.Client
+var socketClient *socketmode.Client
 
-func InitSocketClient(client *slack.Client) {
-	SocketClient = socketmode.New(
+func InitAndRunSocketClient(client *slack.Client) {
+	socketClient = socketmode.New(
 		client,
 		socketmode.OptionDebug(true),
 	)
+	go socketClient.Run()
 }
 
-func MsgListener(ctx context.Context, socketClient *socketmode.Client, channelTokens map[string]string) {
+func MsgListener(ctx context.Context, channelTokens map[string]string) {
 	for {
 		select {
 		case <-ctx.Done():

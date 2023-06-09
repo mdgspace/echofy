@@ -30,14 +30,13 @@ func main() {
 	initializeEnv()
 	utils.InitClient(token, appToken)
 	utils.InitChannelTokens()
-	listeners.InitSocketClient(utils.Client)
+	listeners.InitAndRunSocketClient(utils.Client)
 	db.InitChannelTokens()
 	db.Init()
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	go listeners.SocketClient.Run()
-	go listeners.MsgListener(ctx, listeners.SocketClient, channelTokens)
+	go listeners.MsgListener(ctx, channelTokens)
 	route.Init()
 }
