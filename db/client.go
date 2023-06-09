@@ -107,7 +107,8 @@ func AddPublicUser(name, userID string) {
 // function to check if a userID is valid or not
 func CheckValidUserID(userID string) bool {
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("user:%v",userID), numKeys).Iterator()
+	userID = "user:" + userID
+	iter := redisClient.Scan(ctx, 0, userID, numKeys).Iterator()
 	// if a valid key value pair with the userID as key exists then the userID is valid
 	for iter.Next(ctx) {
 		if (iter.Val() == userID){
