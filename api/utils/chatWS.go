@@ -107,6 +107,11 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	}
 	defer ws.Close()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	if (!db.CheckValidUserID(userID)){
+		userID = name + channel + strconv.Itoa(int(time.Now().Unix()))
+		ws.WriteJSON(map[string]string{"userID":userID})
+		db.AddPublicUser(name, userID)
+	}
 	wg.Wait()
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
@@ -115,11 +120,6 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	webSocketsUserID[ws] = userID
 	webSocketMapsMutex.Unlock()
 	wg.Done()
-	if (!db.CheckValidUserID(userID)){
-		userID = name + channel + strconv.Itoa(int(time.Now().Unix()))
-		ws.WriteJSON(map[string]string{"userID":userID})
-		db.AddPublicUser(name, userID)
-	}
 	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels("public"))
 	if (err != nil){
 		panic(err)
@@ -176,6 +176,26 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 		delete(privateChatWS, userID)
 	}
 	wg.Done()
+}
+
+func CloseWebsocketAndCleanByUserID(userID string) bool {
+	wg.Wait()
+	wg.Add(1)
+	webSocketMapsMutex.Lock()
+	ws := userIDWebSockets[userID]
+	for channelName, wsArr := range(webSockets){
+		for _, val := range(wsArr){
+			if (val == ws){
+				go CloseWebsocketAndClean(ws, channelName, userID)
+				webSocketMapsMutex.Unlock()
+				wg.Done()
+				return true
+			}
+		}
+	}
+	webSocketMapsMutex.Unlock()
+	wg.Done()
+	return false
 }
 
 // function to send msg from slack to corresponding frontend client
