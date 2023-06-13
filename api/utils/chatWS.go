@@ -3,38 +3,27 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"bot/db"
+	"bot/globals"
 	"bot/models"
 
 	"github.com/gorilla/websocket"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
 
 var webSockets = make(map[string]([]*websocket.Conn))
 var privateChatWS = make(map[string]*websocket.Conn) //key - thread time stamp, value - websocket of that user
-var channelTokens = make(map[string]string)
-var channelNames = make(map[string]string)
 var userIDWebSockets = make(map[string]*websocket.Conn)
 var webSocketsUserID = make(map[*websocket.Conn]string)
 var blacklistedIP = make(map[string]time.Time)
 var upgrader websocket.Upgrader
 var webSocketMapsMutex sync.Mutex
 var wg sync.WaitGroup
-
-func InitChannelTokens() {
-	godotenv.Load("../../.env")
-	channelTokens["public"] = os.Getenv("SLACK_PUBLIC_CHANNEL_ID")
-	channelTokens["private"] = os.Getenv("SLACK_PRIVATE_CHANNEL_ID")
-	channelNames[os.Getenv("SLACK_PUBLIC_CHANNEL_ID")] = "public"
-	channelNames[os.Getenv("SLACK_PRIVATE_CHANNEL_ID")] = "private"
-}
 
 // handler for private chats
 func PrivateChatsHandler(c echo.Context, name, id string) error {
@@ -48,9 +37,9 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	history := db.RetrieveAllMessagesPrivateUser(id)
 	if (len(history) == 0){
-		ts = SendMsg(channelTokens["private"], string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
+		ts = SendMsg(globals.GetChannelID("private"), string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
 	} else {
-		SendMsg(channelTokens["private"], "User has re-entered the private chat", name, id)
+		SendMsg(globals.GetChannelID("private"), "User has re-entered the private chat", name, id)
 		ts = id
 	}
 	wg.Wait()
@@ -78,17 +67,17 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			break
 		}
 		fmt.Println("Received msg: ", string(msg))
-		SendMsg(channelTokens["private"], string(msg), name, ts)
+		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
 			Text:      string(msg),
 			Sender:    name,
 			Timestamp: ts,
 		}
-		db.AddMsgToDB(newMsg, channelTokens["private"], ts)
+		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), ts)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			if err == websocket.ErrCloseSent {
-				SendMsgAsBot(channelTokens["private"], "This user has left the chat", ts)
+				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", ts)
 				CloseWebsocketAndClean(ws, "private", ts)
 			}
 			fmt.Println("error: ", err)
@@ -120,7 +109,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	webSocketsUserID[ws] = userID
 	webSocketMapsMutex.Unlock()
 	wg.Done()
-	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels("public"))
+	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels(channel))
 	if (err != nil){
 		panic(err)
 	}
@@ -137,15 +126,15 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			break
 		}
 		fmt.Println("Received msg: ", string(msg))
-		ts := SendMsg(channelTokens["public"], string(msg), name, "")
+		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 		newMsg := models.Message{
 			Text:      string(msg),
 			Sender:    name,
 			Timestamp: ts,
 			OutsiderUserID: userID,
 		}
-		sendMsgToPublicUsers(newMsg, "public")
-		db.AddMsgToDB(newMsg, channelTokens["public"], ts)
+		sendMsgToPublicUsers(newMsg, channel)
+		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			fmt.Println("error: ", err)
@@ -204,7 +193,7 @@ func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
 	if err != nil {
 		if err == websocket.ErrCloseSent {
 			go CloseWebsocketAndClean(privateChatWS[threadTS], "private", threadTS)
-			SendMsgAsBot(channelTokens["private"], "This user has left the chat", threadTS)
+			SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", threadTS)
 		} else {
 			fmt.Println("Error while sending message received on slack to a private chat user: ", err)
 			panic(err)
@@ -237,20 +226,20 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 
 // to send messages to frontend clients
 func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string) {
-	if channelNames[channelID] == "private" {
+	if globals.FindChannelNameIfValidToken(channelID) == "private" {
 		sendSlackToPrivateUser(msgObj, threadTS)
 	} else {
-		sendMsgToPublicUsers(msgObj, channelNames[channelID])
+		sendMsgToPublicUsers(msgObj, globals.FindChannelNameIfValidToken(channelID))
 	}
 }
 
-func BanUser(username string) {
+func BanUser(username, channelToken string) {
 	userID := db.GetUserID(username)
 	ws := userIDWebSockets[userID]
 	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
 	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
 	ws.WriteJSON(map[string]string{"Message":"You are banned now"})
-	SendMsgAsBot(channelTokens["public"], "User with id " + userID + " is banned successfully", "")
+	SendMsgAsBot(channelToken, "User with id " + userID + " is banned successfully", "")
 	ws.Close()
 	db.RemovePublicUser(userID)
 }

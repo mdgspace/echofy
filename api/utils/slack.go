@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bot/globals"
 	"bot/models"
 	"fmt"
 
@@ -78,7 +79,7 @@ func GetSlackUserInfo(userID string) *slack.User {
 
 func SendUserInfoToSlack(infoObj models.UserInfo) {
 	Client.PostMessage(
-		channelTokens[infoObj.Channel],
+		globals.GetChannelID(infoObj.Channel),
 		slack.MsgOptionAttachments(slack.Attachment{
 			Pretext: "Info for user " + infoObj.Username,
 			Text: fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),

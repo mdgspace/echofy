@@ -44,7 +44,7 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "Wrongly formatted info")
 		} else if (info.UserID != db.GetUserID(info.Username)){
 			return c.String(http.StatusBadRequest, "Wrong user id and/or username")
-		} else if (info.Channel != "public" && info.Channel != "private"){
+		} else if (!globals.IsChannelNameValid(info.Channel)){
 			return c.String(http.StatusBadRequest, "Wrong channel name")
 		}
 		//further processing
