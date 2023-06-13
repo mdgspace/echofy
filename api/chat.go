@@ -7,12 +7,11 @@ import (
 
 	"bot/api/utils"
 	"bot/db"
+	"bot/globals"
 	"bot/models"
 
 	"github.com/labstack/echo/v4"
 )
-
-var channels = []string{"public", "private"}
 
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
@@ -21,13 +20,7 @@ func JoinChat() echo.HandlerFunc {
 		}
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
-		var validChannel bool = false
-		for _, ch := range channels {
-			if channel == ch {
-				validChannel = true
-				break
-			}
-		}
+		validChannel := globals.IsChannelNameValid(channel)
 		if name == "" || !validChannel {
 			return c.String(http.StatusBadRequest, "Name and/or channel missing")
 		}
