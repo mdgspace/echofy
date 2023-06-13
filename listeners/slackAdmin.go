@@ -15,12 +15,17 @@ func addChannelTokenHandler(channelName, token string) (remarks string) {
 		return "Invalid channel token"
 	}
 	godotenv.Load("../.env")
-	if os.Getenv(channelName) != "" {
+	if os.Getenv("SLACK_"+strings.ToUpper(channelName)+"_CHANNEL_ID") != "" {
 		return "Channel token exists already"
 	}
-	channelName = strings.ToUpper(channelName)
-	os.Setenv("SLACK_"+channelName+"_CHANNEL_ID", token)
-	globals.AddChannelNameAndToken(channelName, token)
+	os.Setenv("SLACK_"+strings.ToUpper(channelName)+"_CHANNEL_ID", token)
+	f, err := os.OpenFile(".env", os.O_APPEND, 0644)
+	if err != nil {
+		return "Error while writing new channel token to env file with error message: "+ err.Error() +"\n Please try again"
+	}
+	f.WriteString("SLACK_" + strings.ToUpper(channelName) + "_CHANNEL_ID = " + token+"\n")
+	f.Close()
+	globals.AddChannelNameAndToken(strings.ToLower(channelName), token)
 	channelIDs[channelName] = token
-	return "Channel token added successfully"
+	return "Channel token added successfully. Please add the app to the new channel"
 }
