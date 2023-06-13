@@ -97,7 +97,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	defer ws.Close()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	if (!db.CheckValidUserID(userID)){
-		userID = name + channel + strconv.Itoa(int(time.Now().Unix()))
+		userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
 		ws.WriteJSON(map[string]string{"userID":userID})
 		db.AddPublicUser(name, userID)
 	}
