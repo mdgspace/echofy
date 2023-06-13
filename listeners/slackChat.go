@@ -6,6 +6,7 @@ import (
 
 	"bot/api/utils"
 	"bot/db"
+	"bot/globals"
 	"bot/models"
 
 	"github.com/slack-go/slack"
@@ -77,7 +78,7 @@ func MsgListener(ctx context.Context) {
 // for commands like `!users`
 func commandListener(command, channelToken, msgTS string) {
 	if (command == "users"){
-		userNames := db.GetActiveUsers()
+		userNames := db.GetActiveUsers(globals.FindChannelNameIfValidToken(channelToken))
 		names := ""
 		for _, name := range(userNames) {
 			names += name + ", "
@@ -100,6 +101,6 @@ func commandListener(command, channelToken, msgTS string) {
 	} else if (strings.HasPrefix(command, "ban")){
 		// ip based blacklisting
 		username := strings.Split(command, " ")[1]
-		utils.BanUser(username)
+		utils.BanUser(username, channelToken)
 	}
 }
