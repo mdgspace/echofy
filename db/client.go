@@ -120,9 +120,9 @@ func RemovePublicUser(userID string) {
 }
 
 // to fetch all user names
-func GetActiveUsers() []string{
+func GetActiveUsers(channelName string) []string{
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	iter := redisClient.Scan(ctx, 0, "user:*", numKeys).Iterator()
+	iter := redisClient.Scan(ctx, 0, "user:"+channelName+"*", numKeys).Iterator()
 	var userNames[] string
 	for iter.Next(ctx){
 		name, _ := redisClient.Get(ctx, iter.Val()).Result()
