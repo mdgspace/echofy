@@ -1,28 +1,19 @@
 package db
 
 import (
+	"bot/globals"
 	"bot/models"
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/joho/godotenv"
 )
 
 var redisClient *redis.Client
 var ctx context.Context
-
-var channelNames = make(map[string]string)
-
-func InitChannelTokens() {
-	godotenv.Load("../.env")
-	channelNames[os.Getenv("SLACK_PUBLIC_CHANNEL_ID")] = "public"
-	channelNames[os.Getenv("SLACK_PRIVATE_CHANNEL_ID")] = "private"
-}
 
 func Init() {
 	redisInit(6379, 3, "")
@@ -45,7 +36,7 @@ func AddMsgToDB(message models.Message, channelID string, threadTS string) {
 	if err != nil {
 		panic(err)
 	}
-	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v", channelNames[channelID], message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
+	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
 		panic(err)
 	}

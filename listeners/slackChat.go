@@ -15,15 +15,18 @@ import (
 
 var socketClient *socketmode.Client
 
-func InitAndRunSocketClient(client *slack.Client) {
+var channelIDs = make(map[string]string)
+
+func InitAndRunSocketClient(client *slack.Client, channelTokens map[string]string) {
 	socketClient = socketmode.New(
 		client,
 		socketmode.OptionDebug(true),
 	)
+	channelIDs = channelTokens
 	go socketClient.Run()
 }
 
-func MsgListener(ctx context.Context, channelTokens map[string]string) {
+func MsgListener(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -38,13 +41,33 @@ func MsgListener(ctx context.Context, channelTokens map[string]string) {
 				socketClient.Ack(*event.Request)
 				s, isMessage := eventsAPIEvent.InnerEvent.Data.(*slackevents.MessageEvent)
 				if isMessage && s.BotID == "" {
-					if (strings.HasPrefix(s.Text, "!")){
+					if strings.HasPrefix(s.Text, "!") {
 						commandListener(strings.Split(s.Text, "!")[1], s.Channel, s.TimeStamp)
-					} else { sender := utils.GetSlackUserInfo(s.User)
-					msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
-					db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp)
-					utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)}
+					} else {
+						sender := utils.GetSlackUserInfo(s.User)
+						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
+						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp)
+						utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
+					}
 				}
+			case socketmode.EventTypeSlashCommand:
+				commandObj, ok := event.Data.(slack.SlashCommand)
+				if !ok {
+					continue
+				}
+				if commandObj.ChannelID != channelIDs["admin"] {
+					utils.SendMsgAsBot(commandObj.ChannelID, "Unauthorized operation", "")
+				}
+				socketClient.Ack(*event.Request)
+				commandBody := strings.Split(commandObj.Text, " ")
+				var reply string
+				if commandObj.Command == "/addchanneltoken" {
+					reply = addChannelTokenHandler(commandBody[0], commandBody[1])
+				} else {
+					reply = "Invalid command: " + commandObj.Command
+				}
+				
+				utils.SendMsgAsBot(channelIDs["admin"], reply, "")
 			}
 		}
 	}
