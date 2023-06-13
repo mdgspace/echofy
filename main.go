@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"os"
+	"strings"
 
 	"bot/api/utils"
 	"bot/listeners"
 	"bot/route"
 	"bot/db"
+	"bot/globals"
 
 	"github.com/joho/godotenv"
 )
@@ -18,12 +20,21 @@ var token, appToken string
 
 func initializeEnv() {
 	godotenv.Load(".env")
-	token = os.Getenv("SLACK_AUTH_TOKEN")
-	channelTokens["public"] = os.Getenv("SLACK_PUBLIC_CHANNEL_ID")
-	channelTokens["private"] = os.Getenv("SLACK_PRIVATE_CHANNEL_ID")
-	channelNames[os.Getenv("SLACK_PUBLIC_CHANNEL_ID")] = "public"
-	channelNames[os.Getenv("SLACK_PRIVATE_CHANNEL_ID")] = "private"
-	appToken = os.Getenv("SLACK_APP_TOKEN")
+	envVar := os.Environ()
+	for _, element := range(envVar) {
+		pair := strings.Split(element,"=")
+		key := pair[0]
+		if key == "SLACK_AUTH_TOKEN" {
+			token = pair[1]
+		} else if key == "SLACK_APP_TOKEN" {
+			appToken = pair[1]
+		} else if strings.HasSuffix(key, "_CHANNEL_ID") && strings.HasPrefix(key, "SLACK_") {
+			channelName := strings.ToLower(key[6:len(key)-11])
+			channelTokens[channelName] = pair[1]
+			channelNames[pair[1]] = channelName
+		}
+	}
+	globals.InitVariables(channelNames, channelTokens)
 }
 
 func main() {
