@@ -40,9 +40,7 @@ func initializeEnv() {
 func main() {
 	initializeEnv()
 	utils.InitClient(token, appToken)
-	utils.InitChannelTokens()
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
-	db.InitChannelTokens()
 	db.Init()
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
