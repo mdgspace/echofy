@@ -131,7 +131,6 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			Text:      string(msg),
 			Sender:    name,
 			Timestamp: ts,
-			OutsiderUserID: userID,
 		}
 		sendMsgToPublicUsers(newMsg, channel)
 		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
