@@ -73,7 +73,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			Sender:    name,
 			Timestamp: ts,
 		}
-		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), ts)
+		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), ts, ts)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			if err == websocket.ErrCloseSent {
@@ -134,7 +134,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			OutsiderUserID: userID,
 		}
 		sendMsgToPublicUsers(newMsg, channel)
-		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts)
+		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			fmt.Println("error: ", err)

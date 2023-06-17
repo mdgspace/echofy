@@ -47,7 +47,7 @@ func MsgListener(ctx context.Context) {
 					} else {
 						sender := utils.GetSlackUserInfo(s.User)
 						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
-						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp)
+						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "")//empty userID for messages sent by Slack users
 						utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
 					}
 				}

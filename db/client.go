@@ -31,12 +31,12 @@ func redisInit(portNumber, dbNumber int, password string) {
 /*
 to add a new message to the database
 */
-func AddMsgToDB(message models.Message, channelID string, threadTS string) {
+func AddMsgToDB(message models.Message, channelID ,threadTS, userID string) {
 	marshalled, err := json.Marshal(message)
 	if err != nil {
 		panic(err)
 	}
-	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
+	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), userID, threadTS), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
 		panic(err)
 	}
