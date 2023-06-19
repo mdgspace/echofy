@@ -38,7 +38,8 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	history := db.RetrieveAllMessagesPrivateUser(id)
 	if (len(history) == 0){
 		ts = SendMsg(globals.GetChannelID("private"), string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
-	} else {
+		db.AddUserEntry(name, ts)
+		} else {
 		SendMsg(globals.GetChannelID("private"), "User has re-entered the private chat", name, id)
 		ts = id
 	}
