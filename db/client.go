@@ -99,6 +99,14 @@ func AddUserEntry(name, userID string) {
 	}
 }
 
+// to set ttl of the user credentials to next 7 days
+func RefreshUserEntry(userID string) {
+	_, err := redisClient.Expire(ctx, fmt.Sprintf("user:%v",userID), 24*7*time.Hour).Result()
+	if err != nil {
+		panic(err)
+	}
+}
+
 // function to check if a userID is valid or not
 func CheckValidUserID(userID string) bool {
 	numKeys, _ := redisClient.DBSize(ctx).Result()

@@ -62,6 +62,7 @@ func LeaveChat() echo.HandlerFunc {
 			if (!status) {
 				return c.String(http.StatusInternalServerError, "An internal server error has occurred")
 			}
+			db.RefreshUserEntry(userID)
 			return c.String(http.StatusOK, "Thank you for visiting MDG Chat. We wish to have you again soon");
 		} else { 
 			return c.String(http.StatusBadRequest, "Wrong user ID")
