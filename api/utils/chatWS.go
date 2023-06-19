@@ -51,12 +51,8 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			if (err == &websocket.CloseError{}) {
-				CloseWebsocketAndClean(ws, "private", ts)
-				return nil
-			}
-			ws.Close()
-			break
+			CloseWebsocketAndClean(ws, "private", ts)
+			panic(err)
 		}
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
@@ -69,13 +65,13 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		if err != nil {
 			if err == websocket.ErrCloseSent {
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", ts)
-				CloseWebsocketAndClean(ws, "private", ts)
+			} else {
+				SendMsgAsBot(globals.GetChannelID("private"), "There was some error in the websocket corresponding to the user and hence it has been closed", ts)
 			}
-			ws.Close()
-			break
+			CloseWebsocketAndClean(ws, "private", ts)
+			panic(err)
 		}
 	}
-	return nil
 }
 
 // handler for public chats
@@ -97,12 +93,8 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			if (err == &websocket.CloseError{}) {
-				CloseWebsocketAndClean(ws, channel, userID)
-				return nil
-			}
-			ws.Close()
-			break
+			CloseWebsocketAndClean(ws, channel, userID)
+			panic(err)
 		}
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 		newMsg := models.Message{
@@ -115,10 +107,9 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			CloseWebsocketAndClean(ws, channel, userID)
-			break
+			panic(err)
 		}
 	}
-	return nil
 }
 
 // close websocket and remove it from wherever it is stored (golang slices)
