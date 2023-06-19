@@ -109,7 +109,11 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	webSocketsUserID[ws] = userID
 	webSocketMapsMutex.Unlock()
 	wg.Done()
-	prevMsgs, err := json.Marshal(db.RetrieveAllMessagesPublicChannels(channel))
+	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannels(channel, userID)
+	allPrevMsgs := make(map[string]map[string]string)
+	allPrevMsgs["Sent by you"] = currUserSentMsg
+	allPrevMsgs["Sent by others"] = otherUserSentMsg
+	prevMsgs, err := json.Marshal(allPrevMsgs)
 	if (err != nil){
 		panic(err)
 	}

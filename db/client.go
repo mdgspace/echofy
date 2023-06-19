@@ -36,7 +36,7 @@ func AddMsgToDB(message models.Message, channelID ,threadTS, userID string) {
 	if err != nil {
 		panic(err)
 	}
-	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), userID, threadTS), marshalled, 24*7*time.Hour).Result()
+	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), userID, message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
-		messages[strings.Split(iter.Val(), ":")[1]] = str
+		messages[strings.Split(iter.Val(), ":")[2]] = str
 	}
 	if err := iter.Err(); err != nil {
 		panic(err)
@@ -70,21 +70,25 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 
 returns a string of marshalled messages
 */
-func RetrieveAllMessagesPublicChannels(channelName string) map[string]string {
+func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]string, map[string]string) {
 	// iterate over all message keys and get their values
-	messages := make(map[string]string)
+	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), numKeys).Iterator()
 	for iter.Next(ctx) {
 		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
-		messages[strings.Split(iter.Val(), ":")[1]] = str
+		if strings.Split(iter.Val(), ":")[1] == userID {
+			currUserSentMsg[strings.Split(iter.Val(), ":")[2]] = str
+		} else {
+			otherUserSentMsg[strings.Split(iter.Val(), ":")[2]] = str
+		}
 	}
 	if err := iter.Err(); err != nil {
 		panic(err)
 	}
-	return messages
+	return currUserSentMsg, otherUserSentMsg
 }
 
 // function to add user to the db
