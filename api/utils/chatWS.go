@@ -85,7 +85,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	if (!db.CheckValidUserID(userID)){
 		userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
 		ws.WriteJSON(map[string]string{"userID":userID})
-		db.AddPublicUser(name, userID)
+		db.AddUserEntry(name, userID)
 	}
 	addUserAndWebsocketToLocalData(ws, userID, channel)
 	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID, channel)

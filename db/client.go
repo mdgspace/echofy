@@ -92,7 +92,7 @@ func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]s
 }
 
 // function to add user to the db
-func AddPublicUser(name, userID string) {
+func AddUserEntry(name, userID string) {
 	_, err := redisClient.Set(ctx, fmt.Sprintf("user:%v",userID), name, 24*7*time.Hour).Result() // key = userID, value = name
 	if err != nil {
 		panic(err)
