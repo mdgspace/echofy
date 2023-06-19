@@ -42,14 +42,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		SendMsg(globals.GetChannelID("private"), "User has re-entered the private chat", name, id)
 		ts = id
 	}
-	wg.Wait()
-	wg.Add(1)
-	webSocketMapsMutex.Lock()
-	privateChatWS[ts] = ws
-	userIDWebSockets[ts] = ws
-	webSocketsUserID[ws] = ts
-	webSocketMapsMutex.Unlock()
-	wg.Done()
+	addUserAndWebsocketToLocalData(ws, ts, "private")
 	entryInfo, err := json.Marshal(map[string]interface{}{"history":history, "id":ts})
 	if (err != nil){
 		panic(err)
@@ -58,7 +51,6 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			fmt.Println("error: ", err)
 			if (err == &websocket.CloseError{}) {
 				CloseWebsocketAndClean(ws, "private", ts)
 				return nil
@@ -66,7 +58,6 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			ws.Close()
 			break
 		}
-		fmt.Println("Received msg: ", string(msg))
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
 			Text:      string(msg),
@@ -80,7 +71,6 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", ts)
 				CloseWebsocketAndClean(ws, "private", ts)
 			}
-			fmt.Println("error: ", err)
 			ws.Close()
 			break
 		}
@@ -101,27 +91,12 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		ws.WriteJSON(map[string]string{"userID":userID})
 		db.AddPublicUser(name, userID)
 	}
-	wg.Wait()
-	wg.Add(1)
-	webSocketMapsMutex.Lock()
-	webSockets[channel] = append(webSockets[channel], ws)
-	userIDWebSockets[userID] = ws
-	webSocketsUserID[ws] = userID
-	webSocketMapsMutex.Unlock()
-	wg.Done()
-	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannels(channel, userID)
-	allPrevMsgs := make(map[string]map[string]string)
-	allPrevMsgs["Sent by you"] = currUserSentMsg
-	allPrevMsgs["Sent by others"] = otherUserSentMsg
-	prevMsgs, err := json.Marshal(allPrevMsgs)
-	if (err != nil){
-		panic(err)
-	}
+	addUserAndWebsocketToLocalData(ws, userID, channel)
+	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID, channel)
 	ws.WriteMessage(websocket.TextMessage, prevMsgs)
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			fmt.Println("error: ", err)
 			if (err == &websocket.CloseError{}) {
 				CloseWebsocketAndClean(ws, channel, userID)
 				return nil
@@ -129,7 +104,6 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			ws.Close()
 			break
 		}
-		fmt.Println("Received msg: ", string(msg))
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 		newMsg := models.Message{
 			Text:      string(msg),
@@ -140,7 +114,6 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
-			fmt.Println("error: ", err)
 			CloseWebsocketAndClean(ws, channel, userID)
 			break
 		}
@@ -167,6 +140,21 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 	} else {
 		delete(privateChatWS, userID)
 	}
+	wg.Done()
+}
+
+func addUserAndWebsocketToLocalData(ws *websocket.Conn, userID, channelName string) {
+	wg.Wait()
+	wg.Add(1)
+	webSocketMapsMutex.Lock()
+	if channelName == "private" {
+		privateChatWS[userID] = ws
+	} else {
+	webSockets[channelName] = append(webSockets[channelName], ws)
+	}
+	userIDWebSockets[userID] = ws
+	webSocketsUserID[ws] = userID
+	webSocketMapsMutex.Unlock()
 	wg.Done()
 }
 
@@ -208,7 +196,6 @@ func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
 func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 	var closedWSIndex []int
 	var aliveConns []*websocket.Conn
-	fmt.Println("Received message on public channel")
 	for index, value := range webSockets[channelName] {
 		err := value.WriteJSON(msgObj)
 		if err != nil {
@@ -270,4 +257,16 @@ func RequestUserInfo(username string) map[string]string {
 		ws.WriteJSON(map[string]string{"Message":"Send user info"})
 		return map[string]string {"Status":"Request Sent"}
 	}
+}
+
+func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) [] byte {
+	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannels(channelName, userID)
+	allPrevMsgs := make(map[string]map[string]string)
+	allPrevMsgs["Sent by you"] = currUserSentMsg
+	allPrevMsgs["Sent by others"] = otherUserSentMsg
+	chatHistory, err := json.Marshal(allPrevMsgs)
+	if (err != nil) {
+		panic(err)
+	}
+	return chatHistory
 }
