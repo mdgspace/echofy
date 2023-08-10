@@ -11,6 +11,7 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	profanityutils "bot/profanity_utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -55,6 +56,9 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			CloseWebsocketAndClean(ws, "private", ts)
 			panic(err)
 		}
+		if profanityutils.IsMsgProfane(string(msg)) {
+			handleProfaneUser(ws, name, string(msg), ts, "private")
+		}
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
 			Text:      string(msg),
@@ -98,6 +102,9 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			panic(err)
 		}
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
+		if profanityutils.IsMsgProfane(string(msg)) {
+			handleProfaneUser(ws, name, string(msg), ts, "public")
+		}
 		newMsg := models.Message{
 			Text:      string(msg),
 			Sender:    name,
@@ -261,4 +268,12 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) [] 
 		panic(err)
 	}
 	return chatHistory
+}
+
+// handler for user using illicit language
+func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName string) {
+	ws.WriteMessage(websocket.TextMessage, []byte("You have been banned for using illicit language in the chat. You may contact the administrator for any further discussions."))
+	BanUser(name, globals.GetChannelID(channelName))
+	SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been banned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
+	// unban user
 }

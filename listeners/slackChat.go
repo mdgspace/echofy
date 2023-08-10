@@ -8,6 +8,7 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	profanityutils "bot/profanity_utils"
 
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
@@ -64,6 +65,8 @@ func MsgListener(ctx context.Context) {
 				var reply string
 				if commandObj.Command == "/addchanneltoken" {
 					reply = addChannelTokenHandler(commandBody[0], commandBody[1])
+				} else if commandObj.Command == "/removeProfane" {
+					profanityutils.RemoveProfane(commandBody[0])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
