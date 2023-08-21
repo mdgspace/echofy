@@ -104,8 +104,10 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			// panic(err)
 		}
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
+		fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
 		if profanityutils.IsMsgProfane(string(msg)) {
 			handleProfaneUser(ws, name, string(msg), ts, "public")
+			return nil
 		}
 		newMsg := models.Message{
 			Text:      string(msg),
