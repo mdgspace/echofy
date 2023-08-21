@@ -17,6 +17,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var bannedUserIps = make(map[string]string) // userid to ip
 var webSockets = make(map[string]([]*websocket.Conn))
 var privateChatWS = make(map[string]*websocket.Conn) //key - thread time stamp, value - websocket of that user
 var userIDWebSockets = make(map[string]*websocket.Conn)
@@ -99,7 +100,8 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			CloseWebsocketAndClean(ws, channel, userID)
-			panic(err)
+			return nil
+			// panic(err)
 		}
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 		if profanityutils.IsMsgProfane(string(msg)) {
@@ -224,13 +226,27 @@ func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string)
 
 func BanUser(username, channelToken string) {
 	userID := db.GetUserID(username)
+	if userID == "" {
+		SendMsgAsBot(channelToken, "User with username: " + username + " does not exist", "")
+		return
+	}
 	ws := userIDWebSockets[userID]
 	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
+	bannedUserIps[userID] = ip
 	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
 	ws.WriteJSON(map[string]string{"Message":"You are banned now"})
 	SendMsgAsBot(channelToken, "User with id " + userID + " is banned successfully", "")
 	ws.Close()
-	db.RemovePublicUser(userID)
+	db.BanUserInDB(username)
+}
+
+func UnbanUser(username, channelToken string) {
+	userID := db.GetBannedUserId(username) // TODO: this gives empty string kyoki user is banned now
+	print("")
+	ip := bannedUserIps[userID]
+	delete(blacklistedIP, ip)
+	SendMsgAsBot(channelToken, "User with id " + userID + " is un-banned successfully", "")
+	db.UnbanUserInDB(username)
 }
 
 func IsUserBanned(ip string) bool {
