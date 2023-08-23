@@ -10,6 +10,7 @@ import (
 	"bot/route"
 	"bot/db"
 	"bot/globals"
+	"bot/profanity_utils"
 
 	"github.com/joho/godotenv"
 )
@@ -42,6 +43,7 @@ func main() {
 	utils.InitClient(token, appToken)
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
 	db.Init()
+	profanityutils.InitProfanityDetector()	
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
 	ctx, cancel := context.WithCancel(context.Background())

@@ -8,6 +8,7 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	profanityutils "bot/profanity_utils"
 
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
@@ -47,7 +48,7 @@ func MsgListener(ctx context.Context) {
 					} else {
 						sender := utils.GetSlackUserInfo(s.User)
 						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
-						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "")//empty userID for messages sent by Slack users
+						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "") //empty userID for messages sent by Slack users
 						utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
 					}
 				}
@@ -64,10 +65,12 @@ func MsgListener(ctx context.Context) {
 				var reply string
 				if commandObj.Command == "/addchanneltoken" {
 					reply = addChannelTokenHandler(commandBody[0], commandBody[1])
+				} else if commandObj.Command == "/removeProfane" {
+					profanityutils.RemoveProfane(commandBody[0])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
-				
+
 				utils.SendMsgAsBot(channelIDs["admin"], reply, "")
 			}
 		}
@@ -77,30 +80,33 @@ func MsgListener(ctx context.Context) {
 // TODO: store users in such a way that we can access their websocket object from their user id
 // for commands like `!users`
 func commandListener(command, channelToken, msgTS string) {
-	if (command == "users"){
-		userNames := db.GetActiveUsers(globals.FindChannelNameIfValidToken(channelToken))
+	if command == "users" {
+		userNames := db.GetAllUsers(globals.FindChannelNameIfValidToken(channelToken))
 		names := ""
-		for _, name := range(userNames) {
+		for _, name := range userNames {
 			names += name + ", "
 		}
-		if (names == ""){
+		if names == "" {
 			utils.SendMsgAsBot(channelToken, "No active users as of now", "")
 			return
 		}
-		names = names[:len(names) - 2]
+		names = names[:len(names)-2]
 		utils.SendMsgAsBot(channelToken, names, "")
-	} else if (strings.HasPrefix(command, "info")){
+	} else if strings.HasPrefix(command, "info") {
 		// send request to frontend for information
 		// receive information
 		// send information to slack
 		username := strings.Split(command, " ")[1]
 		reqInfo := utils.RequestUserInfo(username)
-		if (reqInfo["Status"] == "Fail"){
-			utils.SendMsgAsBot(channelToken, "Request for user info failed\nError msg: " + reqInfo["Error"], msgTS)
+		if reqInfo["Status"] == "Fail" {
+			utils.SendMsgAsBot(channelToken, "Request for user info failed\nError msg: "+reqInfo["Error"], msgTS)
 		}
-	} else if (strings.HasPrefix(command, "ban")){
+	} else if strings.HasPrefix(command, "ban") {
 		// ip based blacklisting
 		username := strings.Split(command, " ")[1]
 		utils.BanUser(username, channelToken)
+	} else if strings.HasPrefix(command, "unban") {
+		username := strings.Split(command, " ")[1]
+		utils.UnbanUser(username, channelToken)
 	}
 }

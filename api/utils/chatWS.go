@@ -11,11 +11,13 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	profanityutils "bot/profanity_utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 )
 
+var bannedUserIps = make(map[string]string) // userid to ip
 var webSockets = make(map[string]([]*websocket.Conn))
 var privateChatWS = make(map[string]*websocket.Conn) //key - thread time stamp, value - websocket of that user
 var userIDWebSockets = make(map[string]*websocket.Conn)
@@ -54,6 +56,9 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		if err != nil {
 			CloseWebsocketAndClean(ws, "private", ts)
 			panic(err)
+		}
+		if profanityutils.IsMsgProfane(string(msg)) {
+			handleProfaneUser(ws, name, string(msg), ts, "private")
 		}
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
@@ -95,9 +100,15 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			CloseWebsocketAndClean(ws, channel, userID)
-			panic(err)
+			return nil
+			// panic(err)
 		}
 		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
+		fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
+		if profanityutils.IsMsgProfane(string(msg)) {
+			handleProfaneUser(ws, name, string(msg), ts, "public")
+			return nil
+		}
 		newMsg := models.Message{
 			Text:      string(msg),
 			Sender:    name,
@@ -217,13 +228,27 @@ func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string)
 
 func BanUser(username, channelToken string) {
 	userID := db.GetUserID(username)
+	if userID == "" {
+		SendMsgAsBot(channelToken, "User with username: " + username + " does not exist", "")
+		return
+	}
 	ws := userIDWebSockets[userID]
 	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
+	bannedUserIps[userID] = ip
 	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
 	ws.WriteJSON(map[string]string{"Message":"You are banned now"})
 	SendMsgAsBot(channelToken, "User with id " + userID + " is banned successfully", "")
 	ws.Close()
-	db.RemovePublicUser(userID)
+	db.BanUserInDB(username)
+}
+
+func UnbanUser(username, channelToken string) {
+	userID := db.GetBannedUserId(username) // TODO: this gives empty string kyoki user is banned now
+	print("")
+	ip := bannedUserIps[userID]
+	delete(blacklistedIP, ip)
+	SendMsgAsBot(channelToken, "User with id " + userID + " is un-banned successfully", "")
+	db.UnbanUserInDB(username)
 }
 
 func IsUserBanned(ip string) bool {
@@ -261,4 +286,12 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) [] 
 		panic(err)
 	}
 	return chatHistory
+}
+
+// handler for user using illicit language
+func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName string) {
+	ws.WriteMessage(websocket.TextMessage, []byte("You have been banned for using illicit language in the chat. You may contact the administrator for any further discussions."))
+	BanUser(name, globals.GetChannelID(channelName))
+	SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been banned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
+	// unban user
 }
