@@ -87,7 +87,7 @@ func commandListener(command, channelToken, msgTS string) {
 			names += name + ", "
 		}
 		if names == "" {
-			utils.SendMsgAsBot(channelToken, "No active users as of now", "")
+			utils.SendMsgAsBot(channelToken, "No users as of now", "")
 			return
 		}
 		names = names[:len(names)-2]
