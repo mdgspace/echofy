@@ -15,7 +15,7 @@ import (
 
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
-		if (utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0])){
+		if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
 			return c.String(http.StatusForbidden, "You are banned as of now")
 		}
 		name := c.FormValue("name")
@@ -23,6 +23,9 @@ func JoinChat() echo.HandlerFunc {
 		validChannel := globals.IsChannelNameValid(channel)
 		if name == "" || !validChannel {
 			return c.String(http.StatusBadRequest, "Name and/or channel missing")
+		}
+		if db.CheckIfUsernameExists(name, channel) {
+			return c.String(http.StatusConflict, "Username is taken")
 		}
 		userID := c.FormValue("userID")
 		if channel != "private" {
@@ -40,11 +43,11 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		info := new(models.UserInfo)
 		e := c.Bind(info)
-		if (e != nil){
+		if e != nil {
 			return c.String(http.StatusBadRequest, "Wrongly formatted info")
-		} else if (info.UserID != db.GetUserID(info.Username)){
+		} else if info.UserID != db.GetUserID(info.Username) {
 			return c.String(http.StatusBadRequest, "Wrong user id and/or username")
-		} else if (!globals.IsChannelNameValid(info.Channel)){
+		} else if !globals.IsChannelNameValid(info.Channel) {
 			return c.String(http.StatusBadRequest, "Wrong channel name")
 		}
 		//further processing
@@ -56,15 +59,15 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 func LeaveChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		userID := c.FormValue("userID")
-		if (db.CheckValidUserID(userID)){
+		if db.CheckValidUserID(userID) {
 			// close web socket in sync with the chatWS functions
 			status := utils.CloseWebsocketAndCleanByUserID(userID)
-			if (!status) {
+			if !status {
 				return c.String(http.StatusInternalServerError, "An internal server error has occurred")
 			}
-			db.RefreshUserEntry(userID)
-			return c.String(http.StatusOK, "Thank you for visiting MDG Chat. We wish to have you again soon");
-		} else { 
+			db.ChangeActiveUserToInactive(userID)
+			return c.String(http.StatusOK, "Thank you for visiting MDG Chat. We wish to have you again soon")
+		} else {
 			return c.String(http.StatusBadRequest, "Wrong user ID")
 		}
 	}
