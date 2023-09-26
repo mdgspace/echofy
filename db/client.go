@@ -94,15 +94,16 @@ func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]s
 
 // function to add user to the db
 func AddUserEntry(name, userID string) {
-	_, err := redisClient.Set(ctx, fmt.Sprintf("user:%v", userID), name, 24*7*time.Hour).Result() // key = userID, value = name
+	_, err := redisClient.Set(ctx, fmt.Sprintf("active:%v", userID), name, 24*7*time.Hour).Result() // key = userID, value = name
 	if err != nil {
 		panic(err)
 	}
 }
 
 // to set ttl of the user credentials to next 7 days
-func RefreshUserEntry(userID string) {
-	_, err := redisClient.Expire(ctx, fmt.Sprintf("user:%v", userID), 24*7*time.Hour).Result()
+func ChangeActiveUserToInactive(userID string) {
+	redisClient.Rename(ctx, fmt.Sprintf("active:%v", userID), fmt.Sprintf("inactive:%v", userID))
+	_, err := redisClient.Expire(ctx, fmt.Sprintf("inactive:%v", userID), 24*7*time.Hour).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +112,46 @@ func RefreshUserEntry(userID string) {
 // function to check if a userID is valid or not
 func CheckValidUserID(userID string) bool {
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	userID = "user:" + userID
+	activeUserID := "active:" + userID
+	inactiveUserID := "inactive:" + userID
+	iter := redisClient.Scan(ctx, 0, activeUserID, numKeys).Iterator()
+	// if a valid key value pair with the userID as key exists then the userID is valid
+	for iter.Next(ctx) {
+		currId := iter.Val()
+		// fmt.Println(currId)
+		if currId == activeUserID {
+			return true
+		}
+	}
+	iter = redisClient.Scan(ctx, 0, inactiveUserID, numKeys).Iterator()
+	for iter.Next(ctx) {
+		currId := iter.Val()
+		// fmt.Println(currId)
+		if currId == inactiveUserID {
+			return true
+		}
+	}
+	return false
+}
+
+// check if there exists some active user with given user id
+func CheckValidActiveUserID(userID string) bool {
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	userID = "active:" + userID
+	iter := redisClient.Scan(ctx, 0, userID, numKeys).Iterator()
+	// if a valid key value pair with the userID as key exists then the userID is valid
+	for iter.Next(ctx) {
+		if iter.Val() == userID {
+			return true
+		}
+	}
+	return false
+}
+
+// check if there exists some inactive user with given user id
+func CheckValidInactiveUserID(userID string) bool {
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	userID = "inactive:" + userID
 	iter := redisClient.Scan(ctx, 0, userID, numKeys).Iterator()
 	// if a valid key value pair with the userID as key exists then the userID is valid
 	for iter.Next(ctx) {
@@ -125,7 +165,11 @@ func CheckValidUserID(userID string) bool {
 // remove a user from database
 func RemoveUser(userID string) {
 	if CheckValidUserID(userID) {
-		_, err := redisClient.Del(ctx, fmt.Sprintf("user:%v", userID)).Result()
+		_, err := redisClient.Del(ctx, fmt.Sprintf("active:%v", userID)).Result()
+		if err != nil {
+			panic(err)
+		}
+		_, err = redisClient.Del(ctx, fmt.Sprintf("inactive:%v", userID)).Result()
 		if err != nil {
 			panic(err)
 		}
@@ -142,18 +186,25 @@ func GetAllUsers(channelName string) []string {
 }
 
 // func to get un banned users
-func getUnbannedUsers(channelName string, numKeys int64) [] string {
-	iter := redisClient.Scan(ctx, 0, "user:"+channelName+"*", numKeys).Iterator()
+func getUnbannedUsers(channelName string, numKeys int64) []string {
+	iter := redisClient.Scan(ctx, 0, "active:"+channelName+"*", numKeys).Iterator()
 	var userNames []string
 	for iter.Next(ctx) {
 		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		name += "(active)"
+		userNames = append(userNames, name)
+	}
+	iter = redisClient.Scan(ctx, 0, "inactive:"+channelName+"*", numKeys).Iterator()
+	for iter.Next(ctx) {
+		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		name += "(inactive)"
 		userNames = append(userNames, name)
 	}
 	return userNames
 }
 
 // func to get banned users
-func getBannedUsers(channelName string, numKeys int64) [] string {
+func getBannedUsers(channelName string, numKeys int64) []string {
 	iter := redisClient.Scan(ctx, 0, "banned:"+channelName+"*", numKeys).Iterator()
 	var userNames []string
 	for iter.Next(ctx) {
@@ -167,7 +218,21 @@ func getBannedUsers(channelName string, numKeys int64) [] string {
 // To get user Id from user name
 func GetUserID(username string) string {
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	iter := redisClient.Scan(ctx, 0, "user:*", numKeys).Iterator()
+	iter := redisClient.Scan(ctx, 0, "active:*", numKeys).Iterator()
+	for iter.Next(ctx) {
+		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		if name == username {
+			return strings.Split(iter.Val(), ":")[1]
+		}
+	}
+	iter = redisClient.Scan(ctx, 0, "inactive:*", numKeys).Iterator()
+	for iter.Next(ctx) {
+		name, _ := redisClient.Get(ctx, iter.Val()).Result()
+		if name == username {
+			return strings.Split(iter.Val(), ":")[1]
+		}
+	}
+	iter = redisClient.Scan(ctx, 0, "banned:*", numKeys).Iterator()
 	for iter.Next(ctx) {
 		name, _ := redisClient.Get(ctx, iter.Val()).Result()
 		if name == username {
@@ -205,4 +270,19 @@ func UnbanUserInDB(username string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// To check if any user with same username is already in the chat room
+func CheckIfUsernameExists(username, channelName string) bool {
+	// *:channelName* -> key, username -> value
+	bannedName := username + "(banned)"
+	activeName := username + "(active)"
+	inactiveName := username + "(inactive)"
+	allNames := GetAllUsers(channelName)
+	for _, name := range allNames {
+		if name == activeName || name == bannedName || name == inactiveName {
+			return true
+		}
+	}
+	return false
 }
