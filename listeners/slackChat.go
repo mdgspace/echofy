@@ -65,8 +65,8 @@ func MsgListener(ctx context.Context) {
 				var reply string
 				if commandObj.Command == "/addchanneltoken" {
 					reply = addChannelTokenHandler(commandBody[0], commandBody[1])
-				} else if commandObj.Command == "/removeProfane" {
-					profanityutils.RemoveProfane(commandBody[0])
+				} else if commandObj.Command == "/removeprofane" {
+					reply = profanityutils.RemoveProfane(commandBody[0])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
