@@ -18,12 +18,13 @@ func GetProfanePartOfMsg(msg string) string {
 	return profanityDetector.ExtractProfanity(msg)
 }
 
-func RemoveProfane(word string) {
+func RemoveProfane(word string) string {
 	for _, profanity := range falsePositives {
 		if profanity == word {
-			return
+			return word + " is already whitelisted"
 		}
 	}
 	falsePositives = append(falsePositives, word)
 	profanityDetector = *goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, falsePositives, goaway.DefaultFalseNegatives)
+	return word + " is whitelisted successfully"
 }
