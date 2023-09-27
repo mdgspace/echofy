@@ -86,6 +86,17 @@ func SendUserInfoToSlack(infoObj models.UserInfo) {
 		}))
 }
 
+// Function to delete a message
+/*  
+Can delete only those messages which are sent by frontend clients
+*/
+ func DeleteMsg(channelToken, tstamp, triggerID string) {
+	_, _, e := Client.DeleteMessage(channelToken, tstamp)
+	if e != nil {
+		fmt.Println("====> Error while deleting message: ", e)
+	}
+}
+
 // func incomingMsgBroadcaster(ctx context.Context, client *slack.Client, socketClient *socketmode.Client, channelTokens map[string]string, channelNames map[string]string) {
 // 	for {
 // 		select {

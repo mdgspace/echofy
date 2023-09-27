@@ -43,13 +43,26 @@ func MsgListener(ctx context.Context) {
 				socketClient.Ack(*event.Request)
 				s, isMessage := eventsAPIEvent.InnerEvent.Data.(*slackevents.MessageEvent)
 				if isMessage && s.BotID == "" {
-					if strings.HasPrefix(s.Text, "!") {
+					if s.SubType == "message_deleted" {
+						continue
+					} else if strings.HasPrefix(s.Text, "!") {
 						commandListener(strings.Split(s.Text, "!")[1], s.Channel, s.TimeStamp)
 					} else {
 						sender := utils.GetSlackUserInfo(s.User)
 						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
 						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "") //empty userID for messages sent by Slack users
 						utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
+					}
+				}
+			case socketmode.EventTypeInteractive:
+				callback, ok := event.Data.(slack.InteractionCallback)
+				if !ok {
+					continue
+				}
+				socketClient.Ack(*event.Request)
+				if callback.Type == slack.InteractionTypeMessageAction {
+					if callback.CallbackID == "delete_message" {
+						utils.DeleteMsg(callback.Channel.ID, callback.Message.Timestamp, callback.TriggerID)
 					}
 				}
 			case socketmode.EventTypeSlashCommand:
