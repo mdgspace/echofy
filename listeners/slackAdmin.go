@@ -1,6 +1,7 @@
 package listeners
 
 import (
+	"bot/db"
 	"bot/globals"
 	"os"
 	"strings"
@@ -28,4 +29,18 @@ func addChannelTokenHandler(channelName, token string) (remarks string) {
 	globals.AddChannelNameAndToken(strings.ToLower(channelName), token)
 	channelIDs[channelName] = token
 	return "Channel token added successfully. Please add the app to the new channel"
+}
+
+
+func showActiveUsers(publicToken string)(reply string) {
+	userNames := db.GetAllUsers(globals.FindChannelNameIfValidToken(publicToken))
+		names := ""
+		for _, name := range userNames {
+			names += name + ", "
+		}
+		if names == "" {
+			return "No users as of now"
+		}
+		names = names[:len(names)-2]
+		return names
 }
