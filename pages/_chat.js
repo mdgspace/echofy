@@ -1,10 +1,15 @@
 import Image from 'next/image'
 import ChatInputBox from '../components/chatInputBox';
 import ChatContainer from '../components/chatContainer';
+import arrow from '../assets/arrow.svg'
+import {Roboto } from 'next/font/google'
 
 import { useState } from "react";
 
-
+const roboto = Roboto({
+    weight: '400',
+    subsets: ['latin'],
+  })
 
 export default function Home() {
     const [messages, setMessages] = useState([]); // Define messages state in the Home component
@@ -22,12 +27,17 @@ export default function Home() {
                 <div className="col-span-13 mx-[3vw] bg-transparent">
                     <div className="grid grid-rows-12 h-screen">
                         <div className="row-span-1 bg-slate-200">
-                            <div className="grid grid-cols-8  h-full">
+                            <div className="grid grid-cols-8  h-full noir-pro">
                                 <div className="col-span-1 flex flex-col justify-end">
                                     Queries
                                 </div>
                                 <div className="col-span-1 flex flex-col justify-end">
-                                    Templates
+                                    <div className='flex flex-row'>
+                                        <div>Templates</div>
+                                        <div>
+                                            <Image src={arrow} alt=""></Image>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="col-span-6 text-right flex flex-col justify-end">
                                     Join Slack

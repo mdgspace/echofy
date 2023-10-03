@@ -16,6 +16,18 @@
   }
 }
 
+@font-face {
+  font-family: 'noir-pro';
+  src: url(../assets/fonts/NoirPro-Regular.otf) format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+.noir-pro{
+  font-family: 'noir-pro';
+  font-size: 24px;
+}
+
 html,
 body {
   padding: 0;
