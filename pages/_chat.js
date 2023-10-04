@@ -11,7 +11,7 @@ export default function Home() {
 
     // Create a function to update messages in the Home component
     function updateMessages(newMessage) {
-        setMessages([...messages, { text: newMessage, isSent: true }]);
+        setMessages([...messages, { text: newMessage, isSent: false }]);
     }
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">

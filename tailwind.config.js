@@ -23,6 +23,7 @@ module.exports = {
       },
       colors: {
         'bg-orange': '#F95131AB',
+        'txt-grey' : '#3F3F3F'
       },
     },
     plugins: [],
