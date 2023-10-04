@@ -16,7 +16,7 @@ export default function Home() {
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
             <div className="grid grid-cols-16 w-full h-screen">
-                <div className="col-span-2 bg-bg-orange">
+                <div className="col-span-2 bg-bg-orange rounded-r-xl">
                     <div className='p-2 text-white outfit'>.mdg</div>
                     <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
                         {Array(5).fill().map((_, index) => (
@@ -46,7 +46,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="overflow-y-auto noir-pro">
+                        <div className="h-[70vh] overflow-y-auto noir-pro">
                             <ChatContainer messages={messages} />
                         </div>
                         <div className="h-[20vh]">
@@ -54,7 +54,11 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="div bg-bg-orange">
+                <div className=" flex flex-row">
+                    <div className="w-[40%]"></div>
+                    <div className="w-[60%] bg-bg-orange rounded-l-md">
+                        insert right navigation pane
+                    </div>
                 </div>
             </div>
         </div>
