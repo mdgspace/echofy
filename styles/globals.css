@@ -28,10 +28,10 @@
 
 @font-face {
   font-family: 'outfit';
-  src: url(../assets/fonts//static/Outfit-SemiBold.ttf);
+  src: url(../assets/fonts//static/Outfit-Regular.ttf);
 }
 
-.noir-pro{
+.noir-pro-bold{
   font-family: 'noir-pro-bold';
   font-size: 24px;
 }
@@ -40,6 +40,12 @@
   font-family: 'outfit';
   font-size: 24px;
 }
+
+.noir-pro{
+  font-family: 'noir-pro';
+  font-size: 20px;
+}
+
 
 html,
 body {
