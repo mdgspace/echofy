@@ -25,9 +25,9 @@ export default function Home() {
                     </div>
                 </div>
                 <div className="col-span-13 mx-[3vw] bg-transparent">
-                    <div className="grid grid-rows-12 h-screen">
-                        <div className="row-span-1">
-                            <div className="grid grid-cols-8  h-full noir-pro">
+                    <div className="flex flex-col h-screen">
+                        <div className="">
+                            <div className="grid grid-cols-8  h-[10vh] noir-pro">
                                 <div className="col-span-1 flex flex-col justify-end">
                                     <div className='hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white h-[6vh] flex flex-col justify-center mx-[1vw]'>
                                         <center>Queries</center>
@@ -46,10 +46,10 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="row-span-10">
+                        <div className="overflow-y-auto">
                             <ChatContainer messages={messages} />
                         </div>
-                        <div className="row bg-slate-400">
+                        <div className="h-[20vh]">
                             <ChatInputBox updateMessages={updateMessages} />
                         </div>
                     </div>
