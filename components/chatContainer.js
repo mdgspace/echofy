@@ -11,7 +11,7 @@ export default function ChatContainer({ messages }) {
   <li key={index} className={` ${message.isSent ? "sent" : "received"} ${message.isSent ? "flex flex-row items-center justify-end py-[3vh]" : "flex flex-row items-center justify-start py-[3vh]"}`}>
     {message.isSent ? (
       <>
-        <div className="pr-[1vw] w-1/2">
+        <div className="pr-[1vw] w-[70%]">
           <div className="bg-white rounded-lg flex align-items-center justify-items-center py-[2vh] translate-y-[3vh] break-all">
             <div className="mx-[1vw] text-txt-grey  ">{message.text}</div>
           </div>
@@ -21,7 +21,7 @@ export default function ChatContainer({ messages }) {
     ) : (
       <>
         <Image src={Avatar} alt="" className="mr-2" />
-        <div className="pl-[1vw] w-1/2">
+        <div className="pl-[1vw] w-[70%]">
           <div className="bg-white rounded-lg flex align-items-center justify-items-center py-[2vh] translate-y-[3vh] break-all">
             <div className="mx-[1vw] text-txt-grey">{message.text}</div>
           </div>

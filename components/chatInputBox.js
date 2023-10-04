@@ -12,6 +12,12 @@ export default function ChatInputBox({ updateMessages }) {
         setNewMessage("");
     }
 
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          handleSendClick();
+        }
+      }
+
     return (
         <div className="flex justify-center items-center h-full">
             <div className="relative w-1/2 bg-transparent">
@@ -20,6 +26,7 @@ export default function ChatInputBox({ updateMessages }) {
                     placeholder="Enter your message..."
                     value={newMessage}
                     onChange={handleInputChange}
+                    onKeyDown={handleKeyPress}
                     className="w-full p-3 pr-10 border rounded-lg placeholder-gray-400"
                 />
                 <button
