@@ -1,3 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@font-face {
+  font-family: 'noir-pro';
+  src: url(../assets/fonts/NoirPro-Regular.otf) format('opentype');
+}
+
+@font-face {
+  font-family: 'noir-pro-bold';
+  src: url(../assets/fonts//NoirPro-SemiBold.otf) format('opentype');
+}
+
+
+
+.noir-pro-bold{
+  font-family: 'noir-pro-bold';
+  font-size: calc(24*100vw/1440);
+}
+
 html,
 body {
   padding: 0;
