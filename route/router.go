@@ -2,7 +2,7 @@ package route
 
 import (
 	"bot/api"
-	
+
 	"github.com/labstack/echo/v4"
 )
 

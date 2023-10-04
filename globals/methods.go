@@ -24,8 +24,8 @@ func GetChannelID(channelName string) string {
 }
 
 func FindChannelNameIfValidToken(channelID string) (channelName string) {
-	for name, id := range(channelTokens){
-		if (id == channelID){
+	for name, id := range channelTokens {
+		if id == channelID {
 			return name
 		}
 	}

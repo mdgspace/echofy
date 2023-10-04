@@ -87,15 +87,15 @@ func MsgListener(ctx context.Context) {
 					isreply = true
 					reply = showUsers(channelIDs["tp"])
 				} else if commandObj.Command == "/ban" {
-					utils.BanUser(commandBody[0] , channelIDs["admin"])
-				}else {
+					utils.BanUser(commandBody[0], channelIDs["admin"])
+				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
-				
-				if isreply{
+
+				if isreply {
 					utils.SendMsgAsBot(channelIDs["admin"], reply, "")
 				}
-				
+
 			}
 		}
 	}
