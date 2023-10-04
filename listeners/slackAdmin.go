@@ -32,7 +32,7 @@ func addChannelTokenHandler(channelName, token string) (remarks string) {
 }
 
 
-func showActiveUsers(publicToken string)(reply string) {
+func showUsers(publicToken string)(reply string) {
 	userNames := db.GetAllUsers(globals.FindChannelNameIfValidToken(publicToken))
 		names := ""
 		for _, name := range userNames {
