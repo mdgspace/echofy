@@ -19,12 +19,25 @@
 @font-face {
   font-family: 'noir-pro';
   src: url(../assets/fonts/NoirPro-Regular.otf) format('opentype');
-  font-weight: 600;
-  font-style: normal;
+}
+
+@font-face {
+  font-family: 'noir-pro-bold';
+  src: url(../assets/fonts//NoirPro-SemiBold.otf) format('opentype');
+}
+
+@font-face {
+  font-family: 'outfit';
+  src: url(../assets/fonts//static/Outfit-SemiBold.ttf);
 }
 
 .noir-pro{
-  font-family: 'noir-pro';
+  font-family: 'noir-pro-bold';
+  font-size: 24px;
+}
+
+.outfit{
+  font-family: 'outfit';
   font-size: 24px;
 }
 

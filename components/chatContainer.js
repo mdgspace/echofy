@@ -1,12 +1,15 @@
 import React from "react";
+import Avatar from "../assets/avatar.svg"
+import Image from 'next/image'
+
 
 export default function ChatContainer({ messages }) {
   return (
-    <div className="row-span-10 bg-slate-300">
+    <div className="flex justify-end">
       <ul>
         {messages.map((message, index) => (
-          <li key={index} className={message.isSent ? "sent" : "received"}>
-            {message.text}
+          <li key={index} className={` ${message.isSent ? "sent" : "received"} ${"flex flex-row justify-items-center align-items-center"}`}>
+            {message.text} <Image src={Avatar} alt=""></Image>
           </li>
         ))}
       </ul>

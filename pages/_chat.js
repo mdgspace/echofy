@@ -2,34 +2,36 @@ import Image from 'next/image'
 import ChatInputBox from '../components/chatInputBox';
 import ChatContainer from '../components/chatContainer';
 import arrow from '../assets/arrow.svg'
-import {Roboto } from 'next/font/google'
+import Box from '../components/mdgBox';
 
 import { useState } from "react";
-
-const roboto = Roboto({
-    weight: '400',
-    subsets: ['latin'],
-  })
 
 export default function Home() {
     const [messages, setMessages] = useState([]); // Define messages state in the Home component
 
-  // Create a function to update messages in the Home component
-  function updateMessages(newMessage) {
-    setMessages([...messages, { text: newMessage, isSent: true }]);
-  }
+    // Create a function to update messages in the Home component
+    function updateMessages(newMessage) {
+        setMessages([...messages, { text: newMessage, isSent: true }]);
+    }
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
             <div className="grid grid-cols-16 w-full h-screen">
                 <div className="col-span-2 bg-bg-orange">
-                    .mdg
+                    <div className='p-2 text-white outfit'>.mdg</div>
+                    <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
+                        {Array(5).fill().map((_, index) => (
+                            <Box key={index} />
+                        ))}
+                    </div>
                 </div>
                 <div className="col-span-13 mx-[3vw] bg-transparent">
                     <div className="grid grid-rows-12 h-screen">
-                        <div className="row-span-1 bg-slate-200">
+                        <div className="row-span-1">
                             <div className="grid grid-cols-8  h-full noir-pro">
                                 <div className="col-span-1 flex flex-col justify-end">
-                                    Queries
+                                    <div className='hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white h-[6vh] flex flex-col justify-center mx-[1vw]'>
+                                        <center>Queries</center>
+                                        </div>
                                 </div>
                                 <div className="col-span-1 flex flex-col justify-end">
                                     <div className='flex flex-row'>
@@ -39,16 +41,16 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-span-6 text-right flex flex-col justify-end">
+                                <div className="hover:cursor-pointer col-span-6 text-right flex flex-col justify-end text-bg-orange">
                                     Join Slack
                                 </div>
                             </div>
                         </div>
-                        <div className="row-span-10 bg-slate-300">
-                        <ChatContainer messages={messages} />
+                        <div className="row-span-10">
+                            <ChatContainer messages={messages} />
                         </div>
                         <div className="row bg-slate-400">
-                           <ChatInputBox updateMessages={updateMessages}/>
+                            <ChatInputBox updateMessages={updateMessages} />
                         </div>
                     </div>
                 </div>
