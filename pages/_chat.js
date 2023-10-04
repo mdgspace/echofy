@@ -3,6 +3,7 @@ import ChatInputBox from '../components/chatInputBox';
 import ChatContainer from '../components/chatContainer';
 import arrow from '../assets/arrow.svg'
 import Box from '../components/mdgBox';
+import RightPane from '../components/rightPane';
 
 import { useState } from "react";
 
@@ -56,8 +57,8 @@ export default function Home() {
                 </div>
                 <div className=" flex flex-row">
                     <div className="w-[40%]"></div>
-                    <div className="w-[60%] bg-bg-orange rounded-l-md">
-                        insert right navigation pane
+                    <div className="w-[60%] bg-bg-orange rounded-l-md shadow-[0px_0px_20px_-5px_rgba(0,0,0,1)]">
+                        <RightPane/>
                     </div>
                 </div>
             </div>
