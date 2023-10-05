@@ -26,11 +26,31 @@
   src: url(../assets/fonts//NoirPro-SemiBold.otf) format('opentype');
 }
 
+@font-face {
+  font-family: 'outfit';
+  src: url(../assets/fonts//static/Outfit-Regular.ttf);
+}
 
+.noir-pro{
+  font-family: 'noir-pro';
+  font-size: calc(96*100vw/1440);
+  font-weight:400 ;
+}
 
-.noir-pro-bold{
-  font-family: 'noir-pro-bold';
+.noir-pro-small{
+  font-family: 'noir-pro';
   font-size: calc(24*100vw/1440);
+  font-weight:600 ;
+}
+.noir-pro-medium{
+  font-family: 'noir-pro';
+  font-size: calc(48*100vw/1440);
+  font-weight:400 ;
+}
+
+.outfit{
+  font-family: 'outfit';
+  font-size: calc(48*100vw/1440);
 }
 
 html,
