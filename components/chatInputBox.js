@@ -20,7 +20,7 @@ export default function ChatInputBox({ updateMessages }) {
 
     return (
         <div className="flex justify-center items-center h-full">
-            <div className="relative w-1/2 bg-transparent">
+            <div className="relative w-3/4 bg-transparent">
                 <input
                     type="text"
                     placeholder="Enter your message..."
