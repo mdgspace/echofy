@@ -22,6 +22,7 @@ module.exports = {
         'span-16': 'span 16 / span 16',
         'span-21': 'span 21 / span 21',
         'span-24': 'span 24 / span 24',
+        'span-23': 'span 23 / span 23',
       },
       gridRow: {
         'span-10': 'span 10 / span 10',
