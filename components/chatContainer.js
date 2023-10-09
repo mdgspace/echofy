@@ -13,7 +13,7 @@ export default function ChatContainer({ messages }) {
       <>
         <div className="pr-[1vw] w-[70%] max-sm:w-[60%]">
           <div className="shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white rounded-lg flex align-items-center justify-items-center py-[2vh] translate-y-[3vh] break-all">
-            <div className="mx-[1vw] text-txt-grey noir-pro ">{message.text}</div>
+            <div className="mx-[1vw] text-txt-grey noir-pro max-sm:text-sm">{message.text}</div>
           </div>
         </div>
         <div className="w-[6vw] max-md:w-[10vw] max-sm:w-[15vw]">
@@ -28,7 +28,7 @@ export default function ChatContainer({ messages }) {
         
         <div className="pl-[1vw] w-[70%] max-sm:w-[60%]">
           <div className="shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white rounded-lg flex align-items-center justify-items-center py-[2vh] translate-y-[3vh] break-all">
-            <div className="mx-[1vw] text-txt-grey">{message.text}</div>
+            <div className="mx-[1vw] text-txt-grey noir-pro max-sm:text-sm">{message.text}</div>
           </div>
         </div>
       </>
