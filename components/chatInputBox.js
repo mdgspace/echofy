@@ -2,13 +2,14 @@ import { useState } from "react";
 
 export default function ChatInputBox({ updateMessages }) {
     const [newMessage, setNewMessage] = useState("");
+    const [username, setUsername] = useState("zcross.mdg"); //take username from backend and after login
 
     function handleInputChange(event) {
         setNewMessage(event.target.value);
     }
 
     function handleSendClick() {
-        updateMessages(newMessage);
+        updateMessages(newMessage , username);
         setNewMessage("");
     }
 

@@ -11,8 +11,8 @@ export default function Home() {
     const [messages, setMessages] = useState([]); // Define messages state in the Home component
 
     // Create a function to update messages in the Home component
-    function updateMessages(newMessage) {
-        setMessages([...messages, { text: newMessage, isSent: true }]);
+    function updateMessages(newMessage , username) {
+        setMessages([...messages, { text: newMessage, isSent: true , username: username }]);
     }
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">

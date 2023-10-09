@@ -12,7 +12,7 @@ export default function ChatContainer({ messages }) {
     {message.isSent ? (
       <>
         <div className="pr-[1vw] w-[70%] max-sm:w-[60%] flex flex-col translate-y-[3vh]">
-          <div className="username justify-end text-right noir-pro max-sm:text-sm text-txt-mdg-username">zcross.mdg</div>
+          <div className="username justify-end text-right noir-pro max-sm:text-sm text-txt-mdg-username">{message.username}</div>
           <div className="shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white rounded-lg flex align-items-center justify-items-center py-[2vh]  break-all flex flex-col">
             <div className="mx-[1vw] text-txt-grey noir-pro max-sm:text-sm">{message.text}</div>
           </div>
@@ -28,7 +28,7 @@ export default function ChatContainer({ messages }) {
       </div>
         
         <div className="pl-[1vw] w-[70%] max-sm:w-[60%] flex flex-col translate-y-[3vh]">
-          <div className="noir-pro max-sm:text-sm text-txt-mdg-username">zcross.mdg</div>
+          <div className="noir-pro max-sm:text-sm text-txt-mdg-username">{message.username}</div>
           <div className="shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white rounded-lg flex align-items-center justify-items-center py-[2vh]  break-all">
             <div className="mx-[1vw] text-txt-grey noir-pro max-sm:text-sm">{message.text}</div>
           </div>
