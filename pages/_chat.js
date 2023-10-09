@@ -25,10 +25,10 @@ export default function Home() {
                         ))}
                     </div>
                 </div>
-                <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23 bg-slate-400">
+                <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23">
                     <div className="flex flex-col h-screen">
                         <div className="flex flex-row">
-                            <div className="grid grid-cols-8  h-[10vh] noir-pro-bold">
+                            <div className="grid grid-cols-12  h-[10vh] noir-pro-bold">
                                 <div className="col-span-1 flex flex-col justify-end">
                                     <div className='hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw]'>
                                         <center>Queries</center>
@@ -42,7 +42,7 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="hover:cursor-pointer col-span-6 text-right flex flex-col justify-end text-bg-orange">
+                                <div className="hover:cursor-pointer col-span-10 text-right flex flex-col justify-end text-bg-orange">
                                     Join Slack
                                 </div>
                             </div>
