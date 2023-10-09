@@ -16,16 +16,16 @@ export default function Home() {
     }
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
-            <div className="grid grid-cols-16 w-full h-screen">
-                <div className="col-span-2 bg-bg-orange rounded-r-xl">
-                    <div className='p-2 text-white outfit'>.mdg</div>
+            <div className="grid grid-cols-24 w-full h-screen">
+                <div className="col-span-2 bg-bg-orange rounded-r-xl max-sm:hidden max-md:hidden">
+                    <div className='p-2 text-white outfit text-[2vw]'>.mdg</div>
                     <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
                         {Array(5).fill().map((_, index) => (
                             <Box key={index} />
                         ))}
                     </div>
                 </div>
-                <div className="col-span-13 mx-[3vw] bg-transparent">
+                <div className="col-span-21 mx-[3vw] bg-transparent max-sm:col-span-16">
                     <div className="flex flex-col h-screen">
                         <div className="flex flex-row">
                             <div className="grid grid-cols-8  h-[10vh] noir-pro-bold">
@@ -55,7 +55,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className=" flex flex-row">
+                <div className="col-span-1 flex flex-row max-sm:hidden">
                     <div className="w-[40%]"></div>
                     <div className="w-[60%] bg-bg-orange rounded-l-md shadow-[0px_0px_20px_-5px_rgba(0,0,0,1)]">
                         <RightPane/>
