@@ -49,7 +49,7 @@ export default function Home() {
                                 </div>
                                 </div>
                             </div>
-                        <div className="h-[70vh] overflow-y-auto noir-pro w-[100%]">
+                        <div className="h-[70vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
                             <ChatContainer messages={messages} />
                         </div>
                         <div className="h-[20vh]">
@@ -57,7 +57,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <div className="col-span-1 max-md:hidden">
+                <div className="col-span-1 max-md:hidden max-sm:hidden">
                         <RightPane/>
                 </div>
             </div>
