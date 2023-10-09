@@ -12,7 +12,7 @@ export default function Home() {
 
     // Create a function to update messages in the Home component
     function updateMessages(newMessage) {
-        setMessages([...messages, { text: newMessage, isSent: false }]);
+        setMessages([...messages, { text: newMessage, isSent: true }]);
     }
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
@@ -49,7 +49,7 @@ export default function Home() {
                                 </div>
                                 </div>
                             </div>
-                        <div className="h-[70vh] overflow-y-auto noir-pro">
+                        <div className="h-[70vh] overflow-y-auto noir-pro w-[100%]">
                             <ChatContainer messages={messages} />
                         </div>
                         <div className="h-[20vh]">
