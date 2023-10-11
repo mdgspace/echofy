@@ -2,6 +2,7 @@ package listeners
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"bot/api/utils"
@@ -86,16 +87,20 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/users" {
 					isreply = true
 					reply = showUsers(channelIDs["tp"])
+				} else if commandObj.Command == "/info" {
+					isreply = false
+					reqinfo := utils.RequestUserInfo(commandBody[0])
+					fmt.Println(reqinfo)
 				} else if commandObj.Command == "/ban" {
 					utils.BanUser(commandBody[0], channelIDs["admin"])
+				} else if commandObj.Command == "/unban" {
+					utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
-
 				if isreply {
 					utils.SendMsgAsBot(channelIDs["admin"], reply, "")
 				}
-
 			}
 		}
 	}
