@@ -82,15 +82,15 @@ func SendUserInfoToSlack(infoObj models.UserInfo) {
 		globals.GetChannelID(infoObj.Channel),
 		slack.MsgOptionAttachments(slack.Attachment{
 			Pretext: "Info for user " + infoObj.Username,
-			Text: fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),
+			Text:    fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),
 		}))
 }
 
 // Function to delete a message
-/*  
+/*
 Can delete only those messages which are sent by frontend clients
 */
- func DeleteMsg(channelToken, tstamp, triggerID string) {
+func DeleteMsg(channelToken, tstamp, triggerID string) {
 	_, _, e := Client.DeleteMessage(channelToken, tstamp)
 	if e != nil {
 		fmt.Println("====> Error while deleting message: ", e)

@@ -38,16 +38,16 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	var ts string
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	history := db.RetrieveAllMessagesPrivateUser(id)
-	if (len(history) == 0){
+	if len(history) == 0 {
 		ts = SendMsg(globals.GetChannelID("private"), string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
 		db.AddUserEntry(name, ts)
-		} else {
+	} else {
 		SendMsg(globals.GetChannelID("private"), "User has re-entered the private chat", name, id)
 		ts = id
 	}
 	addUserAndWebsocketToLocalData(ws, ts, "private")
-	entryInfo, err := json.Marshal(map[string]interface{}{"history":history, "id":ts})
-	if (err != nil){
+	entryInfo, err := json.Marshal(map[string]interface{}{"history": history, "id": ts})
+	if err != nil {
 		panic(err)
 	}
 	ws.WriteMessage(websocket.TextMessage, entryInfo)
@@ -88,9 +88,9 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	}
 	defer ws.Close()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
-	if (!db.CheckValidUserID(userID)){
+	if !db.CheckValidUserID(userID) {
 		userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
-		ws.WriteJSON(map[string]string{"userID":userID})
+		ws.WriteJSON(map[string]string{"userID": userID})
 		db.AddUserEntry(name, userID)
 	}
 	addUserAndWebsocketToLocalData(ws, userID, channel)
@@ -132,10 +132,10 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 	defer webSocketMapsMutex.Unlock()
 	delete(userIDWebSockets, userID)
 	delete(webSocketsUserID, ws)
-	if (channelName != "private"){
-		var aliveConns[] *websocket.Conn
-		for _, value := range(webSockets[channelName]){
-			if (value != ws){
+	if channelName != "private" {
+		var aliveConns []*websocket.Conn
+		for _, value := range webSockets[channelName] {
+			if value != ws {
 				aliveConns = append(aliveConns, value)
 			}
 		}
@@ -153,7 +153,7 @@ func addUserAndWebsocketToLocalData(ws *websocket.Conn, userID, channelName stri
 	if channelName == "private" {
 		privateChatWS[userID] = ws
 	} else {
-	webSockets[channelName] = append(webSockets[channelName], ws)
+		webSockets[channelName] = append(webSockets[channelName], ws)
 	}
 	userIDWebSockets[userID] = ws
 	webSocketsUserID[ws] = userID
@@ -166,9 +166,9 @@ func CloseWebsocketAndCleanByUserID(userID string) bool {
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
 	ws := userIDWebSockets[userID]
-	for channelName, wsArr := range(webSockets){
-		for _, val := range(wsArr){
-			if (val == ws){
+	for channelName, wsArr := range webSockets {
+		for _, val := range wsArr {
+			if val == ws {
 				go CloseWebsocketAndClean(ws, channelName, userID)
 				webSocketMapsMutex.Unlock()
 				wg.Done()
@@ -229,15 +229,15 @@ func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string)
 func BanUser(username, channelToken string) {
 	userID := db.GetUserID(username)
 	if userID == "" {
-		SendMsgAsBot(channelToken, "User with username: " + username + " does not exist", "")
+		SendMsgAsBot(channelToken, "User with username: "+username+" does not exist", "")
 		return
 	}
 	ws := userIDWebSockets[userID]
 	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
 	bannedUserIps[userID] = ip
 	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
-	ws.WriteJSON(map[string]string{"Message":"You are banned now"})
-	SendMsgAsBot(channelToken, "User with id " + userID + " is banned successfully", "")
+	ws.WriteJSON(map[string]string{"Message": "You are banned now"})
+	SendMsgAsBot(channelToken, "User with id "+userID+" is banned successfully", "")
 	ws.Close()
 	db.BanUserInDB(username)
 }
@@ -247,14 +247,14 @@ func UnbanUser(username, channelToken string) {
 	print("")
 	ip := bannedUserIps[userID]
 	delete(blacklistedIP, ip)
-	SendMsgAsBot(channelToken, "User with id " + userID + " is un-banned successfully", "")
+	SendMsgAsBot(channelToken, "User with id "+userID+" is un-banned successfully", "")
 	db.UnbanUserInDB(username)
 }
 
 func IsUserBanned(ip string) bool {
-	for blackIP, banTime := range(blacklistedIP){
-		if (blackIP == ip){
-			if (banTime.After(time.Now())){
+	for blackIP, banTime := range blacklistedIP {
+		if blackIP == ip {
+			if banTime.After(time.Now()) {
 				return true
 			} else {
 				delete(blacklistedIP, ip)
@@ -267,22 +267,22 @@ func IsUserBanned(ip string) bool {
 
 func RequestUserInfo(username string) map[string]string {
 	userID := db.GetUserID(username)
-	if (userID == ""){
-		return map[string]string{"Status":"Fail", "Error":"No user exists with given name"}
+	if userID == "" {
+		return map[string]string{"Status": "Fail", "Error": "No user exists with given name"}
 	} else {
 		ws := userIDWebSockets[userID]
-		ws.WriteJSON(map[string]string{"Message":"Send user info"})
-		return map[string]string {"Status":"Request Sent"}
+		ws.WriteJSON(map[string]string{"Message": "Send user info"})
+		return map[string]string{"Status": "Request Sent"}
 	}
 }
 
-func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) [] byte {
+func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []byte {
 	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannels(channelName, userID)
 	allPrevMsgs := make(map[string]map[string]string)
 	allPrevMsgs["Sent by you"] = currUserSentMsg
 	allPrevMsgs["Sent by others"] = otherUserSentMsg
 	chatHistory, err := json.Marshal(allPrevMsgs)
-	if (err != nil) {
+	if err != nil {
 		panic(err)
 	}
 	return chatHistory

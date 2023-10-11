@@ -76,15 +76,26 @@ func MsgListener(ctx context.Context) {
 				socketClient.Ack(*event.Request)
 				commandBody := strings.Split(commandObj.Text, " ")
 				var reply string
+				var isreply bool
 				if commandObj.Command == "/addchanneltoken" {
+					isreply = true
 					reply = addChannelTokenHandler(commandBody[0], commandBody[1])
 				} else if commandObj.Command == "/removeprofane" {
+					isreply = true
 					reply = profanityutils.RemoveProfane(commandBody[0])
+				} else if commandObj.Command == "/users" {
+					isreply = true
+					reply = showUsers(channelIDs["tp"])
+				} else if commandObj.Command == "/ban" {
+					utils.BanUser(commandBody[0], channelIDs["admin"])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
 
-				utils.SendMsgAsBot(channelIDs["admin"], reply, "")
+				if isreply {
+					utils.SendMsgAsBot(channelIDs["admin"], reply, "")
+				}
+
 			}
 		}
 	}
