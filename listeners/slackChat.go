@@ -85,6 +85,9 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/removeprofane" {
 					isreply = true
 					reply = profanityutils.RemoveProfane(commandBody[0])
+				} else if commandObj.Command == "/addprofane" {
+					isreply = true
+					reply = profanityutils.AddProfane(commandBody[0])
 				} else if commandObj.Command == "/users" {
 					isreply = true
 					reply = showUsers(channelIDs["tp"])
