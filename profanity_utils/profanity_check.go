@@ -39,3 +39,20 @@ func RemoveProfane(word string) string {
 	profanityDetector = *goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, falsePositives, falseNegatives)
 	return word + " is whitelisted successfully"
 }
+
+func AddProfane(word string) string {
+	for _, profanity := range falseNegatives {
+		if profanity == word {
+			return word + " is already blacklisted"
+		}
+	}
+	for _, profanity := range falsePositives {
+		if profanity == word {
+			falsePositives = customutils.RemoveElementFromSlice[string](falsePositives, profanity)
+			break
+		}
+	}
+	falseNegatives = append(falseNegatives, word)
+	profanityDetector = *goaway.NewProfanityDetector().WithCustomDictionary(goaway.DefaultProfanities, falsePositives, goaway.DefaultFalseNegatives)
+	return word + " is blacklisted successfully"
+}
