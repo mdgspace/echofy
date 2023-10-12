@@ -217,6 +217,29 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 	}
 }
 
+// to send signal to frontend to delete a message
+func SendMsgDeleteSignal(channelID, msgTS string) {
+	channelName := globals.FindChannelNameIfValidToken(channelID)
+	var closedWSIndex []int
+	var aliveConns []*websocket.Conn
+	for index, value := range webSockets[channelName] {
+		err := value.WriteJSON(map[string]string{"Delete": msgTS})
+		if err != nil {
+			if err == websocket.ErrCloseSent {
+				go CloseWebsocketAndClean(value, channelName, webSocketsUserID[value])
+				closedWSIndex = append(closedWSIndex, index)
+			} else {
+				fmt.Println("Unhandled exception while sending message to public chat users")
+				panic(err)
+			}
+		}
+		aliveConns = append(aliveConns, value)
+	}
+	if len(closedWSIndex) != 0 {
+		webSockets[channelName] = aliveConns //cleaning up closed connections
+	}
+}
+
 // to send messages to frontend clients
 func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string) {
 	if globals.FindChannelNameIfValidToken(channelID) == "private" {

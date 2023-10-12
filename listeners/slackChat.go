@@ -63,6 +63,7 @@ func MsgListener(ctx context.Context) {
 				if callback.Type == slack.InteractionTypeMessageAction {
 					if callback.CallbackID == "delete_message" {
 						utils.DeleteMsg(callback.Channel.ID, callback.Message.Timestamp, callback.TriggerID)
+						utils.SendMsgDeleteSignal(callback.Channel.ID, callback.Message.Timestamp)
 					}
 				}
 			case socketmode.EventTypeSlashCommand:
