@@ -7,7 +7,6 @@ import (
 
 	"bot/api/utils"
 	"bot/db"
-	"bot/globals"
 	"bot/models"
 	profanityutils "bot/profanity_utils"
 
@@ -47,7 +46,7 @@ func MsgListener(ctx context.Context) {
 					if s.SubType == "message_deleted" {
 						continue
 					} else if strings.HasPrefix(s.Text, "!") {
-						commandListener(strings.Split(s.Text, "!")[1], s.Channel, s.TimeStamp)
+						continue
 					} else {
 						sender := utils.GetSlackUserInfo(s.User)
 						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
@@ -103,39 +102,5 @@ func MsgListener(ctx context.Context) {
 				}
 			}
 		}
-	}
-}
-
-// TODO: store users in such a way that we can access their websocket object from their user id
-// for commands like `!users`
-func commandListener(command, channelToken, msgTS string) {
-	if command == "users" {
-		userNames := db.GetAllUsers(globals.FindChannelNameIfValidToken(channelToken))
-		names := ""
-		for _, name := range userNames {
-			names += name + ", "
-		}
-		if names == "" {
-			utils.SendMsgAsBot(channelToken, "No users as of now", "")
-			return
-		}
-		names = names[:len(names)-2]
-		utils.SendMsgAsBot(channelToken, names, "")
-	} else if strings.HasPrefix(command, "info") {
-		// send request to frontend for information
-		// receive information
-		// send information to slack
-		username := strings.Split(command, " ")[1]
-		reqInfo := utils.RequestUserInfo(username)
-		if reqInfo["Status"] == "Fail" {
-			utils.SendMsgAsBot(channelToken, "Request for user info failed\nError msg: "+reqInfo["Error"], msgTS)
-		}
-	} else if strings.HasPrefix(command, "ban") {
-		// ip based blacklisting
-		username := strings.Split(command, " ")[1]
-		utils.BanUser(username, channelToken)
-	} else if strings.HasPrefix(command, "unban") {
-		username := strings.Split(command, " ")[1]
-		utils.UnbanUser(username, channelToken)
 	}
 }
