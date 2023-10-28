@@ -1,13 +1,15 @@
 import Image from 'next/image'
 import bg from '../assets/bg.svg'
-
+// import { get, set } from './session-store';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 /**export const UserContext = React.createContext()
 */
 export default function login(){
-    const [username, setUsername] = useState([]);
+    const [username, setUsername] = useState('');
+    const router = useRouter();
 
   function handleUsernameChange (event) {
     setUsername(event.target.value);
@@ -22,6 +24,19 @@ export default function login(){
     setUsername("");
     console.log("Login cancelled.");
   };
+
+  function handleChatWithUsClick  ()  {
+    setSessionId();
+
+    router.push('/_chat');
+
+  }
+
+
+   function setSessionId() {
+    console.log("username", username);
+     sessionStorage.setItem('username', username);
+  }
 
 
 /**<div className='col-span-2 w-[577px] h-[66px] shrink-0 shadow-[0px_4px_7px_0px_rgba(0,0,0,0.20)] rounded-[10px] '>
@@ -64,8 +79,9 @@ return (
               </div></div>
           </div>
           
-          <div className="w-[238px] h-[66px] shrink-0 rounded-[10px] bg-white ml-[60px] mt-[40px] ">
+          <div className="w-[238px] h-[66px] shrink-0 rounded-[10px] bg-white ml-[60px] mt-[40px] cursor-pointer">
             <div className='text-bg-orange noir-pro-small text-center  '
+            onClick={handleChatWithUsClick}
             >Chat with Us
             </div>
             <div className='w-[319px] h-[66px] shrink-0 rounded-[10px] bg-bg-orange ml-[300px]  -mr-[100px] -mt-[40px]'>
