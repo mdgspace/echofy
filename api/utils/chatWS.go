@@ -82,6 +82,19 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 
 // handler for public chats
 func PublicChatsHandler(c echo.Context, name string, channel string, userID string) error {
+	// check if the websocket userIDWebSockets[id] is already present in the map and open
+	// if yes, then close the previous websocket and remove it from the map
+	if userIDWebSockets[userID] != nil {
+		err := userIDWebSockets[userID].WriteMessage(websocket.TextMessage, []byte("ping"))
+		if err == websocket.ErrCloseSent { // if the websocket is already closed
+			CloseWebsocketAndClean(userIDWebSockets[userID], "public", userID)
+		} else if err != nil { // if there is some other error
+			fmt.Println("Error while pinging the websocket: ", err)
+			return c.String(500, "Internal Server Error, please contact the administrator")
+		} else {
+			return c.String(409, "Username already taken")
+		}
+	}
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
 		panic(err)
@@ -144,6 +157,7 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 		delete(privateChatWS, userID)
 	}
 	wg.Done()
+	db.ChangeActiveUserToInactive(userID)
 }
 
 func addUserAndWebsocketToLocalData(ws *websocket.Conn, userID, channelName string) {
@@ -317,4 +331,18 @@ func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName stri
 	BanUser(name, globals.GetChannelID(channelName))
 	SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been banned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
 	// unban user
+}
+
+func CheckConnectionStillActive(userID string) bool {
+	ws := userIDWebSockets[userID]
+	err := ws.WriteMessage(websocket.TextMessage, []byte("ping"))
+	if err == websocket.ErrCloseSent {
+		CloseWebsocketAndCleanByUserID(userID)
+		return false
+	} else if err != nil {
+		fmt.Println("Error while pinging the websocket: ", err)
+		CloseWebsocketAndCleanByUserID(userID)
+		return false
+	}
+	return true
 }

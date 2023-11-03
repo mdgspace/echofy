@@ -48,7 +48,7 @@ func RemoveMsgFromDB(channelID, timestamp string) {
 	// since we will have one key only, delete it
 	iter, _ := redisClient.Keys(ctx, fmt.Sprintf("%v:*%v:*", globals.FindChannelNameIfValidToken(channelID), timestamp)).Result()
 	_, err := redisClient.Del(ctx, iter[0]).Result()
-	if (err != nil){
+	if err != nil {
 		fmt.Println("Error while deleting message: ", err)
 		panic(err)
 	}
@@ -174,6 +174,19 @@ func CheckValidInactiveUserID(userID string) bool {
 	return false
 }
 
+func CheckUserIDBanned(userID string) bool {
+	numKeys, _ := redisClient.DBSize(ctx).Result()
+	userID = "banned:" + userID
+	iter := redisClient.Scan(ctx, 0, userID, numKeys).Iterator()
+	// if a valid key value pair with the userID as key exists then the userID is valid
+	for iter.Next(ctx) {
+		if iter.Val() == userID {
+			return true
+		}
+	}
+	return false
+}
+
 // remove a user from database
 func RemoveUser(userID string) {
 	if CheckValidUserID(userID) {
@@ -284,17 +297,18 @@ func UnbanUserInDB(username string) {
 	}
 }
 
-// To check if any user with same username is already in the chat room
-func CheckIfUsernameExists(username, channelName string) bool {
-	// *:channelName* -> key, username -> value
-	bannedName := username + "(banned)"
-	activeName := username + "(active)"
-	inactiveName := username + "(inactive)"
-	allNames := GetAllUsers(channelName)
-	for _, name := range allNames {
-		if name == activeName || name == bannedName || name == inactiveName {
-			return true
-		}
+// To check if any user with same userid and different username is already in the chat room
+func CheckIfUserIDExists(username, userID string) bool {
+	keys_matching := redisClient.Keys(ctx, fmt.Sprintf("*:%v", userID)).Val()
+	fmt.Println("=====================================")
+	fmt.Println(keys_matching)
+	fmt.Println("=====================================")
+	if len(keys_matching) == 0 {
+		return false
 	}
-	return false
+	if len(keys_matching) > 1 {
+		return true
+	}
+	name := redisClient.Get(ctx, keys_matching[0]).Val()
+	return name != username
 }
