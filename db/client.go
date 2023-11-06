@@ -32,7 +32,6 @@ func redisInit(portNumber, dbNumber int, password string) {
 to add a new message to the database
 */
 func AddMsgToDB(message models.Message, channelID, threadTS, userID string) {
-	fmt.Println(globals.FindChannelNameIfValidToken(channelID), message.Timestamp, threadTS)
 	marshalled, err := json.Marshal(message)
 	if err != nil {
 		panic(err)
@@ -67,7 +66,6 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("private:*:%v", arrivalTimeStamp), numKeys).Iterator()
 	for iter.Next(ctx) {
-		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
 		messages[strings.Split(iter.Val(), ":")[2]] = str
@@ -89,7 +87,6 @@ func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]s
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), numKeys).Iterator()
 	for iter.Next(ctx) {
-		fmt.Println("keys", iter.Val())
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
 		if strings.Split(iter.Val(), ":")[1] == userID {
@@ -130,7 +127,6 @@ func CheckValidUserID(userID string) bool {
 	// if a valid key value pair with the userID as key exists then the userID is valid
 	for iter.Next(ctx) {
 		currId := iter.Val()
-		// fmt.Println(currId)
 		if currId == activeUserID {
 			return true
 		}
@@ -138,7 +134,6 @@ func CheckValidUserID(userID string) bool {
 	iter = redisClient.Scan(ctx, 0, inactiveUserID, numKeys).Iterator()
 	for iter.Next(ctx) {
 		currId := iter.Val()
-		// fmt.Println(currId)
 		if currId == inactiveUserID {
 			return true
 		}
@@ -300,9 +295,6 @@ func UnbanUserInDB(username string) {
 // To check if any user with same userid and different username is already in the chat room
 func CheckIfUserIDExists(username, userID string) bool {
 	keys_matching := redisClient.Keys(ctx, fmt.Sprintf("*:%v", userID)).Val()
-	fmt.Println("=====================================")
-	fmt.Println(keys_matching)
-	fmt.Println("=====================================")
 	if len(keys_matching) == 0 {
 		return false
 	}
