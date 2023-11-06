@@ -15,6 +15,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
+
+	"net/http"
 )
 
 var bannedUserIps = make(map[string]string) // userid to ip
@@ -23,7 +25,7 @@ var privateChatWS = make(map[string]*websocket.Conn) //key - thread time stamp, 
 var userIDWebSockets = make(map[string]*websocket.Conn)
 var webSocketsUserID = make(map[*websocket.Conn]string)
 var blacklistedIP = make(map[string]time.Time)
-var upgrader websocket.Upgrader
+var upgrader =  websocket.Upgrader{ CheckOrigin: func(r* http.Request) bool { return true }, }
 var webSocketMapsMutex sync.Mutex
 var wg sync.WaitGroup
 
