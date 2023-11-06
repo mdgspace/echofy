@@ -5,7 +5,8 @@ import arrow from '../assets/arrow.svg'
 import Box from '../components/mdgBox';
 import RightPane from '../components/rightPane';
 
-import { useState } from "react";
+import { io } from "socket.io-client";
+import { useState,useEffect } from "react";
 
 export default function Home() {
     const [messages, setMessages] = useState([]); // Define messages state in the Home component
@@ -14,6 +15,51 @@ export default function Home() {
     function updateMessages(newMessage , username) {
         setMessages([...messages, { text: newMessage, isSent: true , username: username }]);
     }
+
+    
+
+    useEffect(() => {
+        const username = sessionStorage.getItem('username');
+        const userId = sessionStorage.getItem('userID');
+    const socket = new WebSocket(`ws://127.0.0.1:1323/chat?name=${username}&channel=public`);
+
+    console.log(socket); 
+
+
+        socket.addEventListener('open', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.addEventListener('message', (event) => {
+            console.log('Received message:', event.data);
+
+            try {
+                const messageData = JSON.parse(event.data);
+            
+                if (messageData.userID) {
+                  // If the message contains a userID, store it in sessionStorage
+                  sessionStorage.setItem('userID', messageData.userID);
+                  console.log('User ID stored in sessionStorage:', messageData.userID);
+                }
+              } catch (error) {
+                // Handle the case where the message is not valid JSON or doesn't contain a userID
+                console.error('Error parsing or handling the message:', error);
+              }
+            // Handle the received message data here.
+          });
+          
+
+        // socket.on('chat message', (msg) => {
+        //     console.log('Received message:', msg);
+        //     // Handle the incoming message as needed
+        // });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
+
     return (
         <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
             <div className="grid grid-cols-24 w-full h-screen">

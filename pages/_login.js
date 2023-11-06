@@ -27,9 +27,10 @@ export default function login(){
 
   function handleChatWithUsClick  ()  {
     setSessionId();
-
-    router.push('/_chat');
-
+    const user = sessionStorage.getItem('username');
+    if(user){
+      router.push('/_chat');
+    }
   }
 
 
