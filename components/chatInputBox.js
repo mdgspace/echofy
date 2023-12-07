@@ -9,7 +9,7 @@ export default function ChatInputBox({ updateMessages }) {
     }
 
     function handleSendClick() {
-        updateMessages(newMessage , username);
+        updateMessages(newMessage , username , true);
         setNewMessage("");
     }
 

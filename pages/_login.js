@@ -35,8 +35,8 @@ export default function login(){
 
 
    function setSessionId() {
-    console.log("username", username);
-     sessionStorage.setItem('username', username);
+    
+    sessionStorage.setItem('username', username);
   }
 
 
