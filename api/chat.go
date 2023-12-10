@@ -28,18 +28,18 @@ func JoinChat() echo.HandlerFunc {
 		if db.CheckValidActiveUserID(userID) {
 			// check the websocket connection
 			if utils.CheckConnectionStillActive(userID) {
-				return c.String(http.StatusConflict, "Username taken")
+				return utils.SendConflictMessage(c, "Username taken");
 			}
 		} else if db.CheckValidInactiveUserID(userID) {
 			if db.GetUserID(name) != userID {
-				return c.String(http.StatusConflict, "Username taken")
+				return utils.SendConflictMessage(c, "Username taken");
 			}
 		} else if db.CheckUserIDBanned(userID) {
-			return c.String(http.StatusForbidden, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now")
 		} else if db.CheckIfUserIDExists(name, userID) {
-			return c.String(http.StatusConflict, "Wrong user ID")
+			return utils.SendConflictMessage(c, "Wrong user ID");
 		} else if db.GetUserID(name) != "" {
-			return c.String(http.StatusConflict, "Username taken")
+			return utils.SendConflictMessage(c, "Username taken");
 		}
 		if channel != "private" {
 			go utils.PublicChatsHandler(c, c.FormValue("name"), channel, userID) //this is done like this because there will be many public chat rooms in future
