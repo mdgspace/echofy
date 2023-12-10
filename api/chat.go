@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"strings"
 	"time"
 
@@ -22,7 +21,8 @@ func JoinChat() echo.HandlerFunc {
 		channel := c.FormValue("channel")
 		validChannel := globals.IsChannelNameValid(channel)
 		if name == "" || !validChannel {
-			return c.String(http.StatusBadRequest, "Name and/or channel missing")
+			return utils.SendBadRequestMessage(c, "Name and/or channel missing")
+			// return c.String(http.StatusBadRequest, "Name and/or channel missing")
 		}
 		userID := c.FormValue("userID")
 		if db.CheckValidActiveUserID(userID) {
@@ -57,11 +57,11 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 		info := new(models.UserInfo)
 		e := c.Bind(info)
 		if e != nil {
-			return c.String(http.StatusBadRequest, "Wrongly formatted info")
+			return utils.SendBadRequestMessage(c, "Wrongly formatted info")
 		} else if info.UserID != db.GetUserID(info.Username) {
-			return c.String(http.StatusBadRequest, "Wrong user id and/or username")
+			return utils.SendBadRequestMessage(c, "Wrong user id and/or username")
 		} else if !globals.IsChannelNameValid(info.Channel) {
-			return c.String(http.StatusBadRequest, "Wrong channel name")
+			return utils.SendBadRequestMessage(c, "Wrong channel name")
 		}
 		//further processing
 		utils.SendUserInfoToSlack(*info)
@@ -76,12 +76,12 @@ func LeaveChat() echo.HandlerFunc {
 			// close web socket in sync with the chatWS functions
 			status := utils.CloseWebsocketAndCleanByUserID(userID)
 			if !status {
-				return c.String(http.StatusInternalServerError, "An internal server error has occurred")
+				return utils.SendInternalServerErrorCloseMessage(c, "An internal server error has occurred")
 			}
 			db.ChangeActiveUserToInactive(userID)
-			return c.String(http.StatusOK, "Thank you for visiting MDG Chat. We wish to have you again soon")
+			return utils.SendNormalCloseMessage(c, "Thank you for visiting MDG Chat. We wish to have you again soon")
 		} else {
-			return c.String(http.StatusBadRequest, "Wrong user ID")
+			return utils.SendBadRequestMessage(c, "Wrong user ID")
 		}
 	}
 }
