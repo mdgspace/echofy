@@ -4,9 +4,11 @@ import ChatContainer from "../components/chatContainer";
 import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
+import { useState, useEffect , useRef} from "react";
+import {getSessionUser, getSessionUserId, handleWebSocketClose, handleWebSocketError, processWebSocketMessage} from "../services/utilities/utilities";
+import { buildWebSocketURL } from "../services/url-builder/url-builder";
+import { initializeWebSocketConnection } from "../services/api/api";
 
-import { io } from "socket.io-client";
-import { useState, useEffect } from "react";
 
 export default function Home() {
   const [messages, setMessages] = useState([]); 
@@ -19,69 +21,83 @@ export default function Home() {
     ]);
   }
 
-  useEffect(() => {
-    const username = sessionStorage.getItem("username");
-    const userId = sessionStorage.getItem("userID");
-    let socket = "";
-    if (userId) {
-      socket = new WebSocket(
-        `ws://127.0.0.1:1323/chat?userID=${userId}&name=${username}&channel=public`
-      );
-    } else {
-      socket = new WebSocket(
-        `ws://127.0.0.1:1323/chat?name=${username}&channel=public`
-      );
-    }
+  const socketRef = useRef(null);
 
-    socket.addEventListener("open", () => {
-      console.log("Connected to WebSocket server");
-    });
+  useEffect(() => {
+    const username = getSessionUser();
+    const userId = getSessionUserId();
+    const url = buildWebSocketURL(userId, username);
+
+    const handleOpen = () => console.log("Connected to WebSocket server");
+    const handleMessage = (event) => processWebSocketMessage(event, setMessages);
+    const handleClose = handleWebSocketClose;
+    const handleError = handleWebSocketError;
+
+    const socket = initializeWebSocketConnection(url, handleOpen, handleMessage, handleClose, handleError);
+    
+    socketRef.current = socket;
 
     socket.addEventListener("message", (event) => {
-      console.log("Received message:", event.data);
 
       try {
-        const data = JSON.parse(event.data);
+        let data = "";
+        if(event.data != "Messsage send successful"){
+            data = JSON.parse(event.data);
+        }
 
-        if (data["Sent by others"]) {
-          const allMessages = [];
-          for (const timestamp in data["Sent by others"]) {
-            const messageObj = JSON.parse(data["Sent by others"][timestamp]);
+        const allMessages = [];
+
+        const addMessages = (messageData, isSent) => {
+          for (const timestamp in messageData) {
+            const messageObj = JSON.parse(messageData[timestamp]);
             allMessages.push({
               text: messageObj.text,
-              isSent: false,
+              isSent: isSent,
               username: messageObj.sender,
               timestamp: parseFloat(timestamp),
             });
           }
+        };
+    
+        let hasBulkMessages = false;
+
+        if (data["Sent by others"]) {
+          addMessages(data["Sent by others"], false);
+          hasBulkMessages = true;
+        }
+    
+        if (data["Sent by you"]) {
+          addMessages(data["Sent by you"], true);
+          hasBulkMessages = true;
+        }
+    
+        if (hasBulkMessages) {
           allMessages.sort((a, b) => a.timestamp - b.timestamp);
           setMessages(allMessages);
         } else {
-          let isSent = data.sender === username;
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              text: data.text,
-              isSent: isSent,
-              username: data.sender,
-              timestamp: parseFloat(data.timestamp),
-            },
-          ]);
+          // Check for individual message structure
+          if (data.text && data.sender && data.timestamp) {
+            let isSent = data.sender === username;
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                text: data.text,
+                isSent: isSent,
+                username: data.sender,
+                timestamp: parseFloat(data.timestamp),
+              },
+            ]);
+          }
         }
       } catch (error) {
         console.error("Error parsing or handling the message:", error);
+        console.log(event.data)
       }
     });
-
-    // socket.on('chat message', (msg) => {
-    //     console.log('Received message:', msg);
-    //     // Handle the incoming message as needed
-    // });
-
     return () => {
-      socket.disconnect();
+      socket.close();
     };
-  }, []);
+  }, [initializeWebSocketConnection]);
 
   return (
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
@@ -130,7 +146,7 @@ export default function Home() {
               <ChatContainer messages={messages} />
             </div>
             <div className="h-[20vh]">
-              <ChatInputBox updateMessages={updateMessages} />
+              <ChatInputBox updateMessages={updateMessages} socketRef={socketRef} />
             </div>
           </div>
         </div>
