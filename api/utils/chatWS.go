@@ -348,3 +348,20 @@ func CheckConnectionStillActive(userID string) bool {
 	}
 	return true
 }
+
+func SendBanMessage(c echo.Context, reason string) error {
+    ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+    if err != nil {
+        return err // or handle error differently
+    }
+    defer ws.Close()
+
+    closeCode := websocket.ClosePolicyViolation
+    closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+
+    if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+        return err
+    }
+
+	return nil;
+}

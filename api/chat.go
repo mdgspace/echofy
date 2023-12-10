@@ -16,7 +16,7 @@ import (
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
-			return c.String(http.StatusForbidden, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now")
 		}
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
