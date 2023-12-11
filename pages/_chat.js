@@ -30,7 +30,7 @@ export default function Home() {
 
     const handleOpen = () => console.log("Connected to WebSocket server");
     const handleMessage = (event) => processWebSocketMessage(event, setMessages);
-    const handleClose = handleWebSocketClose;
+    const handleClose = (event) => handleWebSocketClose(event, () => router.push("/_login"));
     const handleError = handleWebSocketError;
 
     const socket = initializeWebSocketConnection(url, handleOpen, handleMessage, handleClose, handleError);

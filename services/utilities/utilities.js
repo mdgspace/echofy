@@ -1,3 +1,8 @@
+import { useRouter } from 'next/navigation';
+
+
+
+
 export function getSessionUser() {
   return sessionStorage.getItem("username");
 }
@@ -35,31 +40,69 @@ export function handleWebSocketError(event) {
   console.error("WebSocket error observed:", event);
 }
 
-export function handleWebSocketClose(event) {
+export function handleWebSocketClose(event, navigateToLogin) {
   console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
   if (isUserBanned(event.code)) {
-    alertBannedUser(event.reason);
+    alertBannedUser(event.reason , navigateToLogin);
   }
   if(isSameUsername(event.code)){
-        alertSameUsername(event.reason);
-    }
+        alertSameUsername(event.reason , navigateToLogin);
+  }
+  if(isBadRequest(event.code)){
+      alertBadRequest(event.reason , navigateToLogin);
+  }
+  if(isServerError(event.code)){
+      alertServerError(event.reason , navigateToLogin);
+  }
+  if(isAbnormalClose(event.code)){
+      alertAbnormalClose(event.reason , navigateToLogin);
+  }
 }
 
 function isUserBanned(code) {
   return code === 1008;
 }
 
-function alertBannedUser(reason) {
+function alertBannedUser(reason , navigateToLogin) {
   alert("You have been banned: " + reason);
+  navigateToLogin();
 }
 
 function isSameUsername(code){
     return code === 4001;
 }
-
-function alertSameUsername(reason){
+function alertSameUsername(reason , navigateToLogin){
     alert("You need to change the username, " + reason);
+    navigateToLogin();
 }
+
+function isBadRequest(code){
+    return code === 1007;
+}
+
+function alertBadRequest(reason , navigateToLogin){
+    alert("Bad request, " + reason);
+    navigateToLogin();
+}
+
+function isServerError(code){
+    return code === 1011;
+}
+
+function alertServerError(reason, navigateToLogin){
+    alert("Server error, " + reason);
+    navigateToLogin();
+}
+
+function isAbnormalClose(code){
+    return code === 1006;
+}
+
+function alertAbnormalClose(reason, navigateToLogin){
+    alert("Cannot connect to the server, please try after sometime");
+    navigateToLogin();
+}
+
 
 export function processWebSocketMessage(event, setMessages, username) {
   console.log("Received message:", event.data);
