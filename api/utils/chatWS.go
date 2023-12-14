@@ -348,3 +348,74 @@ func CheckConnectionStillActive(userID string) bool {
 	}
 	return true
 }
+
+func SendBanMessage(c echo.Context, reason string) error {
+    ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+    if err != nil {
+        return err 
+    }
+    defer ws.Close()
+    closeCode := websocket.ClosePolicyViolation
+    closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+    if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+        return err
+    }
+	return nil;
+}
+
+func SendConflictMessage(c echo.Context, reason string) error {
+	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	if err != nil {
+		return err 
+	}
+	defer ws.Close()
+	closeCode := 4001 //custom close code for same uername
+	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+		return err
+	}
+	return nil;
+}
+
+func SendBadRequestMessage(c echo.Context, reason string) error {
+	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	if err != nil {
+		return err 
+	}
+	defer ws.Close()
+	closeCode := websocket.CloseInvalidFramePayloadData
+	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+		return err
+	}
+	return nil;
+}
+
+func SendNormalCloseMessage(c echo.Context, reason string) error {
+	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	if err != nil {
+		return err 
+	}
+	defer ws.Close()
+	closeCode := websocket.CloseNormalClosure
+	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+		return err
+	}
+	return nil;
+}
+
+func SendInternalServerErrorCloseMessage(c echo.Context, reason string) error {
+	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	if err != nil {
+		return err 
+	}
+	defer ws.Close()
+	closeCode := websocket.CloseInternalServerErr
+	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
+	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+		return err
+	}
+	return nil;
+}
+

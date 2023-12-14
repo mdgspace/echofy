@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"strings"
 	"time"
 
@@ -16,30 +15,31 @@ import (
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
-			return c.String(http.StatusForbidden, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now")
 		}
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
 		validChannel := globals.IsChannelNameValid(channel)
 		if name == "" || !validChannel {
-			return c.String(http.StatusBadRequest, "Name and/or channel missing")
+			return utils.SendBadRequestMessage(c, "Name and/or channel missing")
+			// return c.String(http.StatusBadRequest, "Name and/or channel missing")
 		}
 		userID := c.FormValue("userID")
 		if db.CheckValidActiveUserID(userID) {
 			// check the websocket connection
 			if utils.CheckConnectionStillActive(userID) {
-				return c.String(http.StatusConflict, "Username taken")
+				return utils.SendConflictMessage(c, "Username taken");
 			}
 		} else if db.CheckValidInactiveUserID(userID) {
 			if db.GetUserID(name) != userID {
-				return c.String(http.StatusConflict, "Username taken")
+				return utils.SendConflictMessage(c, "Username taken");
 			}
 		} else if db.CheckUserIDBanned(userID) {
-			return c.String(http.StatusForbidden, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now")
 		} else if db.CheckIfUserIDExists(name, userID) {
-			return c.String(http.StatusConflict, "Wrong user ID")
+			return utils.SendConflictMessage(c, "Wrong user ID");
 		} else if db.GetUserID(name) != "" {
-			return c.String(http.StatusConflict, "Username taken")
+			return utils.SendConflictMessage(c, "Username taken");
 		}
 		if channel != "private" {
 			go utils.PublicChatsHandler(c, c.FormValue("name"), channel, userID) //this is done like this because there will be many public chat rooms in future
@@ -57,11 +57,11 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 		info := new(models.UserInfo)
 		e := c.Bind(info)
 		if e != nil {
-			return c.String(http.StatusBadRequest, "Wrongly formatted info")
+			return utils.SendBadRequestMessage(c, "Wrongly formatted info")
 		} else if info.UserID != db.GetUserID(info.Username) {
-			return c.String(http.StatusBadRequest, "Wrong user id and/or username")
+			return utils.SendBadRequestMessage(c, "Wrong user id and/or username")
 		} else if !globals.IsChannelNameValid(info.Channel) {
-			return c.String(http.StatusBadRequest, "Wrong channel name")
+			return utils.SendBadRequestMessage(c, "Wrong channel name")
 		}
 		//further processing
 		utils.SendUserInfoToSlack(*info)
@@ -76,12 +76,12 @@ func LeaveChat() echo.HandlerFunc {
 			// close web socket in sync with the chatWS functions
 			status := utils.CloseWebsocketAndCleanByUserID(userID)
 			if !status {
-				return c.String(http.StatusInternalServerError, "An internal server error has occurred")
+				return utils.SendInternalServerErrorCloseMessage(c, "An internal server error has occurred")
 			}
 			db.ChangeActiveUserToInactive(userID)
-			return c.String(http.StatusOK, "Thank you for visiting MDG Chat. We wish to have you again soon")
+			return utils.SendNormalCloseMessage(c, "Thank you for visiting MDG Chat. We wish to have you again soon")
 		} else {
-			return c.String(http.StatusBadRequest, "Wrong user ID")
+			return utils.SendBadRequestMessage(c, "Wrong user ID")
 		}
 	}
 }
