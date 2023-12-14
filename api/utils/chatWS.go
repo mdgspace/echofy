@@ -118,7 +118,8 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			return nil
 			// panic(err)
 		}
-		ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
+		if string(msg) != ""{
+			ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 		fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
 		if profanityutils.IsMsgProfane(string(msg)) {
 			handleProfaneUser(ws, name, string(msg), ts, "public")
@@ -136,6 +137,8 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			CloseWebsocketAndClean(ws, channel, userID)
 			panic(err)
 		}
+		}
+		
 	}
 }
 
@@ -222,8 +225,8 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 				go CloseWebsocketAndClean(value, channelName, webSocketsUserID[value])
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
-				fmt.Println("Unhandled exception while sending message to public chat users")
-				panic(err)
+				fmt.Println("Unhandled exception while sending message to public chat users" , err)
+				// panic(err)
 			}
 		}
 		aliveConns = append(aliveConns, value)
@@ -245,8 +248,8 @@ func SendMsgDeleteSignal(channelID, msgTS string) {
 				go CloseWebsocketAndClean(value, channelName, webSocketsUserID[value])
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
-				fmt.Println("Unhandled exception while sending message to public chat users")
-				panic(err)
+				fmt.Println("Unhandled exception while sending message to public chat users" , err)
+				// panic(err)
 			}
 		}
 		aliveConns = append(aliveConns, value)
