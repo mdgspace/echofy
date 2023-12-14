@@ -57,6 +57,7 @@ export default function Home() {
               isSent: isSent,
               username: messageObj.sender,
               timestamp: parseFloat(timestamp),
+              avatar: messageObj.url,
             });
           }
         };
@@ -87,6 +88,7 @@ export default function Home() {
                 isSent: isSent,
                 username: data.sender,
                 timestamp: parseFloat(data.timestamp),
+                avatar: data.url,
               },
             ]);
           }
@@ -103,7 +105,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    // console.log("Messages updated:", messages);
+     console.log("Messages updated:", messages);
   }, [messages]);
 
   return (

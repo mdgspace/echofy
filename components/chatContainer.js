@@ -23,8 +23,8 @@ export default function ChatContainer({ messages }) {
       </>
     ) : (
       <>
-      <div className="w-[6vw]  max-md:w-[10vw] max-sm:w-[15vw]">
-      <Image src={Avatar} alt="" className="mr-2 max-w-[70%] max-h-full" />
+      <div className="w-[3vw]  max-md:w-[10vw] max-sm:w-[15vw]">
+      <Image src={message.avatar || Avatar} width ="70" height="70" alt="" className="rounded-full mr-2 max-w-[100%] max-h-full" />
       </div>
         
         <div className="pl-[1vw] w-[70%] max-sm:w-[60%] flex flex-col translate-y-[3vh]">
