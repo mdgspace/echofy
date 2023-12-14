@@ -1,5 +1,7 @@
 export function buildWebSocketURL(userId, username) {
-  const baseUrl = 'ws://127.0.0.1:1323/chat';
+  const host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const port = process.env.NEXT_PUBLIC_BACKEND_PORT;
+  const baseUrl = `ws://${host}:${port}/chat`;
   const params = new URLSearchParams({
     channel: 'public',
     name: username,
