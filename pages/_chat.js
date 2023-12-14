@@ -103,7 +103,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    console.log("Messages updated:", messages);
+    // console.log("Messages updated:", messages);
   }, [messages]);
 
   return (

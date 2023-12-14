@@ -99,7 +99,7 @@ function isAbnormalClose(code){
 }
 
 function alertAbnormalClose(reason, navigateToLogin){
-    alert("Cannot connect to the server, please try after sometime");
+    alert("Cannot connect to the server, please try after sometime or login using a different username");
     navigateToLogin();
 }
 
