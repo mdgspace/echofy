@@ -104,21 +104,26 @@ function alertAbnormalClose(reason, navigateToLogin){
 }
 
 
-export function processWebSocketMessage(event, setMessages, username) {
+export function processWebSocketMessage(event, setMessages, navigateToLogin) {
   console.log("Received message:", event.data);
 
   try {
-    if (event.data !== "Message send successful") {
+    if (event.data !== "Messsage send successful" && event.data !== "Welcome to MDG Chat!") {
       const data = JSON.parse(event.data);
 
       handleUserID(data);
 
-      if (handleBannedUser(data)) {
+      if (handleBannedUser(data,navigateToLogin)) {
         return;
+      }
+
+      if(data.Delete){
+        handleDeleteMessage(data,setMessages);
       }
     }
   } catch (error) {
     console.error("Error parsing or handling the message:", error);
+    console.error(event.data);
   }
 
   function handleUserID(data) {
@@ -128,11 +133,17 @@ export function processWebSocketMessage(event, setMessages, username) {
     }
   }
 
-  function handleBannedUser(data) {
+  function handleBannedUser(data,navigateToLogin) {
     if (data.Message && data.Message === "You are banned now") {
       alertBannedUser(data.Message);
+      navigateToLogin();
       return true;
     }
     return false;
+  }
+
+  function handleDeleteMessage(data,setMessages){
+    const deleteTimestamp = parseFloat(data.Delete);
+    setMessages(prevMessages => prevMessages.filter(message => message.timestamp !== deleteTimestamp));
   }
 }

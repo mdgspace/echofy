@@ -8,10 +8,12 @@ import { useState, useEffect , useRef} from "react";
 import {getSessionUser, getSessionUserId, handleWebSocketClose, handleWebSocketError, processWebSocketMessage} from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
+import { useRouter } from "next/navigation";
 
 
 export default function Home() {
   const [messages, setMessages] = useState([]); 
+  const router = useRouter();
 
   // Create a function to update messages in the Home component
   function updateMessages(newMessage, username) {
@@ -29,7 +31,7 @@ export default function Home() {
     const url = buildWebSocketURL(userId, username);
 
     const handleOpen = () => console.log("Connected to WebSocket server");
-    const handleMessage = (event) => processWebSocketMessage(event, setMessages);
+    const handleMessage = (event) => processWebSocketMessage(event, setMessages, () => router.push("/_login"));
     const handleClose = (event) => handleWebSocketClose(event, () => router.push("/_login"));
     const handleError = handleWebSocketError;
 
@@ -41,7 +43,7 @@ export default function Home() {
 
       try {
         let data = "";
-        if(event.data != "Messsage send successful"){
+        if(event.data != "Messsage send successful" && event.data != "Welcome to MDG Chat!"){
             data = JSON.parse(event.data);
         }
 
@@ -98,6 +100,11 @@ export default function Home() {
       socket.close();
     };
   }, [initializeWebSocketConnection]);
+
+
+  useEffect(() => {
+    console.log("Messages updated:", messages);
+  }, [messages]);
 
   return (
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
