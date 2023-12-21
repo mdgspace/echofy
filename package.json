@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.16",
+    "file-loader": "^6.2.0",
     "moment": "^2.29.4",
     "next": "latest",
     "postcss": "^8.4.31",
