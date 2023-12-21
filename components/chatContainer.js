@@ -27,7 +27,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
               <div className="flex-shrink-0 w-12 h-12">
                 <Image src={message.avatar || Avatar} width="48" height="48" alt="" className="rounded-full" />
               </div>
-              <div className={`bg-white rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-sm:w-[60vw] max-md:w-[50vw] max-lg:w-[40vw] max-2xl:w-[40vw] 2xl:max-w-[40vw] px-4 py-2 m-2 ${message.isSent ? "order-1" : "order-2"}`}>
+              <div className={`bg-white rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] max-sm:w-[60vw] max-md:w-[50vw] max-lg:w-[40vw] max-2xl:w-[40vw] 2xl:max-w-[40vw] 2xl:min-w-[5vw] px-4 py-2 m-2 ${message.isSent ? "order-1" : "order-2"}`}>
                 <div className="text-txt-mdg-username">{message.username}</div>
                 <div className="text-txt-grey pt-2">{message.text}</div>
                 <div className={`text-xs text-gray-500 ${message.isSent ? "text-right" : "text-right"} mt-2`}>{formatTime(message.timestamp)}</div>
