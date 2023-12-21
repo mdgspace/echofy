@@ -161,7 +161,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="h-[70vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
+            <div className="h-[70vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
               <ChatContainer messages={messages} messagesEndRef={messagesEndRef} />
             </div>
             <div className="h-[20vh]">
