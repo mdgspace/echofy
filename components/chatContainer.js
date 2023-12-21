@@ -3,7 +3,19 @@ import Avatar from "../assets/avatar.svg"
 import Image from 'next/image'
 
 
-export default function ChatContainer({ messages }) {
+
+
+export default function ChatContainer({ messages , messagesEndRef }) {
+  
+
+  React.useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+
+
   return (
     <div className="">
       <ul>
@@ -39,6 +51,7 @@ export default function ChatContainer({ messages }) {
 ))}
 
       </ul>
+      <div ref={messagesEndRef} /> {/* Invisible element at the end of messages */}
     </div>
   );
 }

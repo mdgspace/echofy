@@ -25,6 +25,8 @@ export default function Home() {
 
   const socketRef = useRef(null);
 
+  const messagesEndRef = useRef(null);
+
   useEffect(() => {
     const username = getSessionUser();
     const userId = getSessionUserId();
@@ -108,6 +110,14 @@ export default function Home() {
      console.log("Messages updated:", messages);
   }, [messages]);
 
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+  
+
   return (
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
       <div className="grid grid-cols-24 w-full h-screen">
@@ -152,7 +162,7 @@ export default function Home() {
               </div>
             </div>
             <div className="h-[70vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
-              <ChatContainer messages={messages} />
+              <ChatContainer messages={messages} messagesEndRef={messagesEndRef} />
             </div>
             <div className="h-[20vh]">
               <ChatInputBox updateMessages={updateMessages} socketRef={socketRef} />
