@@ -38,10 +38,22 @@ export async function checkAndPromptSessionChange(
         confirmButtonText: "Yes, change it!",
       });
 
-      if (result.isConfirmed) {
+      if (result.isConfirmed && inputUsername.length < 20) {
         onConfirm();
         return true;
       } else {
+        if(inputUsername.length > 20){
+          Swal.fire({
+            title: "Username too long",
+            text: `Please choose a username with less than 20 characters`,
+            icon: "warning",
+            confirmButtonColor: "#f66151",
+            confirmButtonText: "OK",
+            didOpen: (popup) => {
+              popup.style.borderRadius = "1rem";
+            },
+          });
+        }
         return false;
       }
     } catch (error) {
