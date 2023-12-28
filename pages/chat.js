@@ -191,9 +191,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-row">
-                <div className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl">
+                <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline"
+                href="https://bit.ly/mdgspace-slack-invite"
+                target="_blank"
+                >
                   Join Slack
-                </div>
+                </a>
               </div>
             </div>
             <div className="h-[70vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
