@@ -4,7 +4,7 @@ import ChatContainer from "../components/chatContainer";
 import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   getSessionUser,
   getSessionUserId,
@@ -22,6 +22,9 @@ import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  
   const router = useRouter();
 
   function updateMessages(newMessage, username) {
@@ -33,6 +36,38 @@ export default function Home() {
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    // Access localStorage only when in the browser environment
+    const savedSoundEnabled = localStorage.getItem('soundEnabled');
+    const savedNotificationsEnabled = localStorage.getItem('notificationsEnabled');
+
+    // If we have settings saved, update our state
+    if (savedSoundEnabled !== null) {
+      setSoundEnabled(JSON.parse(savedSoundEnabled));
+    }
+    if (savedNotificationsEnabled !== null) {
+      setNotificationsEnabled(JSON.parse(savedNotificationsEnabled));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save to localStorage when soundEnabled changes
+    localStorage.setItem('soundEnabled', JSON.stringify(soundEnabled));
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    // Save to localStorage when notificationsEnabled changes
+    localStorage.setItem('notificationsEnabled', JSON.stringify(notificationsEnabled));
+  }, [notificationsEnabled]);
+
+  // ... the rest of your component
+
+  const playSound = useCallback((isSent) => {
+    const sound = isSent ? new Audio(notif) : new Audio(notifRecieve);
+    sound.play();
+  }, [soundEnabled]); 
+
 
   useEffect(() => {
     const username = getSessionUser();
@@ -56,11 +91,7 @@ export default function Home() {
     );
     socketRef.current = socket;
 
-    const playSound = (isSent) => {
-      const soundRecieve = new Audio(notifRecieve);
-      const soundSent = new Audio(notif);
-      isSent ? soundSent.play() : soundRecieve.play();
-    };
+    
 
     socket.addEventListener("message", (event) => {
       try {
@@ -109,7 +140,7 @@ export default function Home() {
                 avatar: data.url,
               },
             ]);
-            playSound(isSent);
+            if(soundEnabled) playSound(isSent);
             if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
           }
         }
@@ -121,7 +152,7 @@ export default function Home() {
     return () => {
       socket.close();
     };
-  }, [initializeWebSocketConnection]);
+  }, [initializeWebSocketConnection , soundEnabled]);
 
   useEffect(() => {
     console.log("Messages updated:", messages);
@@ -142,7 +173,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (unreadCount > 0) {
+    if (unreadCount > 0 && notificationsEnabled) {
       document.title = `(${unreadCount}) New Messages - MDGSpace Chat`;
     } else {
       document.title = "MDGSpace Chat";
@@ -154,6 +185,10 @@ export default function Home() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
+
+  const handleQueriesClick = () => { 
+    // write logic to display faq popup
+  }
 
   return (
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
@@ -173,11 +208,13 @@ export default function Home() {
             <div className="flex flex-row h-[10vh] noir-pro-bold justify-between">
               <div className="flex flex-row">
                 <div className="flex flex-col justify-end">
-                  <div className="hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw] p-2 w-full">
+                  <div 
+                  className="hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw] p-2 w-full"
+                  onClick={handleQueriesClick}>
                     <center className="lg:text-2xl">Queries</center>
                   </div>
                 </div>
-                <div className="flex flex-col justify-end max-md:hidden">
+                {/* <div className="flex flex-col justify-end max-md:hidden">
                   <div className="flex flex-row ml-8 lg:mb-2">
                     <div className="lg:text-2xl">Templates</div>
                     <div className="mt-[1vh] ">
@@ -188,10 +225,10 @@ export default function Home() {
                       ></Image>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="flex flex-row">
-                <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline"
+                <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
                 href="https://bit.ly/mdgspace-slack-invite"
                 target="_blank"
                 >
@@ -214,7 +251,11 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-1 max-md:hidden max-sm:hidden">
-          <RightPane />
+          <RightPane 
+          soundEnabled={soundEnabled}
+          setSoundEnabled={setSoundEnabled}
+          notificationsEnabled={notificationsEnabled}
+          setNotificationsEnabled={setNotificationsEnabled}/>
         </div>
       </div>
     </div>
