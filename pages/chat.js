@@ -17,7 +17,7 @@ import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
-import Swal from "sweetalert2";
+// import boxData from "../services/utilities/box-data";
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -159,15 +159,13 @@ export default function Home() {
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
       <div className="grid grid-cols-24 w-full h-screen">
         <div className="col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
-          <div className="p-2 text-white outfit lg:text-2xl text-[2vw]">
+          <div className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro">
             .mdg
           </div>
           <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
-            {Array(5)
-              .fill()
-              .map((_, index) => (
-                <Box key={index} />
-              ))}
+          
+        <Box />
+   
           </div>
         </div>
         <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23">
