@@ -6,6 +6,7 @@ import homeIcon from "../assets/home.svg";
 import Image from "next/image";
 import SettingsPopup from "./settingsPopup";
 import React, { useState, useRef } from 'react';
+import { useRouter } from "next/router";
 
 export default function RightPane({
   soundEnabled,
@@ -15,13 +16,21 @@ export default function RightPane({
 }) {
   const [showSettings, setShowSettings] = useState(false);
 
-
+const router = useRouter();
 
     const hoverEffectClasses =
     "hover:scale-125 hover:cursor-pointer transition-transform duration-300 ease-in-out";
 
     const handleSettingsClick = () => {
       setShowSettings(true);
+    }
+
+    const handleChatClick = () => {
+      router.reload()
+    }
+
+    const handleHomeClick = () => {
+      router.push("/");
     }
 
 
@@ -31,8 +40,12 @@ export default function RightPane({
             <Image src={userIcon} alt="user" className={""}></Image>
           </div>
           <div className="row-span-4 flex flex-col justify-center items-center space-y-[4vh]">
-            <Image src={homeIcon} alt="home" className={hoverEffectClasses} />
+            <div onClick={handleHomeClick}>
+              <Image src={homeIcon} alt="home" className={hoverEffectClasses} />
+            </div>
+            <div onClick={handleChatClick}>
             <Image src={chatIcon} alt="chat" className={hoverEffectClasses} />
+            </div>
             <Image src={helpIcon} alt="help" className={hoverEffectClasses} />
             <div onClick={handleSettingsClick}>
             <Image src={settingIcon} alt="settings" className={hoverEffectClasses} />
