@@ -17,39 +17,38 @@
 }
 
 @font-face {
-  font-family: 'noir-pro';
-  src: url(../assets/fonts/NoirPro-Regular.otf) format('opentype');
+  font-family: "noir-pro";
+  src: url(../assets/fonts/NoirPro-Regular.otf) format("opentype");
 }
 
 @font-face {
-  font-family: 'noir-pro-bold';
-  src: url(../assets/fonts//NoirPro-SemiBold.otf) format('opentype');
+  font-family: "noir-pro-bold";
+  src: url(../assets/fonts//NoirPro-SemiBold.otf) format("opentype");
 }
 
 @font-face {
-  font-family: 'outfit';
+  font-family: "outfit";
   src: url(../assets/fonts//static/Outfit-Regular.ttf);
 }
 
-.noir-pro-bold{
-  font-family: 'noir-pro-bold';
+.noir-pro-bold {
+  font-family: "noir-pro-bold";
 }
 
-.outfit{
-  font-family: 'outfit';
+.outfit {
+  font-family: "outfit";
 }
 
-.noir-pro{
-  font-family: 'noir-pro';
+.noir-pro {
+  font-family: "noir-pro";
 }
-
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   line-height: 1.6;
   font-size: 18px;
 }
@@ -99,5 +98,5 @@ input {
   margin: 3rem auto 6rem;
 }
 .container {
-  background-image: image("assets/background_login.png");
+  background-image: image("assets/backgroundlogin.png");
 }
