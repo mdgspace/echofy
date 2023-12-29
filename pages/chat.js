@@ -194,15 +194,10 @@ export default function Home() {
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
       <div className="grid grid-cols-24 w-full h-screen">
         <div className="col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
-          <a 
-          className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro hover:no-underline  hover:cursor-pointer transition duration-300"
-          href="https://mdgspace.org/"
-          target="_blank"
-          rel="noopener noreferrer" 
-          >
+          <div className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro">
             .mdg
-          </a>
-          <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center  ">
+          </div>
+          <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
           
         <Box />
    
