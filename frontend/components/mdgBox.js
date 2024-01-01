@@ -1,10 +1,9 @@
 import Image from 'next/image';
 import appetizer from '../assets/appetizer.svg'
-import security_app from '../assets/security_app.png'
+import security_app from '../assets/security_app.svg'
 import soc from '../assets/soc.svg'
 import election_portal from '../assets/election_portal.svg'
-import ecert from '../assets/ecert.png'
-import ep from '../assets/ep.png'
+import ecert from '../assets/ecert.svg'
 
 export default function Box() {
     return (
