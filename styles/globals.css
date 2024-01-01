@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@font-face {
+  font-family: "noir-pro";
+  src: url(../assets/fonts/NoirPro-Regular.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "noir-pro-bold";
+  src: url(../assets/fonts//NoirPro-SemiBold.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "outfit";
+  src: url(../assets/fonts//static/Outfit-Regular.ttf);
+}
+
+.noir-pro-bold {
+  font-family: "noir-pro-bold";
+}
+
+.outfit {
+  font-family: "outfit";
+}
+
+.noir-pro {
+  font-family: "noir-pro";
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  background-color: blue;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+/* CSS for the message input field */
+input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login-container {
+  max-width: 30rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+.container {
+  background-image: image("assets/backgroundlogin.png");
+}
