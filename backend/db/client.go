@@ -22,7 +22,7 @@ func Init() {
 func redisInit(portNumber, dbNumber int, password string) {
 	ctx = context.Background()
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("localhost:%v", portNumber), //port number can be changed as per our wish
+		Addr:     fmt.Sprintf("redis:%v", portNumber), //port number can be changed as per our wish
 		Password: password,
 		DB:       dbNumber,
 	})
