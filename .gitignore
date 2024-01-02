@@ -22,6 +22,7 @@ dump.rdb
 
 ## FRONTEND
 # dependencies
+frontend/node_modules/
 /node_modules
 /.pnp
 .pnp.js
@@ -30,7 +31,7 @@ dump.rdb
 /coverage
 
 # next.js
-/.next/
+frontend/.next/
 /out/
 
 # production
