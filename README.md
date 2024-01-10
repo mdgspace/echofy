@@ -35,7 +35,11 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tbody>
     <tr>
+
       <td align="center" valign="top" width="14.28%"><a href="https://jeetube.firebaseapp.com/"><img src="https://avatars.githubusercontent.com/u/95746190?v=4?s=100" width="100px;" alt="Ayush Chaudhary"/><br /><sub><b>Ayush Chaudhary</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Ayush0Chaudhary" title="Code">💻</a></td>
+
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aaditya-G"><img src="https://avatars.githubusercontent.com/u/84654828?v=4?s=100" width="100px;" alt="Zcross"/><br /><sub><b>Zcross</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Aaditya-G" title="Code">💻</a> <a href="https://github.com/mdgspace/Echofy/commits?author=Aaditya-G" title="Documentation">📖</a></td>
+
     </tr>
   </tbody>
 </table>
