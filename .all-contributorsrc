@@ -8,13 +8,6 @@
   "commitConvention": "angular",
   "contributors": [
     {
-      "login": "Ayush0Chaudhary",
-      "name": "Ayush Chaudhary",
-      "avatar_url": "https://avatars.githubusercontent.com/u/95746190?v=4",
-      "profile": "https://jeetube.firebaseapp.com/",
-      "contributions": [
-        "code"
-      ],
       "login": "Aaditya-G",
       "name": "Zcross",
       "avatar_url": "https://avatars.githubusercontent.com/u/84654828?v=4",
@@ -22,6 +15,15 @@
       "contributions": [
         "code",
         "doc"
+      ]
+    },
+    {
+      "login": "Ayush0Chaudhary",
+      "name": "Ayush Chaudhary",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95746190?v=4",
+      "profile": "https://jeetube.firebaseapp.com/",
+      "contributions": [
+        "code"
       ]
     }
   ],
