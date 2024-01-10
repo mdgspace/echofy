@@ -35,7 +35,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Coder-Manan"><img src="https://avatars.githubusercontent.com/u/92792271?v=4?s=100" width="100px;" alt="Manan Garg"/><br /><sub><b>Manan Garg</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Coder-Manan" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Coder-Manan"><img src="https://avatars.githubusercontent.com/u/92792271?v=4?s=100" width="100px;" alt="Manan Garg"/><br /><sub><b>Manan Garg</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Coder-Manan" title="Documentation">📖</a> <a href="https://github.com/mdgspace/Echofy/commits?author=Coder-Manan" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
