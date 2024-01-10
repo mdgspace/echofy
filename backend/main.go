@@ -4,14 +4,17 @@ import (
 	"context"
 	"os"
 	"strings"
+	"time"
 
 	"bot/api/utils"
-	"bot/listeners"
-	"bot/route"
 	"bot/db"
+	"bot/logging"
 	"bot/globals"
+	"bot/listeners"
 	"bot/profanity_utils"
+	"bot/route"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/joho/godotenv"
 )
 
@@ -19,8 +22,7 @@ var channelTokens = make(map[string]string)
 var channelNames = make(map[string]string)
 var token, appToken string
 
-func initializeEnv() {
-	godotenv.Load(".env")
+func initializeSlackEnv() {
 	envVar := os.Environ()
 	for _, element := range(envVar) {
 		pair := strings.Split(element,"=")
@@ -39,7 +41,13 @@ func initializeEnv() {
 }
 
 func main() {
-	initializeEnv()
+	godotenv.Load(".env")
+	sentryDSN := os.Getenv("SENTRY_DSN")
+	if sentryDSN != "" {
+		logging.Init(sentryDSN)
+		defer sentry.Flush(2 * time.Second)
+	}
+	initializeSlackEnv()
 	utils.InitClient(token, appToken)
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
 	db.Init()

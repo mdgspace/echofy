@@ -5,6 +5,7 @@ services:
     ports:
       - "1323:${NEXT_PUBLIC_BACKEND_PORT}" # Exposes the backend's port 1323 to the host
     environment: # Environment variables are passed to the container
+      - SENTRY_DSN=${SENTRY_DSN}
       - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
       - SLACK_AUTH_TOKEN=${SLACK_AUTH_TOKEN}
       - SLACK_PUBLIC_CHANNEL_ID=${SLACK_PUBLIC_CHANNEL_ID}
