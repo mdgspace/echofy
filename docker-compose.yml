@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   backend:
     build: ./backend
@@ -15,12 +15,13 @@ services:
     restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      args: # Passes environment variables to the frontend's build process
+        - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST} 
+        - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
     ports:
       - "3000:3000" # Exposes the frontend's port 3000 to the host
-    environment:
-      - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
-      - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
     depends_on:
       - backend # Optional: Ensures backend service is started before the frontend
     restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user
