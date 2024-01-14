@@ -1,11 +1,27 @@
-# Jinora-Revamp-Backend
-Repository for the backend to be made in GoLang using Echo framework
+# /backend
+Made in GoLang using Echo micro framework
 
-## Steps for setup
-- Clone the repository
-- Add a `.env` file containing the values:
-  1. `SLACK_APP_TOKEN` - the app token given by slack for the Slack app
-  2. `SLACK_AUTH_TOKEN` - the Bot OAuth token 
-  3. `SLACK_PUBLIC_CHANNEL_ID` - the channel id of the channel to be used for public chats
-  4. `SLACK_PRIVATE_CHANNEL_ID` - the channel id of the channel to be used for private chats
-- Get all the packages and run the server!
+## Project Structure
+```bash
+backend/
+├── api/             # API request handling
+|   └──chat.go       # Handlers for specific routes                     
+|   └──utils/        # Helpers for request handling
+|      ├──chatWS.go  # utilities specific to websocket connections
+|      └──slack.go   # using the Slack-Go SDK
+├── customUtils/     # General purpose helpers for data types
+├── db/              # Interacting with database
+├── globals/         # Data and methods used frequently in the code
+├── listeners/       # Listen to and act on basis of Slack Workspace users' actions 
+|  ├── slackAdmin.go # methods for handling some slash commands
+|  └── slackChat.go  # listen to events happening on Slack in public and admin channels
+├── models/          # Custom structs
+├── profanity_utils/ # Profanity filter
+├── route/           # Contains API Router 
+├── Dockerfile       # Backend specific dockerfile             
+├── go.mod                          
+├── go.sum
+├── main.go          # <3 of the app
+├── README.md        # Backend specific documentation
+```
+
