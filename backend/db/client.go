@@ -2,6 +2,7 @@ package db
 
 import (
 	"bot/globals"
+	"bot/logging"
 	"bot/models"
 	"context"
 	"encoding/json"
@@ -34,10 +35,12 @@ to add a new message to the database
 func AddMsgToDB(message models.Message, channelID, threadTS, userID string) {
 	marshalled, err := json.Marshal(message)
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), userID, message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 }
@@ -49,6 +52,7 @@ func RemoveMsgFromDB(channelID, timestamp string) {
 	_, err := redisClient.Del(ctx, iter[0]).Result()
 	if err != nil {
 		fmt.Println("Error while deleting message: ", err)
+		logging.LogException(err)
 		panic(err)
 	}
 }
@@ -71,6 +75,7 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 		messages[strings.Split(iter.Val(), ":")[2]] = str
 	}
 	if err := iter.Err(); err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 	return messages
@@ -96,6 +101,7 @@ func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]s
 		}
 	}
 	if err := iter.Err(); err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 	return currUserSentMsg, otherUserSentMsg
@@ -105,6 +111,7 @@ func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]s
 func AddUserEntry(name, userID string) {
 	_, err := redisClient.Set(ctx, fmt.Sprintf("active:%v", userID), name, 24*7*time.Hour).Result() // key = userID, value = name
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 }
@@ -114,6 +121,7 @@ func ChangeActiveUserToInactive(userID string) {
 	redisClient.Rename(ctx, fmt.Sprintf("active:%v", userID), fmt.Sprintf("inactive:%v", userID))
 	_, err := redisClient.Expire(ctx, fmt.Sprintf("inactive:%v", userID), 24*7*time.Hour).Result()
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 }
@@ -187,10 +195,12 @@ func RemoveUser(userID string) {
 	if CheckValidUserID(userID) {
 		_, err := redisClient.Del(ctx, fmt.Sprintf("active:%v", userID)).Result()
 		if err != nil {
+			logging.LogException(err)
 			panic(err)
 		}
 		_, err = redisClient.Del(ctx, fmt.Sprintf("inactive:%v", userID)).Result()
 		if err != nil {
+			logging.LogException(err)
 			panic(err)
 		}
 	}
@@ -280,6 +290,7 @@ func BanUserInDB(username string) {
 	// in case user is not unbanned manually after 7 days, he/she is unbanned automatically
 	_, err := redisClient.Set(ctx, fmt.Sprintf("banned:%v", userID), username, 24*7*time.Hour).Result() // key = userID, value = name
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 }
@@ -288,6 +299,7 @@ func UnbanUserInDB(username string) {
 	userID := GetBannedUserId(username)
 	_, err := redisClient.Del(ctx, fmt.Sprintf("banned:%v", userID)).Result()
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 }

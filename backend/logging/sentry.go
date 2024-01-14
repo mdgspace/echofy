@@ -6,6 +6,8 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
+var sentryInit bool = false
+
 // Connect to Sentry
 func Init(dsn string) {
 	if err := sentry.Init(sentry.ClientOptions{
@@ -13,10 +15,14 @@ func Init(dsn string) {
 		TracesSampleRate: 1.0,
 	}); err != nil {
 		fmt.Printf("Sentry initialization failed: %v", err)
+	} else {
+		sentryInit = true
 	}
 }
 
 // Capture exceptions and send to Sentry
 func LogException(exception error) {
-	sentry.CaptureException(exception)
+	if sentryInit {
+		sentry.CaptureException(exception)
+	}
 }

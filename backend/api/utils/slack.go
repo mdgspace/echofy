@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bot/globals"
+	"bot/logging"
 	"bot/models"
 	"fmt"
 
@@ -34,8 +35,8 @@ func SendMsgAsBot(channelToken, msg, tstamp string) (timestamp string) {
 		)
 	}
 	if perr != nil {
-		fmt.Println("Exception while posting message to slack as bot: ", perr)
-		panic(perr)
+		logging.LogException(perr)
+		return ""
 	}
 	return ts
 }
@@ -63,6 +64,7 @@ func SendMsg(channelToken, msg, userName, tstamp string) (timestamp string) {
 	}
 	if perr != nil {
 		fmt.Println("Exception while posting message to slack as a user: ", perr)
+		logging.LogException(perr)
 		panic(perr)
 	}
 	return ts
@@ -72,6 +74,7 @@ func GetSlackUserInfo(userID string) *slack.User {
 	user, err := Client.GetUserInfo(userID)
 	if err != nil {
 		fmt.Println("Error while fetching user info: ", err)
+		logging.LogException(err)
 		panic(err)
 	}
 	return user
@@ -93,7 +96,8 @@ Can delete only those messages which are sent by frontend clients
 func DeleteMsg(channelToken, tstamp, triggerID string) {
 	_, _, e := Client.DeleteMessage(channelToken, tstamp)
 	if e != nil {
-		fmt.Println("====> Error while deleting message: ", e)
+		fmt.Println("Error while deleting message: ", e)
+		logging.LogException(e)
 	}
 }
 
