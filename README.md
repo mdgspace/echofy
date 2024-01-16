@@ -28,6 +28,21 @@ Toggle sound and notifications.
 - [Slack Bot Setup](https://github.com/mdgspace/Echo/wiki/Slack-Bot-Setup)
 - [Application Setup using docker](https://github.com/mdgspace/Echo/wiki/Setup-Using-Docker)
 
+## Some Features
+
+### 1. Profanity filtering
+- If any web chat user uses profane language, they are automatically banned for 7 days
+- Profanities can be added/removed and web chat users can be banned and _un_-banned manually using using [custom slash commands](https://github.com/mdgspace/Echofy/wiki/Slash-commands)
+
+### 2. Message and Web Chat User data caching
+- Messages as well as data of web chat users are stored in a [redis](https://redis.io/) db for 7 days
+- Web chat users can re-enter the chat as the user they previously were in the chat (this happens automatically at the frontend) upto 7 days after logging off from the chat
+
+To explore more, have a look at the [wiki](https://github.com/mdgspace/Echofy/wiki)
+
+### 3. Error logging using Sentry
+- The backend is configured to log errors in [sentry](https://sentry.io/) if the environment variable `SENTRY_DSN_BACKEND` is configured
+
 ## Contributors
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
