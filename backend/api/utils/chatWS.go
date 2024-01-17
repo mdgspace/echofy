@@ -11,6 +11,7 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	"bot/logging"
 	profanityutils "bot/profanity_utils"
 
 	"github.com/gorilla/websocket"
@@ -33,7 +34,9 @@ var wg sync.WaitGroup
 func PrivateChatsHandler(c echo.Context, name, id string) error {
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
-		panic(err)
+		logging.LogException(err)
+		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
+		return err
 	}
 	defer ws.Close()
 	// send a hello message in the channel and create a new thread corresponding to the user
@@ -50,6 +53,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 	addUserAndWebsocketToLocalData(ws, ts, "private")
 	entryInfo, err := json.Marshal(map[string]interface{}{"history": history, "id": ts})
 	if err != nil {
+		logging.LogException(err)
 		panic(err)
 	}
 	ws.WriteMessage(websocket.TextMessage, entryInfo)
@@ -57,6 +61,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			CloseWebsocketAndClean(ws, "private", ts)
+			logging.LogException(err)
 			panic(err)
 		}
 		if profanityutils.IsMsgProfane(string(msg)) {
@@ -77,6 +82,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 				SendMsgAsBot(globals.GetChannelID("private"), "There was some error in the websocket corresponding to the user and hence it has been closed", ts)
 			}
 			CloseWebsocketAndClean(ws, "private", ts)
+			logging.LogException(err)
 			panic(err)
 		}
 	}
@@ -99,7 +105,9 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	}
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
-		panic(err)
+		logging.LogException(err)
+		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
+		return err
 	}
 	defer ws.Close()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
@@ -114,29 +122,32 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
+			logging.LogException(err)
+			SendInternalServerErrorCloseMessage(c, "Internal Server Error while reading the message from websocket connection")
 			CloseWebsocketAndClean(ws, channel, userID)
 			return nil
-			// panic(err)
 		}
 		if string(msg) != ""{
 			ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
-		fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
-		if profanityutils.IsMsgProfane(string(msg)) {
-			handleProfaneUser(ws, name, string(msg), ts, "public")
-			return nil
-		}
-		newMsg := models.Message{
-			Text:      string(msg),
-			Sender:    name,
-			Timestamp: ts,
-		}
-		sendMsgToPublicUsers(newMsg, channel)
-		db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
-		err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
-		if err != nil {
-			CloseWebsocketAndClean(ws, channel, userID)
-			panic(err)
-		}
+			fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
+			if profanityutils.IsMsgProfane(string(msg)) {
+				handleProfaneUser(ws, name, string(msg), ts, "public")
+				return nil
+			}
+			newMsg := models.Message{
+				Text:      string(msg),
+				Sender:    name,
+				Timestamp: ts,
+			}
+			sendMsgToPublicUsers(newMsg, channel)
+			db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
+			err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
+			if err != nil {
+				logging.LogException(err)
+				SendInternalServerErrorCloseMessage(c, "Internal Server Error while writing the message to websocket connection")
+				CloseWebsocketAndClean(ws, channel, userID)
+				return nil
+			}
 		}
 		
 	}
@@ -209,6 +220,7 @@ func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
 			SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", threadTS)
 		} else {
 			fmt.Println("Error while sending message received on slack to a private chat user: ", err)
+			logging.LogException(err)
 			panic(err)
 		}
 	}
@@ -226,7 +238,7 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
 				fmt.Println("Unhandled exception while sending message to public chat users" , err)
-				// panic(err)
+				logging.LogException(err)
 			}
 		}
 		aliveConns = append(aliveConns, value)
@@ -249,7 +261,7 @@ func SendMsgDeleteSignal(channelID, msgTS string) {
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
 				fmt.Println("Unhandled exception while sending message to public chat users" , err)
-				// panic(err)
+				logging.LogException(err)
 			}
 		}
 		aliveConns = append(aliveConns, value)
@@ -325,7 +337,8 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []b
 	allPrevMsgs["Sent by others"] = otherUserSentMsg
 	chatHistory, err := json.Marshal(allPrevMsgs)
 	if err != nil {
-		panic(err)
+		logging.LogException(err)
+		return []byte{}
 	}
 	return chatHistory
 }
