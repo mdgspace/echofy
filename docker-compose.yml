@@ -31,3 +31,8 @@ services:
     image: "redis:alpine" # Uses the official Redis image
     ports:
       - "6379:6379" # Exposes the Redis port 6379 to the host
+    volumes:
+      - redis_data:/data # Mounts a volume to persist Redis data
+
+volumes:
+  redis_data:
