@@ -195,27 +195,12 @@ export default function Home() {
   return (
     <div className="main text-slate-950 bg-[url('../assets/bg.svg')] w-full h-screen bg-contain">
       <div className="grid grid-cols-24 w-full h-screen">
-        <div className="flex flex-col justify-between col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
+        <div className="justify-between col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
           <div className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro">
             .mdg
           </div>
-          <div className=" w-full flex flex-col align-center justify-items-center">
+          <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
             <Box />
-          </div>
-          <div className="">
-            <a
-              href="https://github.com/mdgspace/Echofy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="noir-pro-bold"
-            >
-              <div className="flex flex-row gap-2 text-[0.8vw]">
-                <div className="text-yellow-400 ">
-                  <BsStarFill />
-                </div>
-                <div className="noir-pro text-black">Echofy on Github</div>
-              </div>
-            </a>
           </div>
         </div>
         <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23">
@@ -243,23 +228,34 @@ export default function Home() {
                   </div>
                 </div> */}
               </div>
-              <div className="flex flex-row gap-2">
-                <a
-                  className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                  href="https://bit.ly/mdgspace-slack-invite"
-                  target="_blank"
-                >
-                  Join Slack
-                </a>
-                <a
-                  className="hover:cursor-pointer sm:hidden text-right flex flex-col justify-end text-yellow-400 mb-1 lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                  href="https://github.com/mdgspace/Echofy"
-                  target="_blank"
-                >
-                  <div>
-                    <BsStarFill />
-                  </div>
-                </a>
+              <div className="flex flex-row gap-5">
+                <div className="flex flex-col justify-end">
+                  <a
+                    className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
+                    href="https://bit.ly/mdgspace-slack-invite"
+                    target="_blank"
+                  >
+                    Join Slack
+                  </a>
+                </div>
+
+                <div className="flex flex-col justify-end  max:sm-translate-y-1">
+                  <a
+                    href="https://github.com/mdgspace/Echofy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="noir-pro-bold hover:no-underline "
+                  >
+                    <div className="flex flex-row gap-2 ">
+                      <div className="text-yellow-400 flex flex-col hover:scale-125 transition duration-300">
+                        <BsStarFill />
+                      </div>
+                      <div className="noir-pro text-black hidden sm:block -translate-y-1  ">
+                        Echofy on Github
+                      </div>
+                    </div>
+                  </a>
+                </div>
               </div>
             </div>
             <div className="h-[70vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
