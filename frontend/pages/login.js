@@ -118,7 +118,7 @@ export default function login() {
         <div className="mt-5 flex flex-row gap-2">
           <div>
             <a
-              href="https://mdgspace.org"
+              href="https://github.com/mdgspace/Echofy"
               target="_blank"
               rel="noopener noreferrer"
               className="noir-pro-bold text-xl text-yellow-400"

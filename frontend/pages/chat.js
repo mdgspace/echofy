@@ -18,6 +18,8 @@ import { useRouter } from "next/navigation";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 // import boxData from "../services/utilities/box-data";
+import { BsStarFill } from "react-icons/bs";
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -191,16 +193,29 @@ export default function Home() {
   }
 
   return (
-    <div className="main text-slate-950 bg-[url('../assets/bg.svg')] bg-auto w-full h-screen bg-contain">
+    <div className="main text-slate-950 bg-[url('../assets/bg.svg')] w-full h-screen bg-contain">
       <div className="grid grid-cols-24 w-full h-screen">
-        <div className="col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
+        <div className="flex flex-col justify-between col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
           <div className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro">
             .mdg
           </div>
-          <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
-          
-        <Box />
-   
+          <div className=" w-full flex flex-col align-center justify-items-center">
+            <Box />
+          </div>
+          <div className="">
+            <a
+              href="https://github.com/mdgspace/Echofy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="noir-pro-bold"
+            >
+              <div className="flex flex-row gap-2 text-[0.8vw]">
+                <div className="text-yellow-400 ">
+                  <BsStarFill />
+                </div>
+                <div className="noir-pro text-black">Echofy on Github</div>
+              </div>
+            </a>
           </div>
         </div>
         <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23">
@@ -208,9 +223,10 @@ export default function Home() {
             <div className="flex flex-row h-[10vh] noir-pro-bold justify-between">
               <div className="flex flex-row">
                 <div className="flex flex-col justify-end">
-                  <div 
-                  className="hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw] p-2 w-full"
-                  onClick={handleQueriesClick}>
+                  <div
+                    className="hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw] p-2 w-full"
+                    onClick={handleQueriesClick}
+                  >
                     <center className="lg:text-2xl">Queries</center>
                   </div>
                 </div>
@@ -227,12 +243,22 @@ export default function Home() {
                   </div>
                 </div> */}
               </div>
-              <div className="flex flex-row">
-                <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                href="https://bit.ly/mdgspace-slack-invite"
-                target="_blank"
+              <div className="flex flex-row gap-2">
+                <a
+                  className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
+                  href="https://bit.ly/mdgspace-slack-invite"
+                  target="_blank"
                 >
                   Join Slack
+                </a>
+                <a
+                  className="hover:cursor-pointer sm:hidden text-right flex flex-col justify-end text-yellow-400 mb-1 lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
+                  href="https://github.com/mdgspace/Echofy"
+                  target="_blank"
+                >
+                  <div>
+                    <BsStarFill />
+                  </div>
                 </a>
               </div>
             </div>
@@ -251,11 +277,12 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-1 max-md:hidden max-sm:hidden">
-          <RightPane 
-          soundEnabled={soundEnabled}
-          setSoundEnabled={setSoundEnabled}
-          notificationsEnabled={notificationsEnabled}
-          setNotificationsEnabled={setNotificationsEnabled}/>
+          <RightPane
+            soundEnabled={soundEnabled}
+            setSoundEnabled={setSoundEnabled}
+            notificationsEnabled={notificationsEnabled}
+            setNotificationsEnabled={setNotificationsEnabled}
+          />
         </div>
       </div>
     </div>
