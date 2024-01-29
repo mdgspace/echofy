@@ -32,16 +32,16 @@ var wg sync.WaitGroup
 
 // handler for private chats
 func PrivateChatsHandler(c echo.Context, name, id string) error {
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
 		logging.LogException(err)
 		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
 		return err
 	}
-	defer ws.Close()
+	defer wss.Close()
 	// send a hello message in the channel and create a new thread corresponding to the user
 	var ts string
-	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	wss.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	history := db.RetrieveAllMessagesPrivateUser(id)
 	if len(history) == 0 {
 		ts = SendMsg(globals.GetChannelID("private"), string(fmt.Sprintf("%v has entered the private chat", name)), name, "")
@@ -50,22 +50,22 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		SendMsg(globals.GetChannelID("private"), "User has re-entered the private chat", name, id)
 		ts = id
 	}
-	addUserAndWebsocketToLocalData(ws, ts, "private")
+	addUserAndWebsocketToLocalData(wss, ts, "private")
 	entryInfo, err := json.Marshal(map[string]interface{}{"history": history, "id": ts})
 	if err != nil {
 		logging.LogException(err)
 		panic(err)
 	}
-	ws.WriteMessage(websocket.TextMessage, entryInfo)
+	wss.WriteMessage(websocket.TextMessage, entryInfo)
 	for {
-		_, msg, err := ws.ReadMessage()
+		_, msg, err := wss.ReadMessage()
 		if err != nil {
-			CloseWebsocketAndClean(ws, "private", ts)
+			CloseWebsocketAndClean(wss, "private", ts)
 			logging.LogException(err)
 			panic(err)
 		}
 		if profanityutils.IsMsgProfane(string(msg)) {
-			handleProfaneUser(ws, name, string(msg), ts, "private")
+			handleProfaneUser(wss, name, string(msg), ts, "private")
 		}
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
@@ -74,14 +74,14 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			Timestamp: ts,
 		}
 		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), ts, ts)
-		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
+		err = wss.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
 			if err == websocket.ErrCloseSent {
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", ts)
 			} else {
 				SendMsgAsBot(globals.GetChannelID("private"), "There was some error in the websocket corresponding to the user and hence it has been closed", ts)
 			}
-			CloseWebsocketAndClean(ws, "private", ts)
+			CloseWebsocketAndClean(wss, "private", ts)
 			logging.LogException(err)
 			panic(err)
 		}
@@ -103,35 +103,35 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			return c.String(409, "Username already taken")
 		}
 	}
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
 	if err != nil {
 		logging.LogException(err)
 		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
 		return err
 	}
-	defer ws.Close()
-	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
+	defer wss.Close()
+	wss.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	if !db.CheckValidUserID(userID) {
 		userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
-		ws.WriteJSON(map[string]string{"userID": userID})
+		wss.WriteJSON(map[string]string{"userID": userID})
 		db.AddUserEntry(name, userID)
 	}
-	addUserAndWebsocketToLocalData(ws, userID, channel)
+	addUserAndWebsocketToLocalData(wss, userID, channel)
 	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID, channel)
-	ws.WriteMessage(websocket.TextMessage, prevMsgs)
+	wss.WriteMessage(websocket.TextMessage, prevMsgs)
 	for {
-		_, msg, err := ws.ReadMessage()
+		_, msg, err := wss.ReadMessage()
 		if err != nil {
 			logging.LogException(err)
 			SendInternalServerErrorCloseMessage(c, "Internal Server Error while reading the message from websocket connection")
-			CloseWebsocketAndClean(ws, channel, userID)
+			CloseWebsocketAndClean(wss, channel, userID)
 			return nil
 		}
 		if string(msg) != ""{
 			ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 			fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
 			if profanityutils.IsMsgProfane(string(msg)) {
-				handleProfaneUser(ws, name, string(msg), ts, "public")
+				handleProfaneUser(wss, name, string(msg), ts, "public")
 				return nil
 			}
 			newMsg := models.Message{
@@ -141,11 +141,11 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			}
 			sendMsgToPublicUsers(newMsg, channel)
 			db.AddMsgToDB(newMsg, globals.GetChannelID(channel), ts, userID)
-			err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
+			err = wss.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 			if err != nil {
 				logging.LogException(err)
 				SendInternalServerErrorCloseMessage(c, "Internal Server Error while writing the message to websocket connection")
-				CloseWebsocketAndClean(ws, channel, userID)
+				CloseWebsocketAndClean(wss, channel, userID)
 				return nil
 			}
 		}
@@ -154,17 +154,17 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 }
 
 // close websocket and remove it from wherever it is stored (golang slices)
-func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
+func CloseWebsocketAndClean(wss *websocket.Conn, channelName, userID string) {
 	wg.Wait()
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
 	defer webSocketMapsMutex.Unlock()
 	delete(userIDWebSockets, userID)
-	delete(webSocketsUserID, ws)
+	delete(webSocketsUserID, wss)
 	if channelName != "private" {
 		var aliveConns []*websocket.Conn
 		for _, value := range webSockets[channelName] {
-			if value != ws {
+			if value != wss {
 				aliveConns = append(aliveConns, value)
 			}
 		}
@@ -176,17 +176,17 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 	db.ChangeActiveUserToInactive(userID)
 }
 
-func addUserAndWebsocketToLocalData(ws *websocket.Conn, userID, channelName string) {
+func addUserAndWebsocketToLocalData(wss *websocket.Conn, userID, channelName string) {
 	wg.Wait()
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
 	if channelName == "private" {
-		privateChatWS[userID] = ws
+		privateChatWS[userID] = wss
 	} else {
-		webSockets[channelName] = append(webSockets[channelName], ws)
+		webSockets[channelName] = append(webSockets[channelName], wss)
 	}
-	userIDWebSockets[userID] = ws
-	webSocketsUserID[ws] = userID
+	userIDWebSockets[userID] = wss
+	webSocketsUserID[wss] = userID
 	webSocketMapsMutex.Unlock()
 	wg.Done()
 }
@@ -195,11 +195,11 @@ func CloseWebsocketAndCleanByUserID(userID string) bool {
 	wg.Wait()
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
-	ws := userIDWebSockets[userID]
+	wss := userIDWebSockets[userID]
 	for channelName, wsArr := range webSockets {
 		for _, val := range wsArr {
-			if val == ws {
-				go CloseWebsocketAndClean(ws, channelName, userID)
+			if val == wss {
+				go CloseWebsocketAndClean(wss, channelName, userID)
 				webSocketMapsMutex.Unlock()
 				wg.Done()
 				return true
@@ -286,13 +286,13 @@ func BanUser(username, channelToken string) {
 		SendMsgAsBot(channelToken, "User with username: "+username+" does not exist", "")
 		return
 	}
-	ws := userIDWebSockets[userID]
-	ip := strings.Split(ws.RemoteAddr().String(), ":")[0]
+	wss := userIDWebSockets[userID]
+	ip := strings.Split(wss.RemoteAddr().String(), ":")[0]
 	bannedUserIps[userID] = ip
 	blacklistedIP[ip] = time.Now().AddDate(0, 0, 7)
-	ws.WriteJSON(map[string]string{"Message": "You are banned now"})
+	wss.WriteJSON(map[string]string{"Message": "You are banned now"})
 	SendMsgAsBot(channelToken, "User with id "+userID+" is banned successfully", "")
-	ws.Close()
+	wss.Close()
 	db.BanUserInDB(username)
 }
 
@@ -324,8 +324,8 @@ func RequestUserInfo(username string) map[string]string {
 	if userID == "" {
 		return map[string]string{"Status": "Fail", "Error": "No user exists with given name"}
 	} else {
-		ws := userIDWebSockets[userID]
-		ws.WriteJSON(map[string]string{"Message": "Send user info"})
+		wss := userIDWebSockets[userID]
+		wss.WriteJSON(map[string]string{"Message": "Send user info"})
 		return map[string]string{"Status": "Request Sent"}
 	}
 }
@@ -344,16 +344,16 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []b
 }
 
 // handler for user using illicit language
-func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName string) {
-	ws.WriteMessage(websocket.TextMessage, []byte("You have been banned for using illicit language in the chat. You may contact the administrator for any further discussions."))
+func handleProfaneUser(wss *websocket.Conn, name, msg, threadTS, channelName string) {
+	wss.WriteMessage(websocket.TextMessage, []byte("You have been banned for using illicit language in the chat. You may contact the administrator for any further discussions."))
 	BanUser(name, globals.GetChannelID(channelName))
 	SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been banned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
 	// unban user
 }
 
 func CheckConnectionStillActive(userID string) bool {
-	ws := userIDWebSockets[userID]
-	err := ws.WriteMessage(websocket.TextMessage, []byte("ping"))
+	wss := userIDWebSockets[userID]
+	err := wss.WriteMessage(websocket.TextMessage, []byte("ping"))
 	if err == websocket.ErrCloseSent {
 		CloseWebsocketAndCleanByUserID(userID)
 		return false
@@ -366,70 +366,70 @@ func CheckConnectionStillActive(userID string) bool {
 }
 
 func SendBanMessage(c echo.Context, reason string) error {
-    ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+    wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
     if err != nil {
         return err 
     }
-    defer ws.Close()
+    defer wss.Close()
     closeCode := websocket.ClosePolicyViolation
     closeMessage := websocket.FormatCloseMessage(closeCode, reason)
-    if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+    if err := wss.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
         return err
     }
 	return nil;
 }
 
 func SendConflictMessage(c echo.Context, reason string) error {
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
 	if err != nil {
 		return err 
 	}
-	defer ws.Close()
+	defer wss.Close()
 	closeCode := 4001 //custom close code for same uername
 	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
-	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+	if err := wss.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
 		return err
 	}
 	return nil;
 }
 
 func SendBadRequestMessage(c echo.Context, reason string) error {
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
 	if err != nil {
 		return err 
 	}
-	defer ws.Close()
+	defer wss.Close()
 	closeCode := websocket.CloseInvalidFramePayloadData
 	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
-	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+	if err := wss.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
 		return err
 	}
 	return nil;
 }
 
 func SendNormalCloseMessage(c echo.Context, reason string) error {
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
 	if err != nil {
 		return err 
 	}
-	defer ws.Close()
+	defer wss.Close()
 	closeCode := websocket.CloseNormalClosure
 	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
-	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+	if err := wss.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
 		return err
 	}
 	return nil;
 }
 
 func SendInternalServerErrorCloseMessage(c echo.Context, reason string) error {
-	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+	wss, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
 	if err != nil {
 		return err 
 	}
-	defer ws.Close()
+	defer wss.Close()
 	closeCode := websocket.CloseInternalServerErr
 	closeMessage := websocket.FormatCloseMessage(closeCode, reason)
-	if err := ws.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
+	if err := wss.WriteMessage(websocket.CloseMessage, closeMessage); err != nil {
 		return err
 	}
 	return nil;
