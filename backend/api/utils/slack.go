@@ -21,17 +21,13 @@ func SendMsgAsBot(channelToken, msg, tstamp string) (timestamp string) {
 	if tstamp != "" {
 		_, ts, perr = Client.PostMessage(
 			channelToken,
-			slack.MsgOptionAttachments(slack.Attachment{
-				Pretext: msg,
-			}),
+			slack.MsgOptionText(msg, false),
 			slack.MsgOptionTS(tstamp),
 		)
 	} else {
 		_, ts, perr = Client.PostMessage(
 			channelToken,
-			slack.MsgOptionAttachments(slack.Attachment{
-				Pretext: msg,
-			}),
+			slack.MsgOptionText(msg, false),
 		)
 	}
 	if perr != nil {
@@ -47,19 +43,15 @@ func SendMsg(channelToken, msg, userName, tstamp string) (timestamp string) {
 	if tstamp != "" {
 		_, ts, perr = Client.PostMessage(
 			channelToken,
-			slack.MsgOptionAttachments(slack.Attachment{
-				Pretext: msg,
-			}),
 			slack.MsgOptionUsername(userName),
 			slack.MsgOptionTS(tstamp),
+			slack.MsgOptionText(msg, false),
 		)
 	} else {
 		_, ts, perr = Client.PostMessage(
 			channelToken,
-			slack.MsgOptionAttachments(slack.Attachment{
-				Pretext: msg,
-			}),
 			slack.MsgOptionUsername(userName),
+			slack.MsgOptionText(msg, false),
 		)
 	}
 	if perr != nil {
@@ -84,9 +76,9 @@ func SendUserInfoToSlack(infoObj models.UserInfo) {
 	Client.PostMessage(
 		globals.GetChannelID(infoObj.Channel),
 		slack.MsgOptionAttachments(slack.Attachment{
-			Pretext: "Info for user " + infoObj.Username,
-			Text:    fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),
-		}))
+			Text: fmt.Sprintf("IP: %v\nLocation: %v\nAgent: %v\nOperating System: %v\n", infoObj.IP, infoObj.Location, infoObj.Agent, infoObj.OS),
+		}),
+		slack.MsgOptionText("Info for user "+infoObj.Username, false))
 }
 
 // Function to delete a message
