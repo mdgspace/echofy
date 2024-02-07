@@ -78,7 +78,9 @@ export default function Home() {
     }
     const userId = getSessionUserId();
     const url = buildWebSocketURL(userId, username);
-    const handleOpen = () => console.log("Connected to WebSocket server");
+    const handleOpen = () => {
+      //todo-> toast connected to server
+    }
     const handleMessage = (event) =>
       processWebSocketMessage(event, setMessages, () => router.push("/login"));
     const handleClose = (event) =>
@@ -147,8 +149,7 @@ export default function Home() {
           }
         }
       } catch (error) {
-        console.error("Error parsing or handling the message:", error);
-        console.log(event.data);
+        //todo-> enable sentry logger here
       }
     });
     return () => {
@@ -157,7 +158,7 @@ export default function Home() {
   }, [initializeWebSocketConnection , soundEnabled]);
 
   useEffect(() => {
-    console.log("Messages updated:", messages);
+    
   }, [messages]);
 
   useEffect(() => {

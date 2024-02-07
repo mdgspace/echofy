@@ -69,7 +69,6 @@ export function handleWebSocketError(event) {
 }
 
 export function handleWebSocketClose(event, navigateToLogin) {
-  console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
   if (isUserBanned(event.code)) {
     alertBannedUser(event.reason, navigateToLogin);
   }
@@ -206,8 +205,6 @@ function alertAbnormalClose(reason, navigateToLogin) {
 }
 
 export function processWebSocketMessage(event, setMessages, navigateToLogin) {
-  console.log("Received message:", event.data);
-
   try {
     if (
       event.data !== "Messsage send successful" &&
@@ -233,7 +230,6 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin) {
   function handleUserID(data) {
     if (data.userID) {
       sessionStorage.setItem("userID", data.userID);
-      console.log("userID set in session storage:", data.userID);
     }
   }
 

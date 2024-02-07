@@ -20,7 +20,7 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
             messageTimesRef.current.push(Date.now());
             checkForTimeout();
         } else {
-            console.log('WebSocket is not connected.');
+            //todo : add an alert in case of websocket is not connected, redirect user to login screen
         }
     }
 
