@@ -11,6 +11,7 @@ import {
   handleWebSocketClose,
   handleWebSocketError,
   processWebSocketMessage,
+  sendProfaneAlert,
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
@@ -102,9 +103,13 @@ export default function Home() {
         let data = "";
         if (
           event.data != "Messsage send successful" &&
-          event.data != "Welcome to MDG Chat!"
+          event.data != "Welcome to MDG Chat!" &&
+          event.data !== "PROFANE MESSAGE DETECTED!"
         ) {
           data = JSON.parse(event.data);
+        }
+        if (event.data === "PROFANE MESSAGE DETECTED!") {
+          sendProfaneAlert();
         }
         const allMessages = [];
         const addMessages = (messageData, isSent) => {

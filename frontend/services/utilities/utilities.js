@@ -208,7 +208,8 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin) {
   try {
     if (
       event.data !== "Messsage send successful" &&
-      event.data !== "Welcome to MDG Chat!"
+      event.data !== "Welcome to MDG Chat!" &&
+      event.data !== "PROFANE MESSAGE DETECTED!"
     ) {
       const data = JSON.parse(event.data);
 
@@ -248,4 +249,17 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin) {
       prevMessages.filter((message) => message.timestamp !== deleteTimestamp)
     );
   }
+}
+
+export function sendProfaneAlert() {
+  Swal.fire({
+    title: "Profanity Alert",
+    text: "Please refrain from using profanity",
+    icon: "warning",
+    confirmButtonColor: "#f66151",
+    confirmButtonText: "OK",
+    didOpen: (popup) => {
+      popup.style.borderRadius = "1rem";
+    },
+  });
 }

@@ -1,7 +1,7 @@
 package api
 
 import (
-	"strings"
+	// "strings"
 	"time"
 
 	"bot/api/utils"
@@ -14,9 +14,9 @@ import (
 
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
-		if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
-			return utils.SendBanMessage(c, "You are banned as of now")
-		}
+		// if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
+		// 	return utils.SendBanMessage(c, "You are banned as of now")
+		// }
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
 		validChannel := globals.IsChannelNameValid(channel)
@@ -34,8 +34,8 @@ func JoinChat() echo.HandlerFunc {
 			if db.GetUserID(name) != userID {
 				return utils.SendConflictMessage(c, "Username taken");
 			}
-		} else if db.CheckUserIDBanned(userID) {
-			return utils.SendBanMessage(c, "You are banned as of now")
+		// } else if db.CheckUserIDBanned(userID) {
+		// 	return utils.SendBanMessage(c, "You are banned as of now")
 		} else if db.CheckIfUserIDExists(name, userID) {
 			return utils.SendConflictMessage(c, "Wrong user ID");
 		} else if db.GetUserID(name) != "" {

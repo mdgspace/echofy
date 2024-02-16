@@ -93,10 +93,10 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/info" {
 					isreply = true
 					reply = utils.RequestUserInfo(commandBody[0])
-				} else if commandObj.Command == "/ban" {
-					utils.BanUser(commandBody[0], channelIDs["admin"])
-				} else if commandObj.Command == "/unban" {
-					utils.UnbanUser(commandBody[0], channelIDs["admin"])
+				// } else if commandObj.Command == "/ban" {
+				// 	// utils.BanUser(commandBody[0], channelIDs["admin"])
+				// } else if commandObj.Command == "/unban" {
+				// 	utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
