@@ -95,10 +95,10 @@ func MsgListener(ctx context.Context) {
 					isreply = false
 					reqinfo := utils.RequestUserInfo(commandBody[0])
 					fmt.Println(reqinfo)
-				} else if commandObj.Command == "/ban" {
-					utils.BanUser(commandBody[0], channelIDs["admin"])
-				} else if commandObj.Command == "/unban" {
-					utils.UnbanUser(commandBody[0], channelIDs["admin"])
+				// } else if commandObj.Command == "/ban" {
+				// 	// utils.BanUser(commandBody[0], channelIDs["admin"])
+				// } else if commandObj.Command == "/unban" {
+				// 	utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
