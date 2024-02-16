@@ -104,6 +104,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		}
 	}
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header()) //Yet to be tested
+	userAgent := c.Request().UserAgent()
 	if err != nil {
 		logging.LogException(err)
 		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
@@ -115,6 +116,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 		userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
 		ws.WriteJSON(map[string]string{"userID": userID})
 		db.AddUserEntry(name, userID)
+		db.AddUserInfoToDb(name,userID, userAgent, c.RealIP(), channel)
 	}
 	addUserAndWebsocketToLocalData(ws, userID, channel)
 	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID, channel)
@@ -319,14 +321,13 @@ func IsUserBanned(ip string) bool {
 	return false
 }
 
-func RequestUserInfo(username string) map[string]string {
+func RequestUserInfo(username string) string {
 	userID := db.GetUserID(username)
 	if userID == "" {
-		return map[string]string{"Status": "Fail", "Error": "No user exists with given name"}
+		return "No user Exists with this username"
 	} else {
-		ws := userIDWebSockets[userID]
-		ws.WriteJSON(map[string]string{"Message": "Send user info"})
-		return map[string]string{"Status": "Request Sent"}
+		info := db.GetUserInfo(userID)
+		return info
 	}
 }
 

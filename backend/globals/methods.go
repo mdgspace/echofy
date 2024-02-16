@@ -1,5 +1,7 @@
 package globals
 
+var LocationToken string
+
 func InitVariables(channel_names map[string]string, channel_tokens map[string]string) {
 	channelNames = channel_names
 	channelTokens = channel_tokens
@@ -30,4 +32,8 @@ func FindChannelNameIfValidToken(channelID string) (channelName string) {
 		}
 	}
 	return ""
+}
+
+func InitLocationToken(location_token string)  {
+	LocationToken = location_token
 }

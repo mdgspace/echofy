@@ -47,6 +47,7 @@ func main() {
 		logging.Init(sentryDSN)
 		defer sentry.Flush(2 * time.Second)
 	}
+	globals.InitLocationToken(os.Getenv("LOCATION_TOKEN"))
 	initializeSlackEnv()
 	utils.InitClient(token, appToken)
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
