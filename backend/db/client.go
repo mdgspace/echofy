@@ -1,6 +1,7 @@
 package db
 
 import (
+	customutils "bot/customUtils"
 	"bot/globals"
 	"bot/logging"
 	"bot/models"
@@ -315,4 +316,49 @@ func CheckIfUserIDExists(username, userID string) bool {
 	}
 	name := redisClient.Get(ctx, keys_matching[0]).Val()
 	return name != username
+}
+
+func AddUserInfoToDb(username string, userId string, userAgent string, ip string, channel string) {
+	location := customutils.GetUserLocation(ip)
+	browser, os := customutils.GetBrowserAndOS(userAgent)
+	info := models.UserInfo{
+		UserID:   userId,
+		Username: username,
+		IP:       ip,
+		Location: location,
+		OS:       os,
+		Agent:    browser,
+		Channel:  channel,
+	}
+	marshalled, errm := json.Marshal(info)
+	if errm != nil {
+		logging.LogException(errm)
+		panic(errm)
+	}
+	_, err := redisClient.Set(ctx, fmt.Sprintf("info:%v", userId), marshalled, 24*7*time.Hour).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
+func GetUserInfo(userId string) string {
+	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()	
+    var _info models.UserInfo
+    err := json.Unmarshal([]byte(info), &_info)
+	if(err != nil){
+		logging.LogException(err)
+		panic(err)
+	}
+	formattedInfo := fmt.Sprintf(
+        "UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
+        _info.UserID,
+        _info.Username,
+        _info.IP,
+        _info.Location,
+        _info.OS,
+        _info.Agent,
+        _info.Channel,
+    )
+	return formattedInfo
 }
