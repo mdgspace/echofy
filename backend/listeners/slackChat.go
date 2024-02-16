@@ -2,7 +2,6 @@ package listeners
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"bot/api/utils"
@@ -92,9 +91,8 @@ func MsgListener(ctx context.Context) {
 					isreply = true
 					reply = showUsers(channelIDs["tp"])
 				} else if commandObj.Command == "/info" {
-					isreply = false
-					reqinfo := utils.RequestUserInfo(commandBody[0])
-					fmt.Println(reqinfo)
+					isreply = true
+					reply = utils.RequestUserInfo(commandBody[0])
 				} else if commandObj.Command == "/ban" {
 					utils.BanUser(commandBody[0], channelIDs["admin"])
 				} else if commandObj.Command == "/unban" {
