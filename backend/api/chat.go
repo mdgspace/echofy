@@ -16,7 +16,7 @@ import (
 func JoinChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		if utils.IsUserBanned(strings.Split(c.Request().RemoteAddr, ":")[0]) {
-			return utils.SendBanMessage(c, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now , Incase you are using a public network, consider switching to mobile data")
 		}
 		name := c.FormValue("name")
 		channel := c.FormValue("channel")
@@ -40,7 +40,7 @@ func JoinChat() echo.HandlerFunc {
 				return utils.SendConflictMessage(c, "Username taken");
 			}
 		} else if db.CheckUserIDBanned(userID) {
-			return utils.SendBanMessage(c, "You are banned as of now")
+			return utils.SendBanMessage(c, "You are banned as of now , Incase you are using a public network, consider switching to mobile data")
 		} else if db.CheckIfUserIDExists(name, userID) {
 			return utils.SendConflictMessage(c, "Wrong user ID");
 		} else if db.GetUserID(name) != "" {
