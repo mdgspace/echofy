@@ -346,8 +346,8 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []b
 
 // handler for user using illicit language
 func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName string) {
-	ws.WriteMessage(websocket.TextMessage, []byte("PROFANE MESSAGE DETECTED!"))	
-	SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been warned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
+	ws.WriteMessage(websocket.TextMessage, []byte("PROFANE MESSAGE DETECTED!"))
+    SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been warned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
 }
 
 func CheckConnectionStillActive(userID string) bool {

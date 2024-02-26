@@ -8,6 +8,7 @@ import (
 	"bot/db"
 	"bot/globals"
 	"bot/models"
+	profanityutils "bot/profanity_utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,6 +24,10 @@ func JoinChat() echo.HandlerFunc {
 		if name == "" || !validChannel {
 			return utils.SendBadRequestMessage(c, "Name and/or channel missing")
 			// return c.String(http.StatusBadRequest, "Name and/or channel missing")
+		}
+		if profanityutils.IsMsgProfane(name) {
+			utils.SendMsgAsBot(globals.GetChannelID(channel), "A user tried to enter chat with a profane username: "+name+"" , "")
+			return utils.SendBadRequestMessage(c, "Username is profane")
 		}
 		userID := c.FormValue("userID")
 		if db.CheckValidActiveUserID(userID) {
