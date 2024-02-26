@@ -39,10 +39,6 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 		return err
 	}
 	defer ws.Close()
-		if profanityutils.IsMsgProfane(name) {
-		handleProfaneUser(ws, name, name, "", "public" , "username")
-		return nil
-	}
 	// send a hello message in the channel and create a new thread corresponding to the user
 	var ts string
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
@@ -69,7 +65,7 @@ func PrivateChatsHandler(c echo.Context, name, id string) error {
 			panic(err)
 		}
 		if profanityutils.IsMsgProfane(string(msg)) {
-			handleProfaneUser(ws, name, string(msg), ts, "private" , "message")
+			handleProfaneUser(ws, name, string(msg), ts, "private")
 		}
 		SendMsg(globals.GetChannelID("private"), string(msg), name, ts)
 		newMsg := models.Message{
@@ -117,7 +113,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 	defer ws.Close()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	if profanityutils.IsMsgProfane(name) {
-		handleProfaneUser(ws, name, name, "", "public" , "username")
+		handleProfaneUser(ws, name, name, "", "public" )
 		return nil
 	}
 	if !db.CheckValidUserID(userID) {
@@ -141,7 +137,7 @@ func PublicChatsHandler(c echo.Context, name string, channel string, userID stri
 			ts := SendMsg(globals.GetChannelID(channel), string(msg), name, "")
 			fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
 			if profanityutils.IsMsgProfane(string(msg)) {
-				handleProfaneUser(ws, name, string(msg), ts, "public" , "message")
+				handleProfaneUser(ws, name, string(msg), ts, "public")
 				continue
 			}
 			newMsg := models.Message{
@@ -353,14 +349,9 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []b
 }
 
 // handler for user using illicit language
-func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName , profanePart string) {
+func handleProfaneUser(ws *websocket.Conn, name, msg, threadTS, channelName string) {
 	ws.WriteMessage(websocket.TextMessage, []byte("PROFANE MESSAGE DETECTED!"))
-	if profanePart == "message" {
-		SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been warned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
-	} else if profanePart == "username" {
-		SendMsgAsBot(globals.GetChannelID(channelName), "A user tried to enter chat with a profane username : "+name+" ", "")
-	}
-	
+    SendMsgAsBot(globals.GetChannelID(channelName), fmt.Sprintf("This user has been warned due to use of illicit language.\nThe profane part of the chat is %s", profanityutils.GetProfanePartOfMsg(string(msg))), threadTS)
 }
 
 func CheckConnectionStillActive(userID string) bool {
