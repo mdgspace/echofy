@@ -88,8 +88,16 @@ func MsgListener(ctx context.Context) {
 						fmt.Println("email not found")
 						fmt.Println("channelId", channelId)
 						utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
+					}else{
+						result := customutils.SendEmail(callback.User.ID, email, response)
+						if(result == "mail sent successfully") {
+							utils.SendMsgAsBot(channelId, "Email sent successfully", timestamp)
+							db.RemoveUserEmail(userName)
+						} else {
+							utils.SendMsgAsBot(channelId, "Error sending email", timestamp)
+						}
 					}
-					customutils.SendEmail(callback.User.ID, email, response)
+					
 				}
 			case socketmode.EventTypeSlashCommand:
 				commandObj, ok := event.Data.(slack.SlashCommand)

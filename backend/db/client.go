@@ -375,3 +375,11 @@ func GetUserEmail(username string) string {
 	email, _ := redisClient.Get(ctx, fmt.Sprintf("email:%v", username)).Result()
 	return email
 }
+
+func RemoveUserEmail(username string) {
+	_, err := redisClient.Del(ctx, fmt.Sprintf("email:%v", username)).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
