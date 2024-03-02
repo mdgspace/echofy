@@ -2,10 +2,14 @@ package listeners
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"strings"
 
 	"bot/api/utils"
+	customutils "bot/customUtils"
 	"bot/db"
+	"bot/logging"
 	"bot/models"
 	profanityutils "bot/profanity_utils"
 
@@ -65,6 +69,27 @@ func MsgListener(ctx context.Context) {
 						db.RemoveMsgFromDB(callback.Channel.ID, callback.Message.Timestamp)
 						utils.SendMsgDeleteSignal(callback.Channel.ID, callback.Message.Timestamp)
 					}
+					if callback.CallbackID == "email_respond" {
+						utils.ShowEmailModal(callback.TriggerID, callback.Message.Username , callback.Message.Timestamp , callback.Channel.ID)
+					}
+				}
+				if callback.Type == slack.InteractionTypeViewSubmission {
+					response := callback.View.State.Values["email_response"]["email_response"].Value
+					var metaData map[string]string
+    				err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
+    					if err != nil {
+        				logging.LogException(err)
+   					}
+    				userName := metaData["userName"]
+					channelId := metaData["channelId"]
+					timestamp := metaData["timestamp"]
+					email := db.GetUserEmail(userName)
+					if (email == "") {
+						fmt.Println("email not found")
+						fmt.Println("channelId", channelId)
+						utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
+					}
+					customutils.SendEmail(callback.User.ID, email, response)
 				}
 			case socketmode.EventTypeSlashCommand:
 				commandObj, ok := event.Data.(slack.SlashCommand)
