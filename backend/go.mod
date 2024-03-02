@@ -21,6 +21,8 @@ require (
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mileusna/useragent v1.3.4 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
+	github.com/sendgrid/rest v2.6.9+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.14.0+incompatible // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
