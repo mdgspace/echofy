@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"bot/api/utils"
+	customutils "bot/customUtils"
 	"bot/db"
 	"bot/globals"
 	"bot/models"
@@ -26,25 +27,25 @@ func JoinChat() echo.HandlerFunc {
 			// return c.String(http.StatusBadRequest, "Name and/or channel missing")
 		}
 		if profanityutils.IsMsgProfane(name) {
-			utils.SendMsgAsBot(globals.GetChannelID(channel), "A user tried to enter chat with a profane username: "+name+"" , "")
+			utils.SendMsgAsBot(globals.GetChannelID(channel), "A user tried to enter chat with a profane username: "+name+"", "")
 			return utils.SendBadRequestMessage(c, "Username is profane")
 		}
 		userID := c.FormValue("userID")
 		if db.CheckValidActiveUserID(userID) {
 			// check the websocket connection
 			if utils.CheckConnectionStillActive(userID) {
-				return utils.SendConflictMessage(c, "Username taken");
+				return utils.SendConflictMessage(c, "Username taken")
 			}
 		} else if db.CheckValidInactiveUserID(userID) {
 			if db.GetUserID(name) != userID {
-				return utils.SendConflictMessage(c, "Username taken");
+				return utils.SendConflictMessage(c, "Username taken")
 			}
 		} else if db.CheckUserIDBanned(userID) {
 			return utils.SendBanMessage(c, "You are banned as of now , Incase you are using a public network, consider switching to mobile data")
 		} else if db.CheckIfUserIDExists(name, userID) {
-			return utils.SendConflictMessage(c, "Wrong user ID");
+			return utils.SendConflictMessage(c, "Wrong user ID")
 		} else if db.GetUserID(name) != "" {
-			return utils.SendConflictMessage(c, "Username taken");
+			return utils.SendConflictMessage(c, "Username taken")
 		}
 		if channel != "private" {
 			go utils.PublicChatsHandler(c, c.FormValue("name"), channel, userID) //this is done like this because there will be many public chat rooms in future
@@ -88,5 +89,33 @@ func LeaveChat() echo.HandlerFunc {
 		} else {
 			return utils.SendBadRequestMessage(c, "Wrong user ID")
 		}
+	}
+}
+
+func Subscribe() echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		email := c.FormValue("email")
+		userId := c.FormValue("userId")
+		username := c.FormValue("username")
+		if email == "" {
+			return c.String(400, "Email missing")
+		}
+		if userId == "" {
+			return c.String(400, "User ID missing")
+		}
+		if !db.CheckIfUserIDExists(username, userId) {
+			return c.String(400, "Wrong user ID")
+		}
+		if !customutils.ValidateEmail(email) {
+			return c.String(400, "Invalid email")
+		}
+		if db.GetUserEmail(username) != "" {
+			return c.String(409, "email already exists for this user")
+		}
+		if db.CheckEmailExists(email) {
+			return c.String(409, "email already exists")
+		}
+		db.AddUserEmailToDb(username, email)
+		return c.String(200, "Subscribed")
 	}
 }

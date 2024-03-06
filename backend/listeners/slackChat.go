@@ -70,34 +70,34 @@ func MsgListener(ctx context.Context) {
 						utils.SendMsgDeleteSignal(callback.Channel.ID, callback.Message.Timestamp)
 					}
 					if callback.CallbackID == "email_respond" {
-						utils.ShowEmailModal(callback.TriggerID, callback.Message.Username , callback.Message.Timestamp , callback.Channel.ID)
+						utils.ShowEmailModal(callback.TriggerID, callback.Message.Username, callback.Message.Timestamp, callback.Channel.ID)
 					}
 				}
 				if callback.Type == slack.InteractionTypeViewSubmission {
 					response := callback.View.State.Values["email_response"]["email_response"].Value
 					var metaData map[string]string
-    				err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
-    					if err != nil {
-        				logging.LogException(err)
-   					}
-    				userName := metaData["userName"]
+					err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
+					if err != nil {
+						logging.LogException(err)
+					}
+					userName := metaData["userName"]
 					channelId := metaData["channelId"]
 					timestamp := metaData["timestamp"]
 					email := db.GetUserEmail(userName)
-					if (email == "") {
-						fmt.Println("email not found")
-						fmt.Println("channelId", channelId)
+					if email == "" {
 						utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
-					}else{
+					} else {
 						result := customutils.SendEmail(callback.User.ID, email, response)
-						if(result == "mail sent successfully") {
-							utils.SendMsgAsBot(channelId, "Email sent successfully", timestamp)
+						if result == "mail sent successfully" {
+							message := fmt.Sprintf("Email sent successfully to %v", email)
+							utils.SendMsgAsBot(channelId, message, timestamp)
 							db.RemoveUserEmail(userName)
 						} else {
-							utils.SendMsgAsBot(channelId, "Error sending email", timestamp)
+							message := fmt.Sprintf("Error sending email to %v", email)
+							utils.SendMsgAsBot(channelId, message, timestamp)
 						}
 					}
-					
+
 				}
 			case socketmode.EventTypeSlashCommand:
 				commandObj, ok := event.Data.(slack.SlashCommand)
