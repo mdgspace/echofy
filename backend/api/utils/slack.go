@@ -4,6 +4,7 @@ import (
 	"bot/globals"
 	"bot/logging"
 	"bot/models"
+	"encoding/json"
 	"fmt"
 
 	"github.com/slack-go/slack"
@@ -91,6 +92,49 @@ func DeleteMsg(channelToken, tstamp, triggerID string) {
 		fmt.Println("Error while deleting message: ", e)
 		logging.LogException(e)
 	}
+}
+
+func ShowEmailModal(triggerID,userName,timestamp,channleId string) {
+	privateMetadata, err := json.Marshal(map[string]string{"userName": userName, "timestamp": timestamp , "channelId": channleId})
+    if err != nil {
+        fmt.Printf("Error encoding private metadata: %v\n", err)
+        return
+    }
+	modalRequest := slack.ModalViewRequest{
+		Type:       "modal",
+		CallbackID: "email response",
+		Title: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "My App",
+		},
+		Close: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Close",
+		},
+		Blocks: slack.Blocks{
+			BlockSet: []slack.Block{
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "email_response",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "email_response",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter message here"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Email Response"},
+				},
+			},
+		},
+		Submit: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Submit",
+		},
+		PrivateMetadata: string(privateMetadata), 
+	}
+	 _, err = Client.OpenView(triggerID, modalRequest)
+    if err != nil {
+        fmt.Printf("Error opening view: %v\n", err)
+    }
 }
 
 // func incomingMsgBroadcaster(ctx context.Context, client *slack.Client, socketClient *socketmode.Client, channelTokens map[string]string, channelNames map[string]string) {

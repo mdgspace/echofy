@@ -362,3 +362,24 @@ func GetUserInfo(userId string) string {
     )
 	return formattedInfo
 }
+
+func AddUserEmailToDb(username string, email string) {
+	_, err := redisClient.Set(ctx, fmt.Sprintf("email:%v", username), email, 24*7*time.Hour).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
+func GetUserEmail(username string) string {
+	email, _ := redisClient.Get(ctx, fmt.Sprintf("email:%v", username)).Result()
+	return email
+}
+
+func RemoveUserEmail(username string) {
+	_, err := redisClient.Del(ctx, fmt.Sprintf("email:%v", username)).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
