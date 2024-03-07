@@ -116,7 +116,7 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 // handler for public chats
 func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocket.Conn) error {
 	defer ws.Close()
-	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID, "public")
+	prevMsgs := getMarshalledSegregatedMsgHistoryPublicUser(userID)
 	ws.WriteMessage(websocket.TextMessage, prevMsgs)
 	for {
 		_, msg, err := ws.ReadMessage()
@@ -138,7 +138,7 @@ func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocke
 				Sender:    name,
 				Timestamp: ts,
 			}
-			sendMsgToPublicUsers(newMsg, "public")
+			sendMsgToPublicUsers(newMsg)
 			db.AddMsgToDB(newMsg, globals.GetChannelID("public"), ts, userID)
 			err = ws.WriteMessage(websocket.TextMessage, []byte("Messsage send successful")) //This is just so that we can check at frontend regularly that connection is alive
 			if err != nil {
@@ -225,14 +225,14 @@ func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
 }
 
 // function to broadcast msg from slack to all corresponding frontend clients
-func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
+func sendMsgToPublicUsers(msgObj models.Message) {
 	var closedWSIndex []int
 	var aliveConns []*websocket.Conn
-	for index, value := range webSockets[channelName] {
+	for index, value := range webSockets["public"] {
 		err := value.WriteJSON(msgObj)
 		if err != nil {
 			if err == websocket.ErrCloseSent {
-				go CloseWebsocketAndClean(value, channelName, webSocketsUserID[value])
+				go CloseWebsocketAndClean(value, "public", webSocketsUserID[value])
 				closedWSIndex = append(closedWSIndex, index)
 			} else {
 				fmt.Println("Unhandled exception while sending message to public chat users", err)
@@ -242,7 +242,7 @@ func sendMsgToPublicUsers(msgObj models.Message, channelName string) {
 		aliveConns = append(aliveConns, value)
 	}
 	if len(closedWSIndex) != 0 {
-		webSockets[channelName] = aliveConns //cleaning up closed connections
+		webSockets["public"] = aliveConns //cleaning up closed connections
 	}
 }
 
@@ -274,7 +274,7 @@ func SendMsgToFrontend(msgObj models.Message, channelID string, threadTS string)
 	if globals.FindChannelNameIfValidToken(channelID) == "private" {
 		sendSlackToPrivateUser(msgObj, threadTS)
 	} else {
-		sendMsgToPublicUsers(msgObj, globals.FindChannelNameIfValidToken(channelID))
+		sendMsgToPublicUsers(msgObj)
 	}
 }
 
@@ -327,8 +327,8 @@ func RequestUserInfo(username string) string {
 	}
 }
 
-func getMarshalledSegregatedMsgHistoryPublicUser(userID, channelName string) []byte {
-	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannels(channelName, userID)
+func getMarshalledSegregatedMsgHistoryPublicUser(userID string) []byte {
+	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannel(userID)
 	allPrevMsgs := make(map[string]map[string]string)
 	allPrevMsgs["Sent by you"] = currUserSentMsg
 	allPrevMsgs["Sent by others"] = otherUserSentMsg
