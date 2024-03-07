@@ -52,7 +52,8 @@ func main() {
 	utils.InitClient(token, appToken)
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
 	db.Init()
-	profanityutils.InitProfanityDetector()	
+	profanityutils.InitProfanityDetector()
+	utils.InitDialogflowConfig(os.Getenv("GCP_PROJECT_ID"))
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
 	ctx, cancel := context.WithCancel(context.Background())
