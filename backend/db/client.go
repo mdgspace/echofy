@@ -383,3 +383,14 @@ func RemoveUserEmail(username string) {
 		panic(err)
 	}
 }
+
+func CheckEmailExists(email string) bool {
+	keys_matching := redisClient.Keys(ctx, ("email:*")).Val()
+	for _, key := range keys_matching {
+		if redisClient.Get(ctx, key).Val() == email {
+			return true
+		}
+	}
+	return false
+}
+
