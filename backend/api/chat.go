@@ -97,11 +97,22 @@ func Subscribe() echo.HandlerFunc {
 		email := c.FormValue("email")
 		userId := c.FormValue("userId")
 		username := c.FormValue("username")
+		ts := string(c.FormValue("timestamp"))
+		channel := c.FormValue("channel")
 		if email == "" {
 			return c.String(400, "Email missing")
 		}
 		if userId == "" {
 			return c.String(400, "User ID missing")
+		}
+		if username == "" {
+			return c.String(400, "Username missing")
+		}
+		if ts == "" {
+			return c.String(400, "Timestamp missing")
+		}
+		if channel == "" || !globals.IsChannelNameValid(channel) {
+			return c.String(400, "Channel missing or wrong channel name")
 		}
 		if !db.CheckIfUserIDExists(username, userId) {
 			return c.String(400, "Wrong user ID")
@@ -116,6 +127,7 @@ func Subscribe() echo.HandlerFunc {
 			return c.String(409, "email already exists")
 		}
 		db.AddUserEmailToDb(username, email)
+		utils.SendMsgAsBot(globals.GetChannelID(channel), "User "+username+" has asked for a response on his email "+email+"", ts)
 		return c.String(200, "Subscribed")
 	}
 }
