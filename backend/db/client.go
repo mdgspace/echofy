@@ -87,11 +87,11 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 
 returns a string of marshalled messages
 */
-func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]string, map[string]string) {
+func RetrieveAllMessagesPublicChannel(userID string) (map[string]string, map[string]string) {
 	// iterate over all message keys and get their values
 	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), numKeys).Iterator()
+	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", "public"), numKeys).Iterator()
 	for iter.Next(ctx) {
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
