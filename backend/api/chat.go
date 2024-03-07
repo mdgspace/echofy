@@ -47,12 +47,7 @@ func JoinChat() echo.HandlerFunc {
 		} else if db.GetUserID(name) != "" {
 			return utils.SendConflictMessage(c, "Username taken")
 		}
-		if channel != "private" {
-			go utils.PublicChatsHandler(c, c.FormValue("name"), channel, userID) //this is done like this because there will be many public chat rooms in future
-		}
-		if channel == "private" {
-			go utils.PrivateChatsHandler(c, c.FormValue("name"), userID)
-		}
+		utils.ChatUserHandler(c, name, channel, userID)
 		time.Sleep(time.Second)
 		return nil
 	}
