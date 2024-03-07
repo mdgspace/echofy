@@ -68,14 +68,14 @@ func CloseSessionClient(sessionID string) (sesID string, err error) {
 }
 
 // send a text query to dialogflow, retrieve response using knowledge connectors
-func SendTextQuery(sessionID, query, topic string) (document_question, document_answer string, found_answer bool, err error) {
+func SendTextQuery(sessionID, query, topic string) (answer string, err error) {
 	sessionClient, ok := sessionClients[sessionID]
 	if !ok {
-		return "", "", false, fmt.Errorf("bad session id: %s", sessionID)
+		return "Looks like you asked something outside my knowledge. Please proceed to Slack chat for further help", fmt.Errorf("bad session id: %s", sessionID)
 	}
 	knowledgeBaseName, ok := knowledgeBaseDisplayNameToActualName[topic]
 	if !ok {
-		return "", "", false, fmt.Errorf("bad topic: %s", topic)
+		return "", fmt.Errorf("bad topic: %s", topic)
 	}
 	ctx := context.Background()
 	sessionPath := fmt.Sprintf("projects/%s/agent/sessions/%s", gcpProjectID, sessionID)
@@ -86,7 +86,7 @@ func SendTextQuery(sessionID, query, topic string) (document_question, document_
 	request := dialogflowpb.DetectIntentRequest{Session: sessionPath, QueryInput: &queryInput, QueryParams: &queryParams}
 	responseMsg, err := sessionClient.DetectIntent(ctx, &request)
 	if err != nil {
-		return "", "", false, fmt.Errorf("error sending query to dialogflow: %v", err)
+		return "", fmt.Errorf("error sending query to dialogflow: %v", err)
 	}
 	queryResult := responseMsg.GetQueryResult()
 	if queryResult.GetKnowledgeAnswers() != nil {
@@ -94,7 +94,7 @@ func SendTextQuery(sessionID, query, topic string) (document_question, document_
 		// possible enhancements:
 		// 1. if there are multiple answers, return all of them
 		// 2. put a minimum confidence threshold and/or pass confidence score to the caller
-		return answers[0].FaqQuestion, answers[0].Answer, true, nil
+		return answers[0].GetAnswer(), nil
 	}
-	return "", "", false, nil
+	return "", nil
 }
