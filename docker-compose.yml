@@ -11,6 +11,8 @@ services:
       - SLACK_PUBLIC_CHANNEL_ID=${SLACK_PUBLIC_CHANNEL_ID}
       - SLACK_PRIVATE_CHANNEL_ID=${SLACK_PRIVATE_CHANNEL_ID}
       - SLACK_ADMIN_CHANNEL_ID=${SLACK_ADMIN_CHANNEL_ID}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     depends_on:
       - redis # Ensures Redis service is started before the backend
     restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user

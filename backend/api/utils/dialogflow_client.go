@@ -18,6 +18,15 @@ var sessionClients = make(map[string]*dialogflow.SessionsClient)
 // Format: projects/<project-id>/knowledgeBases/<knowledge-base-id>
 var knowledgeBaseDisplayNameToActualName = make(map[string]string)
 
+func checkValidBotTopic(name string) bool {
+	for topic := range knowledgeBaseDisplayNameToActualName {
+		if topic == name {
+			return true
+		}
+	}
+	return false
+}
+
 func getKnowledgeBases() error {
 	ctx := context.Background()
 	getKnowledgeBaseRequest := dialogflowpb.ListKnowledgeBasesRequest{Parent: fmt.Sprintf("projects/%s/locations/global", gcpProjectID)}
@@ -47,7 +56,7 @@ func InitDialogflowConfig(projectID string) {
 
 // initiate a new session client by providing a session id
 // it is the caller's duty to close this session client
-func InitNewSessionClient(sessionID string) (sesID string, err error) {
+func initNewSessionClient(sessionID string) (sesID string, err error) {
 	ctx := context.Background()
 	sessionClient, err := dialogflow.NewSessionsClient(ctx)
 	if err != nil {
@@ -58,7 +67,7 @@ func InitNewSessionClient(sessionID string) (sesID string, err error) {
 }
 
 // terminate an active session
-func CloseSessionClient(sessionID string) (sesID string, err error) {
+func closeSessionClient(sessionID string) (sesID string, err error) {
 	if sessionClient, ok := sessionClients[sessionID]; ok {
 		sessionClient.Close()
 		delete(sessionClients, sessionID)
@@ -68,7 +77,7 @@ func CloseSessionClient(sessionID string) (sesID string, err error) {
 }
 
 // send a text query to dialogflow, retrieve response using knowledge connectors
-func SendTextQuery(sessionID, query, topic string) (answer string, err error) {
+func retrieveTextQueryResponse(sessionID, query, topic string) (answer string, err error) {
 	sessionClient, ok := sessionClients[sessionID]
 	if !ok {
 		return "Looks like you asked something outside my knowledge. Please proceed to Slack chat for further help", fmt.Errorf("bad session id: %s", sessionID)
@@ -96,5 +105,5 @@ func SendTextQuery(sessionID, query, topic string) (answer string, err error) {
 		// 2. put a minimum confidence threshold and/or pass confidence score to the caller
 		return answers[0].GetAnswer(), nil
 	}
-	return "", nil
+	return "", fmt.Errorf("no answers found for the query")
 }
