@@ -4,13 +4,8 @@ services:
     build: ./backend
     ports:
       - "1323:${NEXT_PUBLIC_BACKEND_PORT}" # Exposes the backend's port 1323 to the host
-    environment: # Environment variables are passed to the container
-      - SENTRY_DSN=${SENTRY_DSN}
-      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN}
-      - SLACK_AUTH_TOKEN=${SLACK_AUTH_TOKEN}
-      - SLACK_PUBLIC_CHANNEL_ID=${SLACK_PUBLIC_CHANNEL_ID}
-      - SLACK_PRIVATE_CHANNEL_ID=${SLACK_PRIVATE_CHANNEL_ID}
-      - SLACK_ADMIN_CHANNEL_ID=${SLACK_ADMIN_CHANNEL_ID}
+    env_file: 
+      - .env # Reads environment variables from a file
     depends_on:
       - redis # Ensures Redis service is started before the backend
     restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user
@@ -21,6 +16,7 @@ services:
       args: # Passes environment variables to the frontend's build process
         - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST} 
         - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
+        - NEXT_PUBLIC_BACKEND_ENVIRONMENT=${NEXT_PUBLIC_BACKEND_ENVIRONMENT}
     ports:
       - "3000:3000" # Exposes the frontend's port 3000 to the host
     depends_on:
