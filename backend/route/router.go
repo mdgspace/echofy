@@ -13,5 +13,6 @@ func Init() {
 	e.GET("/chat", api.JoinChat())
 	e.POST("/userInfo", api.ReceivedFrontendUserInfo())
 	e.POST("/chat/leave", api.LeaveChat())
+	e.POST("/subscribe", api.Subscribe())
 	e.Start(":1323")
 }

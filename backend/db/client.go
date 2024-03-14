@@ -87,11 +87,11 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
 
 returns a string of marshalled messages
 */
-func RetrieveAllMessagesPublicChannels(channelName, userID string) (map[string]string, map[string]string) {
+func RetrieveAllMessagesPublicChannel(userID string) (map[string]string, map[string]string) {
 	// iterate over all message keys and get their values
 	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
-	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", channelName), numKeys).Iterator()
+	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", "public"), numKeys).Iterator()
 	for iter.Next(ctx) {
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
@@ -362,3 +362,35 @@ func GetUserInfo(userId string) string {
     )
 	return formattedInfo
 }
+
+func AddUserEmailToDb(username string, email string) {
+	_, err := redisClient.Set(ctx, fmt.Sprintf("email:%v", username), email, 24*7*time.Hour).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
+func GetUserEmail(username string) string {
+	email, _ := redisClient.Get(ctx, fmt.Sprintf("email:%v", username)).Result()
+	return email
+}
+
+func RemoveUserEmail(username string) {
+	_, err := redisClient.Del(ctx, fmt.Sprintf("email:%v", username)).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
+func CheckEmailExists(email string) bool {
+	keys_matching := redisClient.Keys(ctx, ("email:*")).Val()
+	for _, key := range keys_matching {
+		if redisClient.Get(ctx, key).Val() == email {
+			return true
+		}
+	}
+	return false
+}
+

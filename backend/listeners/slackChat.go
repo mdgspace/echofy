@@ -2,10 +2,14 @@ package listeners
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"strings"
 
 	"bot/api/utils"
+	customutils "bot/customUtils"
 	"bot/db"
+	"bot/logging"
 	"bot/models"
 	profanityutils "bot/profanity_utils"
 
@@ -65,6 +69,35 @@ func MsgListener(ctx context.Context) {
 						db.RemoveMsgFromDB(callback.Channel.ID, callback.Message.Timestamp)
 						utils.SendMsgDeleteSignal(callback.Channel.ID, callback.Message.Timestamp)
 					}
+					if callback.CallbackID == "email_respond" {
+						utils.ShowEmailModal(callback.TriggerID, callback.Message.Username, callback.Message.Timestamp, callback.Channel.ID)
+					}
+				}
+				if callback.Type == slack.InteractionTypeViewSubmission {
+					response := callback.View.State.Values["email_response"]["email_response"].Value
+					var metaData map[string]string
+					err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
+					if err != nil {
+						logging.LogException(err)
+					}
+					userName := metaData["userName"]
+					channelId := metaData["channelId"]
+					timestamp := metaData["timestamp"]
+					email := db.GetUserEmail(userName)
+					if email == "" {
+						utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
+					} else {
+						result := customutils.SendEmail(callback.User.ID, email, response)
+						if result == "mail sent successfully" {
+							message := fmt.Sprintf("Email sent successfully to %v", email)
+							utils.SendMsgAsBot(channelId, message, timestamp)
+							db.RemoveUserEmail(userName)
+						} else {
+							message := fmt.Sprintf("Error sending email to %v", email)
+							utils.SendMsgAsBot(channelId, message, timestamp)
+						}
+					}
+
 				}
 			case socketmode.EventTypeSlashCommand:
 				commandObj, ok := event.Data.(slack.SlashCommand)
@@ -93,10 +126,10 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/info" {
 					isreply = true
 					reply = utils.RequestUserInfo(commandBody[0])
-				// } else if commandObj.Command == "/ban" {
-				// 	// utils.BanUser(commandBody[0], channelIDs["admin"])
-				// } else if commandObj.Command == "/unban" {
-				// 	utils.UnbanUser(commandBody[0], channelIDs["admin"])
+				} else if commandObj.Command == "/ban" {
+					utils.BanUser(commandBody[0], channelIDs["admin"])
+				} else if commandObj.Command == "/unban" {
+					utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else {
 					reply = "Invalid command: " + commandObj.Command
 				}
