@@ -13,10 +13,8 @@ services:
   frontend:
     build: 
       context: ./frontend
-      args: # Passes environment variables to the frontend's build process
-        - NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST} 
-        - NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
-        - NEXT_PUBLIC_BACKEND_ENVIRONMENT=${NEXT_PUBLIC_BACKEND_ENVIRONMENT}
+    env_file: 
+      - .env # Reads environment variables from a file
     ports:
       - "3000:3000" # Exposes the frontend's port 3000 to the host
     depends_on:
