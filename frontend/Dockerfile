@@ -4,15 +4,11 @@ FROM node:latest
 # Set the working directory
 WORKDIR /app
 
-# Set environment variables
-ARG NEXT_PUBLIC_BACKEND_HOST
-ENV NEXT_PUBLIC_BACKEND_HOST=${NEXT_PUBLIC_BACKEND_HOST}
-
-ARG NEXT_PUBLIC_BACKEND_PORT
-ENV NEXT_PUBLIC_BACKEND_PORT=${NEXT_PUBLIC_BACKEND_PORT}
-
 # Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Set the registry
+RUN npm config set registry
 
 # Install dependencies
 RUN npm install
