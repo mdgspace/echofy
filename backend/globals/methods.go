@@ -8,6 +8,9 @@ func InitVariables(channel_names map[string]string, channel_tokens map[string]st
 }
 
 func IsChannelNameValid(channelName string) bool {
+	if channelName == "chatbot" {
+		return true
+	}
 	for _, channel := range channelNames {
 		if channel == channelName {
 			return true
@@ -34,6 +37,6 @@ func FindChannelNameIfValidToken(channelID string) (channelName string) {
 	return ""
 }
 
-func InitLocationToken(location_token string)  {
+func InitLocationToken(location_token string) {
 	LocationToken = location_token
 }

@@ -42,6 +42,7 @@ func initializeSlackEnv() {
 
 func main() {
 	godotenv.Load(".env")
+	utils.InitDialogflowConfig(os.Getenv("GCP_PROJECT_ID"))
 	sentryDSN := os.Getenv("SENTRY_DSN")
 	if sentryDSN != "" {
 		logging.Init(sentryDSN)
@@ -52,7 +53,7 @@ func main() {
 	utils.InitClient(token, appToken)
 	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
 	db.Init()
-	profanityutils.InitProfanityDetector()	
+	profanityutils.InitProfanityDetector()
 
 	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
 	ctx, cancel := context.WithCancel(context.Background())

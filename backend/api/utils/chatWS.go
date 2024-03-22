@@ -51,8 +51,8 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 	}
 	userAgent := c.Request().UserAgent()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
-	if !db.CheckValidUserID(userID) {
-		if channel == "public" {
+	if userID == "" || !db.CheckValidUserID(userID) {
+		if channel == "public" || channel == "chatbot" {
 			userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
 		} else if channel == "private" {
 			userID = SendMsgAsBot(globals.GetChannelID("private"), name+" has joined private chat", "")
@@ -66,6 +66,10 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 		go PublicChatsHandler(c, name, userID, ws)
 	} else if channel == "private" {
 		go PrivateChatsHandler(c, name, userID, ws)
+	} else if channel == "chatbot" {
+		go ChatBotChatHandler(c, c.FormValue("topic"), name, userID, ws)
+	} else {
+		SendBadRequestMessage(c, "Invalid channel name")
 	}
 	return nil
 }
@@ -146,6 +150,46 @@ func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocke
 				SendInternalServerErrorCloseMessage(c, "Internal Server Error while writing the message to websocket connection")
 				CloseWebsocketAndClean(ws, "public", userID)
 				return nil
+			}
+		}
+	}
+}
+
+// handler for chats with chatbot
+func ChatBotChatHandler(c echo.Context, chatTopic, name, userID string, ws *websocket.Conn) {
+	defer ws.Close()
+	if !checkValidBotTopic(chatTopic) {
+		SendBadRequestMessage(c, "Invalid chat topic")
+		return
+	}
+	sesID, err := initNewSessionClient(userID)
+	if err != nil || sesID == "" {
+		ws.WriteMessage(websocket.TextMessage, []byte("Internal Server Error"))
+		logging.LogException(err)
+		return
+	}
+	defer closeSessionClient(sesID)
+	for {
+		_, msg, err := ws.ReadMessage()
+		if err != nil {
+			logging.LogException(err)
+			SendInternalServerErrorCloseMessage(c, "Internal Server Error while reading the message from websocket connection")
+			CloseWebsocketAndClean(ws, "chatbot", userID)
+			return
+		}
+		if string(msg) != "" {
+			ws.WriteMessage(websocket.TextMessage, []byte("You: "+string(msg)))
+			answer, err := retrieveTextQueryResponse(sesID, string(msg), chatTopic)
+			if err != nil {
+				err = ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+			} else {
+				err = ws.WriteMessage(websocket.TextMessage, []byte(answer))
+			}
+			if err != nil {
+				CloseWebsocketAndClean(ws, "chatbot", userID)
+				if err != websocket.ErrCloseSent {
+					logging.LogException(err)
+				}
 			}
 		}
 	}
