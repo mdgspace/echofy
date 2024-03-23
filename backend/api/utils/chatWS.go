@@ -156,6 +156,8 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 	wg.Wait()
 	wg.Add(1)
 	webSocketMapsMutex.Lock()
+	defer ws.Close()
+	defer ws.CloseHandler()(websocket.CloseNormalClosure, "Connection closed")
 	defer webSocketMapsMutex.Unlock()
 	delete(userIDWebSockets, userID)
 	delete(webSocketsUserID, ws)

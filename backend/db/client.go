@@ -127,6 +127,16 @@ func ChangeActiveUserToInactive(userID string) {
 	}
 }
 
+// to set inactive user as active again
+func ChangeInactiveUserToActive(userID string) {
+	redisClient.Rename(ctx, fmt.Sprintf("inactive:%v", userID), fmt.Sprintf("active:%v", userID))
+	_, err := redisClient.Expire(ctx, fmt.Sprintf("active:%v", userID), 24*7*time.Hour).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
 // function to check if a userID is valid or not
 func CheckValidUserID(userID string) bool {
 	numKeys, _ := redisClient.DBSize(ctx).Result()
