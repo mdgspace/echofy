@@ -40,6 +40,7 @@ func JoinChat() echo.HandlerFunc {
 			if db.GetUserID(name) != userID {
 				return utils.SendConflictMessage(c, "Username taken")
 			}
+			db.ChangeInactiveUserToActive(userID)
 		} else if db.CheckUserIDBanned(userID) {
 			return utils.SendBanMessage(c, "You are banned as of now , Incase you are using a public network, consider switching to mobile data")
 		} else if db.CheckIfUserIDExists(name, userID) {
@@ -73,14 +74,19 @@ func ReceivedFrontendUserInfo() echo.HandlerFunc {
 func LeaveChat() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
 		userID := c.FormValue("userID")
-		if db.CheckValidUserID(userID) {
+		if db.CheckValidInactiveUserID(userID) {
+			_, err := c.Response().Write([]byte("Thank you for visiting MDG Chat. We wish to have you again soon"))
+			return err
+		} else if db.CheckValidActiveUserID(userID) {
 			// close web socket in sync with the chatWS functions
 			status := utils.CloseWebsocketAndCleanByUserID(userID)
 			if !status {
 				return utils.SendInternalServerErrorCloseMessage(c, "An internal server error has occurred")
 			}
 			db.ChangeActiveUserToInactive(userID)
-			return utils.SendNormalCloseMessage(c, "Thank you for visiting MDG Chat. We wish to have you again soon")
+			_, err := c.Response().Write([]byte("Thank you for visiting MDG Chat. We wish to have you again soon"))
+			return err
+			// return utils.SendNormalCloseMessage(c, "Thank you for visiting MDG Chat. We wish to have you again soon")
 		} else {
 			return utils.SendBadRequestMessage(c, "Wrong user ID")
 		}
