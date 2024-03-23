@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"bot/globals"
+
 	dialogflow "cloud.google.com/go/dialogflow/apiv2beta1"
 	"cloud.google.com/go/dialogflow/apiv2beta1/dialogflowpb"
 )
@@ -105,5 +107,5 @@ func retrieveTextQueryResponse(sessionID, query, topic string) (answer string, e
 		// 2. put a minimum confidence threshold and/or pass confidence score to the caller
 		return answers[0].GetAnswer(), nil
 	}
-	return "", fmt.Errorf("no answers found for the query")
+	return "", fmt.Errorf(globals.ChatbotNoAnswerFound)
 }

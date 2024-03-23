@@ -181,7 +181,9 @@ func ChatBotChatHandler(c echo.Context, chatTopic, name, userID string, ws *webs
 			ws.WriteMessage(websocket.TextMessage, []byte("You: "+string(msg)))
 			answer, err := retrieveTextQueryResponse(sesID, string(msg), chatTopic)
 			if err != nil {
-				err = ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+				if err.Error() == globals.ChatbotNoAnswerFound {
+					err = ws.WriteMessage(websocket.TextMessage, []byte("No answers found for that query, please try again or proceed to public/private slack chat"))
+				}
 			} else {
 				err = ws.WriteMessage(websocket.TextMessage, []byte(answer))
 			}
