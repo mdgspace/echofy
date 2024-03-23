@@ -159,7 +159,7 @@ func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocke
 func ChatBotChatHandler(c echo.Context, chatTopic, name, userID string, ws *websocket.Conn) {
 	defer ws.Close()
 	if !checkValidBotTopic(chatTopic) {
-		SendBadRequestMessage(c, "Invalid chat topic")
+		ws.WriteMessage(websocket.TextMessage, []byte("Invalid chat topic"))
 		return
 	}
 	sesID, err := initNewSessionClient(userID)
