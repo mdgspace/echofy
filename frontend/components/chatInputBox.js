@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { MdSend } from "react-icons/md"; 
-
+import { FaPlus } from "react-icons/fa";
 export default function ChatInputBox({ updateMessages, socketRef }) {
     const [newMessage, setNewMessage] = useState("");
     const [isTimeout, setIsTimeout] = useState(false);
@@ -19,6 +19,7 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
             setNewMessage("");
             messageTimesRef.current.push(Date.now());
             checkForTimeout();
+            console.log("message sent");
         } else {
             //todo : add an alert in case of websocket is not connected, redirect user to login screen
         }
@@ -45,25 +46,32 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
 
 
     return (
-        <div className="flex justify-center items-center h-full">
-            <div className="relative w-3/4 bg-transparent">
+        <>
+        
+         <div className="flex justify-center items-center h-full px-5 py-10" >
+            <div className="relative w-full bg-transparent py-10">
+                <div className="">
+                    <FaPlus className="absolute left-2 top-1/2 transform -translate-y-1/2 text--500" />
+                </div>
                 <input
                     type="text"
-                    placeholder={isTimeout? "Timed out for 5 seconds" : "Enter your message..."}
+                    placeholder={isTimeout? "Timed out for 5 seconds" : "New Message"}
                     value={newMessage}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyPress}
                     disabled={isTimeout}
-                    className="w-full p-3 pr-10 border rounded-lg placeholder-gray-400"
+                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue"
                 />
                 <button
                     onClick={handleSendClick}
                     disabled={isTimeout}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${isTimeout ? 'bg-gray-500' : 'bg-orange-500'} text-white rounded-full p-2`}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? 'bg-gray-500' : 'bg--500'} text-white rounded-full p-2`}
                 >
                     <MdSend className={`w-6 h-6 ${isTimeout ? 'text-gray-300' : 'text-white'}`} />
                 </button>
             </div>
         </div>
+        </>
+       
     );
 }
