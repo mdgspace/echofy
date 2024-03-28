@@ -33,6 +33,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
                 } break-words`}
               >
                 <div className="text-txt-mdg-username">{message.username}</div>
+                {console.log(message)}
                 <div className="text-txt-grey pt-2">{message.text}</div>
                 <div className={`text-xs text-gray-500 ${message.isSent ? "text-right" : "text-right"} mt-2`}>{formatTime(message.timestamp)}</div>
               </div>

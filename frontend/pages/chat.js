@@ -17,6 +17,8 @@ import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
+import { AiFillAccountBook } from "react-icons/ai";
+import { AiFillCamera } from "react-icons/ai";
 // import boxData from "../services/utilities/box-data";
 import { BsStarFill } from "react-icons/bs";
 
@@ -95,7 +97,7 @@ export default function Home() {
     );
     socketRef.current = socket;
 
-    
+     
 
     socket.addEventListener("message", (event) => {
       try {
@@ -149,6 +151,7 @@ export default function Home() {
           }
         }
       } catch (error) {
+        console.log(error)
         //todo-> enable sentry logger here
       }
     });
@@ -194,72 +197,44 @@ export default function Home() {
   }
 
   return (
-    <div className="main text-slate-950 bg-[url('../assets/bg.svg')] w-full h-screen bg-contain">
+    <>
+
+    <div>
+
+    </div>
+    
+    <div className="main text-slate-950 bg- w-full h-screen bg-contain">
+
       <div className="grid grid-cols-24 w-full h-screen">
-        <div className="justify-between col-span-2 bg-bg-orange rounded-r-xl max-md:hidden">
-          <div className="p-2 text-white pl-[1vw]  lg:text-2xl text-[2vw] noir-pro">
-            .mdg
-          </div>
-          <div className="pt-[5vh] w-full flex flex-col align-center justify-items-center">
+
+        <div className="justify-between col-span-7 bg-bg-orange rounded-r-xl max-md:hidden">
+          <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
             <Box />
           </div>
         </div>
-        <div className="col-span-21 mx-[3vw] bg-transparent max-md:col-span-23">
-          <div className="flex flex-col h-screen">
-            <div className="flex flex-row h-[10vh] noir-pro-bold justify-between">
-              <div className="flex flex-row">
-                <div className="flex flex-col justify-end">
-                  <div
-                    className="hover:shadow-[0px_0px_20px_-15px_rgba(0,0,0,1)] hover:cursor-pointer bg-bg-orange rounded-lg text-white flex flex-col justify-end mx-[1vw] p-2 w-full"
-                    onClick={handleQueriesClick}
-                  >
-                    <center className="lg:text-2xl">Queries</center>
-                  </div>
-                </div>
-                {/* <div className="flex flex-col justify-end max-md:hidden">
-                  <div className="flex flex-row ml-8 lg:mb-2">
-                    <div className="lg:text-2xl">Templates</div>
-                    <div className="mt-[1vh] ">
-                      <Image
-                        src={arrow}
-                        alt=""
-                        className="scale-[2.0] ml-[1vw] hover:cursor-pointer"
-                      ></Image>
-                    </div>
-                  </div>
-                </div> */}
-              </div>
-              <div className="flex flex-row gap-5">
-                <div className="flex flex-col justify-end">
-                  <a
-                    className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                    href="https://bit.ly/mdgspace-slack-invite"
-                    target="_blank"
-                  >
-                    Join Slack
-                  </a>
-                </div>
 
-                <div className="flex flex-col justify-end  max:sm-translate-y-1">
-                  <a
-                    href="https://github.com/mdgspace/Echofy"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="noir-pro-bold hover:no-underline "
-                  >
-                    <div className="flex flex-row gap-2 ">
-                      <div className="text-yellow-400 flex flex-col hover:scale-125 transition duration-300">
-                        <BsStarFill />
-                      </div>
-                      <div className="noir-pro text-black hidden sm:block -translate-y-1  ">
-                        Echofy on Github
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="h-[70vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
+
+        <div className="col-span-17 mx-[3vw] bg-gray-100 max-md:col-span-24" mt-10>
+          <div className="flex flex-col h-screen">
+          <div class="flex h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-10 ">
+    <div class="text-blue-500 font-roboto font-semibold text-lg leading-7">
+      Jinora Chat Bot</div>
+    <div className =  "flex flex-row items-center justify-between px-4">
+    <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >Chat with mdg members</div>
+    <div>
+         <AiFillAccountBook size={24} className="text-gray-600 mr-10"/>
+    </div>
+    <div className="text-gray-600 font-lato text-base font-normal leading-7 mr-6">
+      Request A mail reply
+
+    </div>
+    <div>
+      <AiFillCamera size={24} className="text-gray-600 ml -10" />
+    </div>
+    </div>
+    
+  </div>
+            <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
               <ChatContainer
                 messages={messages}
                 messagesEndRef={messagesEndRef}
@@ -273,15 +248,17 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="col-span-1 max-md:hidden max-sm:hidden">
+        {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
           <RightPane
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
             notificationsEnabled={notificationsEnabled}
             setNotificationsEnabled={setNotificationsEnabled}
           />
-        </div>
+        </div>*/}
+      
       </div>
     </div>
+    </>
   );
 }
