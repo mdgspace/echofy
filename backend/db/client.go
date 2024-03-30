@@ -353,23 +353,23 @@ func AddUserInfoToDb(username string, userId string, userAgent string, ip string
 }
 
 func GetUserInfo(userId string) string {
-	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()	
-    var _info models.UserInfo
-    err := json.Unmarshal([]byte(info), &_info)
-	if(err != nil){
+	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()
+	var _info models.UserInfo
+	err := json.Unmarshal([]byte(info), &_info)
+	if err != nil {
 		logging.LogException(err)
 		panic(err)
 	}
 	formattedInfo := fmt.Sprintf(
-        "UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
-        _info.UserID,
-        _info.Username,
-        _info.IP,
-        _info.Location,
-        _info.OS,
-        _info.Agent,
-        _info.Channel,
-    )
+		"UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
+		_info.UserID,
+		_info.Username,
+		_info.IP,
+		_info.Location,
+		_info.OS,
+		_info.Agent,
+		_info.Channel,
+	)
 	return formattedInfo
 }
 
@@ -404,3 +404,99 @@ func CheckEmailExists(email string) bool {
 	return false
 }
 
+func UpsertProject(project models.Project) {
+	if !isValidProjectCategory(project.Category) {
+		err := fmt.Errorf("invalid project category: %s", project.Category)
+		logging.LogException(err)
+		panic(err)
+	}
+	// using hset adds project if it doesn't exist, else updates it
+	_, err := redisClient.HSet(redisClient.Context(), "project:"+project.Name, map[string]interface{}{
+		"projectCategory":         string(project.Category),
+		"projectShortDescription": string(project.ShortDesc),
+		"projectLongDescription":  string(project.LongDesc),
+	}).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+}
+
+func GetProject(client *redis.Client, projectName string) models.Project {
+	result, err := client.HGetAll(client.Context(), projectName).Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+
+	project := models.Project{
+		Name:      projectName,
+		Category:  models.ProjectCategory(result["projectCategory"]),
+		ShortDesc: result["projectShortDescription"],
+		LongDesc:  result["projectLongDescription"],
+	}
+
+	return project
+}
+
+func GetAllProjects() []models.Project {
+	keys, err := redisClient.Keys(redisClient.Context(), "project:*").Result()
+	if err != nil {
+		logging.LogException(err)
+		panic(err)
+	}
+	var projects []models.Project
+	for _, key := range keys {
+		result, err := redisClient.HGetAll(redisClient.Context(), key).Result()
+		if err != nil {
+			logging.LogException(err)
+			panic(err)
+		}
+		project := models.Project{
+			Name:      key[len("project:"):],
+			Category:  models.ProjectCategory(result["projectCategory"]),
+			ShortDesc: result["projectShortDescription"],
+			LongDesc:  result["projectLongDescription"],
+		}
+		projects = append(projects, project)
+	}
+	return projects
+}
+
+func isValidProjectCategory(category models.ProjectCategory) bool {
+	switch category {
+	case models.Events, models.Projects:
+		return true
+	default:
+		return false
+	}
+}
+
+func DeleteProject(client *redis.Client, projectName string) error {
+	
+	if !projectExists(client, projectName) {
+		err := fmt.Errorf("project %s does not exist", projectName)
+		logging.LogException(err)
+		return err
+	}
+
+	
+	key := "project:" + projectName
+	_, err := client.Del(client.Context(), key).Result()
+	if err != nil {
+		logging.LogException(err)
+		return err
+	}
+
+	return nil
+}
+
+func projectExists(client *redis.Client, projectName string) bool {
+	key := "project:" + projectName
+	exists, err := client.Exists(client.Context(), key).Result()
+	if err != nil {
+		logging.LogException(err)
+		return false
+	}
+	return exists == 1
+}
