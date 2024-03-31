@@ -48,8 +48,8 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
     return (
         <>
         
-         <div className="flex justify-center items-center h-full px-5 py-10" >
-            <div className="relative w-full bg-transparent py-10">
+         <div className="flex justify-center items-center h-full px-5 pt-20" >
+            <div className="relative w-full bg-transparent py-10 mx-1">
                 <div className="">
                     <FaPlus className="absolute left-2 top-1/2 transform -translate-y-1/2 text--500" />
                 </div>
@@ -65,9 +65,9 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
                 <button
                     onClick={handleSendClick}
                     disabled={isTimeout}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? 'bg-gray-500' : 'bg--500'} text-white rounded-full p-2`}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? '' : 'bg--500'} text-white rounded-full p-2`}
                 >
-                    <MdSend className={`w-6 h-6 ${isTimeout ? 'text-gray-300' : 'text-white'}`} />
+                    <MdSend className={`w-6 h-6 ${isTimeout ? 'text-gray-100' : 'text-white'}`} />
                 </button>
             </div>
         </div>
