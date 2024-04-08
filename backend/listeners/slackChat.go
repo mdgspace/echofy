@@ -74,30 +74,47 @@ func MsgListener(ctx context.Context) {
 					}
 				}
 				if callback.Type == slack.InteractionTypeViewSubmission {
-					response := callback.View.State.Values["email_response"]["email_response"].Value
-					var metaData map[string]string
-					err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
-					if err != nil {
-						logging.LogException(err)
-					}
-					userName := metaData["userName"]
-					channelId := metaData["channelId"]
-					timestamp := metaData["timestamp"]
-					email := db.GetUserEmail(userName)
-					if email == "" {
-						utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
-					} else {
-						result := customutils.SendEmail(callback.User.ID, email, response)
-						if result == "mail sent successfully" {
-							message := fmt.Sprintf("Email sent successfully to %v", email)
-							utils.SendMsgAsBot(channelId, message, timestamp)
-							db.RemoveUserEmail(userName)
-						} else {
-							message := fmt.Sprintf("Error sending email to %v", email)
-							utils.SendMsgAsBot(channelId, message, timestamp)
+					if(callback.View.CallbackID == "email response"){
+						response := callback.View.State.Values["email_response"]["email_response"].Value
+						var metaData map[string]string
+						err := json.Unmarshal([]byte(callback.View.PrivateMetadata), &metaData)
+						if err != nil {
+							logging.LogException(err)
 						}
+						userName := metaData["userName"]
+						channelId := metaData["channelId"]
+						timestamp := metaData["timestamp"]
+						email := db.GetUserEmail(userName)
+						if email == "" {
+							utils.SendMsgAsBot(channelId, "User has not provided email", timestamp)
+						} else {
+							result := customutils.SendEmail(callback.User.ID, email, response)
+							if result == "mail sent successfully" {
+								message := fmt.Sprintf("Email sent successfully to %v", email)
+								utils.SendMsgAsBot(channelId, message, timestamp)
+								db.RemoveUserEmail(userName)
+							} else {
+								message := fmt.Sprintf("Error sending email to %v", email)
+								utils.SendMsgAsBot(channelId, message, timestamp)
+							}
+						}
+					} else if (callback.View.CallbackID == "add_project") {
+						projectName := callback.View.State.Values["project_name"]["project_name"].Value
+						projectCategory := callback.View.State.Values["project_category"]["project_category"].Value
+						projectShortDesc := callback.View.State.Values["project_short_description"]["project_short_description"].Value
+						projectLongDesc := callback.View.State.Values["project_long_description"]["project_long_description"].Value
+
+					// Create a Project object with the extracted data
+					project := models.Project{
+						Name:      projectName,
+						Category:  models.ProjectCategory(projectCategory),
+						ShortDesc: projectShortDesc,
+						LongDesc:  projectLongDesc,
 					}
 
+					db.UpsertProject(project)
+						utils.SendMsgAsBot(callback.Channel.ID, "Project added successfully", "")
+					}
 				}
 			case socketmode.EventTypeSlashCommand:
 				commandObj, ok := event.Data.(slack.SlashCommand)
@@ -130,7 +147,11 @@ func MsgListener(ctx context.Context) {
 					utils.BanUser(commandBody[0], channelIDs["admin"])
 				} else if commandObj.Command == "/unban" {
 					utils.UnbanUser(commandBody[0], channelIDs["admin"])
-				} else {
+				} else if commandObj.Command == "/projectlist" {
+					utils.ShowViewProjectModal(commandObj.TriggerID)
+				} else if commandObj.Command == "/addproject" {
+					utils.ShowAddProjectModal(commandObj.TriggerID)
+				}else {
 					reply = "Invalid command: " + commandObj.Command
 				}
 				if isreply {
