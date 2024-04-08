@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"bot/db"
 	"bot/globals"
 	"bot/logging"
 	"bot/models"
+	// "bytes"
 	"encoding/json"
 	"fmt"
 
@@ -136,3 +138,131 @@ func ShowEmailModal(triggerID, userName, timestamp, channleId string) {
 		fmt.Printf("Error opening view: %v\n", err)
 	}
 }
+
+func ShowViewProjectModal(triggerID string) {
+	projects := db.GetAllProjects()
+
+	// Group projects by category
+	projectMap := make(map[models.ProjectCategory][]models.Project)
+	for _, project := range projects {
+		projectMap[project.Category] = append(projectMap[project.Category], project)
+	}
+
+	modalRequest := slack.ModalViewRequest{
+		Type:       "modal",
+		CallbackID: "project_response",
+		Title: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Projects",
+		},
+		Close: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Close",
+		},
+		Blocks: slack.Blocks{
+			BlockSet: generateProjectBlocks(projectMap),
+		},
+	}
+	_, err := Client.OpenView(triggerID, modalRequest)
+	if err != nil {
+		fmt.Printf("Error opening view: %v\n", err)
+	}
+}
+
+func generateProjectBlocks(projectMap map[models.ProjectCategory][]models.Project) []slack.Block {
+	var blocks []slack.Block
+
+	for category, projects := range projectMap {
+		// Add section block for each category
+		blocks = append(blocks, slack.SectionBlock{
+			Type: "section",
+			Text: &slack.TextBlockObject{
+				Type: "mrkdwn",
+				Text: fmt.Sprintf("*%s*", category), // Display category name in bold
+			},
+		})
+
+		// Add project list for the category
+		for _, project := range projects {
+            blocks = append(blocks, slack.SectionBlock{
+                Type: "section",
+                Text: &slack.TextBlockObject{
+                    Type: "mrkdwn",
+                    Text: fmt.Sprintf("*%s*\nShort Description: %s\nLong Description: %s",
+					project.Name, project.ShortDesc, project.LongDesc),
+                },
+            })
+        }
+	}
+
+	return blocks
+}
+
+func ShowAddProjectModal(triggerID string) {
+	modalRequest := slack.ModalViewRequest{
+		Type:       "modal",
+		CallbackID: "add_project",
+		Title: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Add Project",
+		},
+		Close: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Close",
+		},
+		Blocks: slack.Blocks{
+			BlockSet: []slack.Block{
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_name",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_name",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project name"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project Name"},
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_category",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_category",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project category"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project Category"},
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_short_description",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_short_description",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project short description"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project Short Description"},
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_long_description",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_long_description",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project long description"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project Long Description"},
+				},
+			},
+		},
+		//on clicking submit , call the upsert db function
+		Submit: &slack.TextBlockObject{
+			Type: "plain_text",
+			Text: "Submit",
+		},
+	}
+	_, err := Client.OpenView(triggerID, modalRequest)
+	if err != nil {
+		fmt.Printf("Error opening view: %v\n", err)
+	}
+}
+

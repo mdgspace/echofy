@@ -472,9 +472,9 @@ func isValidProjectCategory(category models.ProjectCategory) bool {
 	}
 }
 
-func DeleteProject(client *redis.Client, projectName string) error {
+func DeleteProject(projectName string) error {
 	
-	if !projectExists(client, projectName) {
+	if !projectExists(projectName) {
 		err := fmt.Errorf("project %s does not exist", projectName)
 		logging.LogException(err)
 		return err
@@ -482,7 +482,7 @@ func DeleteProject(client *redis.Client, projectName string) error {
 
 	
 	key := "project:" + projectName
-	_, err := client.Del(client.Context(), key).Result()
+	_, err := redisClient.Del(redisClient.Context(), key).Result()
 	if err != nil {
 		logging.LogException(err)
 		return err
@@ -491,9 +491,9 @@ func DeleteProject(client *redis.Client, projectName string) error {
 	return nil
 }
 
-func projectExists(client *redis.Client, projectName string) bool {
+func projectExists( projectName string) bool {
 	key := "project:" + projectName
-	exists, err := client.Exists(client.Context(), key).Result()
+	exists, err := redisClient.Exists(redisClient.Context(), key).Result()
 	if err != nil {
 		logging.LogException(err)
 		return false
