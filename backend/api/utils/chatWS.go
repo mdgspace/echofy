@@ -89,6 +89,11 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
+			if(err.Error() == "websocket: close 1000 (normal)"){
+				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", rootTS)
+				delete(privateChatWS, userID)
+				return nil
+			}
 			CloseWebsocketAndClean(ws, "private", rootTS)
 			logging.LogException(err)
 			panic(err)
@@ -259,6 +264,9 @@ func CloseWebsocketAndCleanByUserID(userID string) bool {
 
 // function to send msg from slack to corresponding frontend client
 func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
+	if privateChatWS[threadTS] == nil {
+		return
+	}
 	err := privateChatWS[threadTS].WriteJSON(msgObj)
 	if err != nil {
 		if err == websocket.ErrCloseSent {
