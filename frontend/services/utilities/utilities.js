@@ -10,7 +10,9 @@ export function getSessionUser() {
 }
 
 export function getSessionUserId() {
-  return sessionStorage.getItem("userID");
+  const a = sessionStorage.getItem("userID");
+  console.log(a)
+  return a;
 }
 
 export function setSessionUser(username) {

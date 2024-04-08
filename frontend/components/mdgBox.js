@@ -19,7 +19,7 @@ export default function Box() {
       </div>
     </div>
   </div>
-  <div className="w-36 text-zinc-700 text-xl font-semibold font-['Lato'] leading-7">Projects ({projects.projects.length})</div>
+  <div className="w-36  text-xl font-semibold font-sans leading-7">Projects ({projects.projects.length})</div>
 </div>
 
 {projects.projects.map((project, index) => (
@@ -40,11 +40,11 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex "  >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0  text-base font-medium font-['Lato'] leading-normal tracking-tight">{project.Name}</div>
+      <div className="grow shrink basis-0  text-base font-medium font-Lato leading-normal tracking-tight">{project.Name}</div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
-    <div className="self-stretch text-zinc-600 text-xs font-medium font-['Lato'] leading-none tracking-tight">{project.Info }</div>
+    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.Info }</div>
   </div>
 </div>
   </div>
@@ -60,7 +60,7 @@ export default function Box() {
       <div className="w-6 h-6 relative" />
     </div>
   </div>
-  <div className="text-zinc-700 text-xl font-semibold font-['Roboto'] leading-7">Events at MDG ({projects.projects.length})</div>
+  <div className="text-zinc-700 text-xl font-semibold font-Roboto leading-7">Events at MDG ({projects.projects.length})</div>
 </div>
 
 {projects.projects.map((project, index) => (
@@ -81,11 +81,11 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex" key = {index} >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-['Lato'] leading-normal tracking-tight">{project.Name}</div>
+      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-Lato leading-normal tracking-tight">{project.Name}</div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
-    <div className="self-stretch text-zinc-600 text-xs font-medium font-['Lato'] leading-none tracking-tight">{project.Info }</div>
+    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.Info }</div>
   </div>
 </div>
   </div>

@@ -12,6 +12,8 @@ import {
   checkAndPromptSessionChange,
 } from "../services/utilities/utilities";
 
+import {useHistory} from "react-router-dom";
+
 /**export const UserContext = React.createContext()
  */
 export default function login() {
@@ -38,30 +40,83 @@ export default function login() {
   }
 
   async function handleChatWithUsClick() {
+    const chatType = localStorage.getItem("chatType");
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-
-    if (currentUser && currentUserId) {
-      if (currentUser === username) {
-        router.push("/chat");
-      } else {
-        const hasChanged = await checkAndPromptSessionChange(
-          currentUser,
-          username,
-          () => {
-            removeSessionUserId();
-            setSessionUser(username);
-          }
-        );
-        if (hasChanged) {
+    console.log(chatType);
+    if(chatType == "public"){
+      if (currentUser && currentUserId) {
+        if (currentUser === username) {
           router.push("/chat");
+        } else {
+          const hasChanged = await checkAndPromptSessionChange(
+            currentUser,
+            username,
+            () => {
+              removeSessionUserId();
+              setSessionUser(username);
+            }
+          );
+          if (hasChanged) {
+            router.push("/chat");
+          }
         }
+      } else {
+        setSessionUser(username);
+        router.push("/chat");
       }
-    } else {
-      setSessionUser(username);
-      router.push("/chat");
     }
+    else if(chatType == "private"){
+      if (currentUser && currentUserId) {
+        if (currentUser === username) {
+          router.push("/private_chat");
+        } else {
+          const hasChanged = await checkAndPromptSessionChange(
+            currentUser,
+            username,
+            () => {
+              removeSessionUserId();
+              setSessionUser(username);
+            }
+          );
+          if (hasChanged) {
+            router.push("/private_chat");
+          }
+        }
+      } else {
+        setSessionUser(username);
+        router.push("/private_chat");
+      }
+    }
+
+    else if(chatType == "chatbot"){
+      if (currentUser && currentUserId) {
+        if (currentUser === username) {
+          router.push("/chat_bot");
+        } else {
+          const hasChanged = await checkAndPromptSessionChange(
+            currentUser,
+            username,
+            () => {
+              removeSessionUserId();
+              setSessionUser(username);
+            }
+          );
+          if (hasChanged) {
+            router.push("/chat_bot");
+          }
+        }
+      } else {
+        setSessionUser(username);
+        router.push("/chat_bot");
+      }
+
+    }
+    
   }
+
+  
+  
 
   return (
     <div className="flex flex-col justify-between items-center bg-[url('../assets/bg.svg')] bg-cover w-full h-screen">

@@ -35,7 +35,12 @@ module.exports = {
         'txt-mdg-username' : '#AAAAAA',
         'customBlue' : '#3670F5',
       },
+      fontFamily:{
+        'Lato': ['Lato', 'sans-serif'],
+        'Roboto': ['Roboto', 'sans-serif'],
+      }
     },
     plugins: [],
+
   }
 }
