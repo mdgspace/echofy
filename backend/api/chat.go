@@ -132,3 +132,13 @@ func Subscribe() echo.HandlerFunc {
 		return c.String(200, "Subscribed")
 	}
 }
+
+func GetProjects() echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		projects , err := db.GetAllProjects()
+		if(err != nil){
+			return c.String(500, "Internal server error")
+		}
+		return c.JSON(200, projects)
+	}
+}

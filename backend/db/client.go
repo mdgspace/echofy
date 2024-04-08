@@ -439,18 +439,18 @@ func GetProject(client *redis.Client, projectName string) models.Project {
 	return project
 }
 
-func GetAllProjects() []models.Project {
+func GetAllProjects() ([]models.Project , error) {
 	keys, err := redisClient.Keys(redisClient.Context(), "project:*").Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return nil , err
 	}
 	var projects []models.Project
 	for _, key := range keys {
 		result, err := redisClient.HGetAll(redisClient.Context(), key).Result()
 		if err != nil {
 			logging.LogException(err)
-			panic(err)
+			return nil , err
 		}
 		project := models.Project{
 			Name:      key[len("project:"):],
@@ -460,7 +460,7 @@ func GetAllProjects() []models.Project {
 		}
 		projects = append(projects, project)
 	}
-	return projects
+	return projects , nil
 }
 
 func isValidProjectCategory(category models.ProjectCategory) bool {

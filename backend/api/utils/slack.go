@@ -140,8 +140,12 @@ func ShowEmailModal(triggerID, userName, timestamp, channleId string) {
 }
 
 func ShowViewProjectModal(triggerID string) {
-	projects := db.GetAllProjects()
+	projects , error := db.GetAllProjects()
 
+	if error != nil {
+		logging.LogException(error)
+		return
+	}
 	// Group projects by category
 	projectMap := make(map[models.ProjectCategory][]models.Project)
 	for _, project := range projects {
