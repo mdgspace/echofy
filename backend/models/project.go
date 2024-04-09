@@ -12,4 +12,8 @@ type Project struct {
 	Category  ProjectCategory
 	ShortDesc string
 	LongDesc  string
+	ImageLink string
+	AppStoreLink string
+	GithubLink string
+	PlayStoreLink string
 }

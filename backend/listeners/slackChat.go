@@ -103,6 +103,10 @@ func MsgListener(ctx context.Context) {
 						projectCategory := callback.View.State.Values["project_category"]["project_category"].Value
 						projectShortDesc := callback.View.State.Values["project_short_description"]["project_short_description"].Value
 						projectLongDesc := callback.View.State.Values["project_long_description"]["project_long_description"].Value
+						projectImageLink := callback.View.State.Values["project_image_link"]["project_image_link"].Value
+						projectAppStoreLink := callback.View.State.Values["project_app_store_link"]["project_app_store_link"].Value
+						projectGithubLink := callback.View.State.Values["project_github_link"]["project_github_link"].Value
+						projectPlayStoreLink := callback.View.State.Values["project_play_store_link"]["project_play_store_link"].Value
 
 					// Create a Project object with the extracted data
 					project := models.Project{
@@ -110,6 +114,10 @@ func MsgListener(ctx context.Context) {
 						Category:  models.ProjectCategory(projectCategory),
 						ShortDesc: projectShortDesc,
 						LongDesc:  projectLongDesc,
+						ImageLink: projectImageLink,
+						AppStoreLink: projectAppStoreLink,
+						GithubLink: projectGithubLink,
+						PlayStoreLink: projectPlayStoreLink,
 					}
 
 					db.UpsertProject(project)
@@ -148,9 +156,19 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/unban" {
 					utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else if commandObj.Command == "/projectlist" {
-					utils.ShowViewProjectModal(commandObj.TriggerID)
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						utils.ShowViewProjectModal(commandObj.TriggerID)
+					}
 				} else if commandObj.Command == "/addproject" {
-					utils.ShowAddProjectModal(commandObj.TriggerID)
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						utils.ShowAddProjectModal(commandObj.TriggerID)
+					}
+				} else if commandObj.Command == "/deleteproject" {
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						isreply = true
+						projectName := strings.Trim(fmt.Sprintf("%v", commandBody), " []")
+						reply = db.DeleteProject(projectName)
+					}
 				}else {
 					reply = "Invalid command: " + commandObj.Command
 				}

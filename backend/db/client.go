@@ -415,6 +415,11 @@ func UpsertProject(project models.Project) {
 		"projectCategory":         string(project.Category),
 		"projectShortDescription": string(project.ShortDesc),
 		"projectLongDescription":  string(project.LongDesc),
+		"projectImageLink":        string(project.ImageLink),
+		"projectAppStoreLink":     string(project.AppStoreLink),
+		"projectGithubLink":       string(project.GithubLink),
+		"projectPlayStoreLink":    string(project.PlayStoreLink),
+
 	}).Result()
 	if err != nil {
 		logging.LogException(err)
@@ -422,22 +427,22 @@ func UpsertProject(project models.Project) {
 	}
 }
 
-func GetProject(client *redis.Client, projectName string) models.Project {
-	result, err := client.HGetAll(client.Context(), projectName).Result()
-	if err != nil {
-		logging.LogException(err)
-		panic(err)
-	}
+// func GetProject(client *redis.Client, projectName string) models.Project {
+// 	result, err := client.HGetAll(client.Context(), projectName).Result()
+// 	if err != nil {
+// 		logging.LogException(err)
+// 		panic(err)
+// 	}
 
-	project := models.Project{
-		Name:      projectName,
-		Category:  models.ProjectCategory(result["projectCategory"]),
-		ShortDesc: result["projectShortDescription"],
-		LongDesc:  result["projectLongDescription"],
-	}
+// 	project := models.Project{
+// 		Name:      projectName,
+// 		Category:  models.ProjectCategory(result["projectCategory"]),
+// 		ShortDesc: result["projectShortDescription"],
+// 		LongDesc:  result["projectLongDescription"],
+// 	}
 
-	return project
-}
+// 	return project
+// }
 
 func GetAllProjects() ([]models.Project , error) {
 	keys, err := redisClient.Keys(redisClient.Context(), "project:*").Result()
@@ -457,6 +462,10 @@ func GetAllProjects() ([]models.Project , error) {
 			Category:  models.ProjectCategory(result["projectCategory"]),
 			ShortDesc: result["projectShortDescription"],
 			LongDesc:  result["projectLongDescription"],
+			ImageLink: result["projectImageLink"],
+			AppStoreLink: result["projectAppStoreLink"],
+			GithubLink: result["projectGithubLink"],
+			PlayStoreLink: result["projectPlayStoreLink"],
 		}
 		projects = append(projects, project)
 	}
@@ -472,12 +481,12 @@ func isValidProjectCategory(category models.ProjectCategory) bool {
 	}
 }
 
-func DeleteProject(projectName string) error {
+func DeleteProject(projectName string) string {
 	
 	if !projectExists(projectName) {
 		err := fmt.Errorf("project %s does not exist", projectName)
 		logging.LogException(err)
-		return err
+		return err.Error()
 	}
 
 	
@@ -485,10 +494,10 @@ func DeleteProject(projectName string) error {
 	_, err := redisClient.Del(redisClient.Context(), key).Result()
 	if err != nil {
 		logging.LogException(err)
-		return err
+		return err.Error()
 	}
 
-	return nil
+	return fmt.Sprintf("project %v deleted succesfully" , projectName)
 }
 
 func projectExists( projectName string) bool {
