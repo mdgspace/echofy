@@ -148,9 +148,13 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/unban" {
 					utils.UnbanUser(commandBody[0], channelIDs["admin"])
 				} else if commandObj.Command == "/projectlist" {
-					utils.ShowViewProjectModal(commandObj.TriggerID)
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						utils.ShowViewProjectModal(commandObj.TriggerID)
+					}
 				} else if commandObj.Command == "/addproject" {
-					utils.ShowAddProjectModal(commandObj.TriggerID)
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						utils.ShowAddProjectModal(commandObj.TriggerID)
+					} 
 				}else {
 					reply = "Invalid command: " + commandObj.Command
 				}
