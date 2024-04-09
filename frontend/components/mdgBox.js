@@ -1,3 +1,4 @@
+"use client"
 import Image from 'next/image';
 import appetizer from '../assets/appetizer.svg'
 import security_app from '../assets/security_app.svg'
@@ -6,8 +7,45 @@ import election_portal from '../assets/election_portal.svg'
 import ecert from '../assets/ecert.svg'
 import { GoArrowLeft } from "react-icons/go";
 import {projects} from './projectData'
+import { use, useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export default function Box() {
+
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    async function fetchProjects(){
+
+      const res = await axios("http://localhost:1323/projects");
+      console.log(res.data);
+      const data = await res.data;
+      setProjects(data);
+      console.log(data);
+    }
+    
+
+    fetchProjects();
+
+  },[]);
+
+  const router = useRouter();
+  const [topic, setTopic] = useState(" ");
+   const handleDivClick = (e) => {
+    const content = e.target.textContent;
+    setTopic(content);
+    router.push({
+      pathname:'/chat_bot',
+      query:{topic:content}
+    })
+   }
+
+
+  const projectList = projects.filter(project => project.Category === 'Projects');
+  const eventList = projects.filter(project => project.Category === 'Events');
+
     return (
         <>
          <div className="h-screen overflow-y-scroll bg-gray ">
@@ -19,10 +57,10 @@ export default function Box() {
       </div>
     </div>
   </div>
-  <div className="w-36  text-xl font-semibold font-sans leading-7">Projects ({projects.projects.length})</div>
+  <div className="w-36  text-xl font-semibold font-sans leading-7">Projects ({projectList.length})</div>
 </div>
 
-{projects.projects.map((project, index) => (
+{projectList.map((project, index) => (
   <div key={index}>
   <div className="w-96 h-32 p-4 bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex ">
     <div className="w-96 h-32 p-4  bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex bg-gray-100">
@@ -40,15 +78,15 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex "  >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0  text-base font-medium font-Lato leading-normal tracking-tight">{project.Name}</div>
+      <div className="grow shrink basis-0  text-base font-medium font-Lato leading-normal tracking-tight" onClick = {handleDivClick}>{project.Name}</div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
-    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.Info }</div>
+    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.ShortDesc }</div>
   </div>
 </div>
   </div>
-  {index != projects.projects.length - 1 && <div className="h-4" />}
+  {index != projectList.length - 1 && <div className="h-4" />}
 </div>
 
 ))}
@@ -60,10 +98,10 @@ export default function Box() {
       <div className="w-6 h-6 relative" />
     </div>
   </div>
-  <div className="text-zinc-700 text-xl font-semibold font-Roboto leading-7">Events at MDG ({projects.projects.length})</div>
+  <div className="text-zinc-700 text-xl font-semibold font-Roboto leading-7">Events at MDG ({eventList.length})</div>
 </div>
 
-{projects.projects.map((project, index) => (
+{eventList.map((project, index) => (
   <div key={index}>
   <div className="w-96 h-32 p-4 bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex" >
     <div className="w-96 h-32 p-4  bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex ">
@@ -81,15 +119,15 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex" key = {index} >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-Lato leading-normal tracking-tight">{project.Name}</div>
+      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-Lato leading-normal tracking-tight" onClick={handleDivClick}></div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
-    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.Info }</div>
+    <div className="self-stretch text-zinc-600 text-xs font-medium font-Lato leading-none tracking-tight">{project.ShortDesc }</div>
   </div>
 </div>
   </div>
-  {index != projects.projects.length - 1 && <div className="h-4" />}
+  {index != eventList.length - 1 && <div className="h-4" />}
 </div>
 
 ))}

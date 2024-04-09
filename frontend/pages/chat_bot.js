@@ -14,7 +14,7 @@ import {
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
-import { useRouter } from "next/navigation";
+
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 import { AiFillAccountBook } from "react-icons/ai";
@@ -26,16 +26,24 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail";
+import { json } from "react-router-dom";
+import ChatbotContainer from "../components/chatbotContainer";
+import { useRouter } from "next/router";
  
 
 export default function Home() {
-  const [,,messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isMailOpen, setIsMailOpen] = useState(false);
-  
+
   const router = useRouter();
+  const {topic} = router.query;
+ const  newTopic = JSON.stringify(topic);
+ console.log(newTopic);
+  console.log({topic});
+
 
   function openMail() {
     setIsMailOpen(true);
@@ -46,12 +54,17 @@ function closeMail() {
     console.log(isMailOpen)
   }
 
-  function updateMessages(newMessage, username) {
+  function updateMessages(newMessage) {
+    console.log("-------------------------------")
     setMessages([
       ...messages,
-      { text: newMessage, isSent: true, username: username },
+        JSON.stringify({text:newMessage , isSent:true})
+        
     ]);
+    console.log( JSON.stringify({text:newMessage , isSent:true}))
+    console.log("----------------------------------")
   }
+
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -97,8 +110,8 @@ function closeMail() {
     console.log(userId)
     console.log(username);
     const channel = 'chatbot';
-    
-    const url = buildWebSocketURL(userId, username , channel);
+    const socketTopic = newTopic
+    const url = buildWebSocketURL(userId, username , channel, socketTopic);
     console.log(url);
     const handleOpen = () => {
       //todo-> toast connected to server
@@ -116,60 +129,90 @@ function closeMail() {
       handleError
     );
     socketRef.current = socket;
+    
 
      
 
     socket.addEventListener("message", (event) => {
       try {
+        const username = getSessionUser();
+        console.log(username);
+
         let data = "";
         if (
           event.data != "Messsage send successful" &&
           event.data != "Welcome to MDG Chat!"
         ) {
-          data = JSON.parse(event.data);
+          data = event.data
         }
+        console.log()
+
         const allMessages = [];
-        const addMessages = (messageData, isSent) => {
-          for (const timestamp in messageData) {
-            const messageObj = JSON.parse(messageData[timestamp]);
-            allMessages.push({
-              text: messageObj.text,
-              isSent: isSent,
-              username: messageObj.sender,
-              timestamp: parseFloat(timestamp),
-              avatar: messageObj.url,
-            });
-          }
-        };
-        let hasBulkMessages = false;
-        if (data["Sent by others"]) {
-          addMessages(data["Sent by others"], false);
-          hasBulkMessages = true;
+        // if(username){
+        //     const jsonResponse =  JSON.stringify({text:data , isSent:true})
+        //     allMessages.push({text:jsonResponse.text , isSent:true});
+        // }else{
+        //     const jsonResponse =  JSON.stringify({text:data , isSent:false})
+        //     allMessages.push({text:jsonResponse.text , isSent:false});
+        // }
+        if(username){
+            var jsonResponse =  JSON.stringify({text:data , isSent:true})
+            allMessages.push({text:jsonResponse.text , isSent:true});
+        }else{
+            var jsonResponse = JSON.stringify({text:data , isSent:false})
+        allMessages.push({text:jsonResponse.text , isSent:false});
         }
-        if (data["Sent by you"]) {
-          addMessages(data["Sent by you"], true);
-          hasBulkMessages = true;
-        }
-        if (hasBulkMessages) {
-          allMessages.sort((a, b) => a.timestamp - b.timestamp);
-          setMessages(allMessages);
-        } else {
-          if (data.text && data.sender && data.timestamp) {
-            let isSent = data.sender === username;
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              {
-                text: data.text,
-                isSent: isSent,
-                username: data.sender,
-                timestamp: parseFloat(data.timestamp),
-                avatar: data.url,
-              },
-            ]);
-            if(soundEnabled) playSound(isSent);
-            if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
-          }
-        }
+
+
+        
+
+        console.log(jsonResponse);
+
+        setMessages((prevMessages) => [...prevMessages,jsonResponse]);
+        
+
+        // const addMessages = (messageData, isSent) => {
+        //   for (const timestamp in messageData) {
+        //     const messageObj = JSON.parse(messageData[timestamp]);
+        //     allMessages.push({
+        //       text: messageObj.text,
+        //       isSent: isSent,
+        //       username: messageObj.sender,
+        //       timestamp: parseFloat(timestamp),
+        //       avatar: messageObj.url,
+        //     });
+        //   }
+        // };
+        // let hasBulkMessages = false;
+        // if (data["Sent by others"]) {
+        //   addMessages(data["Sent by others"], false);
+        //   hasBulkMessages = true;
+        // }
+        // if (data["Sent by you"]) {
+        //   addMessages(data["Sent by you"], true);
+        //   hasBulkMessages = true;
+        // }
+        // if (hasBulkMessages) {
+        //   allMessages.sort((a, b) => a.timestamp - b.timestamp);
+        //   setMessages(allMessages);
+        // } else {
+        //   if (data.text && data.sender && data.timestamp) {
+        //     let isSent = data.sender === username;
+        //     setMessages((prevMessages) => [
+        //       ...prevMessages,
+        //       {
+        //         // text: data.text,
+        //         // isSent: isSent,
+        //         // username: data.sender,
+        //         // timestamp: parseFloat(data.timestamp),
+        //         // avatar: data.url,
+        //         messageObj
+        //       },
+        //     ]);
+        //     if(soundEnabled) playSound(isSent);
+        //     if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
+        //   }
+        // }
       } catch (error) {
         console.log(error)
         //todo-> enable sentry logger here
@@ -298,6 +341,7 @@ function closeMail() {
 
 
 
+
       
      <Mail isOpen={isMailOpen} onClose={closeMail} />
 
@@ -306,12 +350,23 @@ function closeMail() {
     </div>
     
   </div>
-            <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
-              <ChatContainer
-                messages={messages}
-                messagesEndRef={messagesEndRef} 
-              />
+                            <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
+                                  <ChatbotContainer
+                                    messages={messages}
+                                    messagesEndRef={messagesEndRef} 
+                                />  
+                                <div>
+
+                <div>
+                    
+                    {/* {messages.map((message, index) => {
+                            const parsedMessage = JSON.parse(message);
+                            
+                            return <div key={index}>{parsedMessage.text}</div>;
+                    })} */}
+                </div>
             </div>
+                            </div>
             <div className="h-[0vh]">
               <ChatInputBox
                 updateMessages={updateMessages}
