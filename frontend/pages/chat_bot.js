@@ -26,11 +26,10 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail";
-import {useHistory} from "react-router-dom";
  
 
 export default function Home() {
-  const [messages, setMessages] = useState([]);
+  const [,,messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -97,8 +96,8 @@ function closeMail() {
     const userId = getSessionUserId();
     console.log(userId)
     console.log(username);
-
-    const channel = "public";
+    const channel = 'chatbot';
+    
     const url = buildWebSocketURL(userId, username , channel);
     console.log(url);
     const handleOpen = () => {
@@ -128,7 +127,6 @@ function closeMail() {
           event.data != "Welcome to MDG Chat!"
         ) {
           data = JSON.parse(event.data);
-          console.log(data);
         }
         const allMessages = [];
         const addMessages = (messageData, isSent) => {
@@ -218,10 +216,11 @@ function closeMail() {
     // write logic to display faq popup
   }
 
-  const handleTalkToBotClick = () => {
-   router.push("/chat_bot")
-   localStorage.setItem('chatType','chatbot') // write logic to display bot popup
+  const handleChatWithMDGClick = () => {
+    router.push("/chat");
+    localStorage.setItem("chatType", "public");
   }
+
   return (
     <>
     
@@ -248,7 +247,7 @@ function closeMail() {
     </div>
     <div className="grow shrink basis-0 h-12 rounded-full border border-blue-500 flex-col justify-center items-center gap-2 inline-flex">
       <div className="self-stretch h-10 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-blue-500 text-sm font-medium font-Roboto leading-tight tracking-tight">Talk to Bot</div>
+        <div className="text-center text-blue-500 text-sm font-medium font-Roboto leading-tight tracking-tight">JOIN MDG’s PUBLIC CHAT</div>
       </div>
     </div>
   </div>
@@ -276,9 +275,9 @@ function closeMail() {
       
     </div>
     <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
-    <p  className="text-gray-600 font-lato text-base font-normal leading-7 " onClick={handleTalkToBotClick}>
-    Talk to Bot
+    <p  className="text-gray-600 font-lato text-base font-normal leading-7">
 
+    Chat with MDG members
       </p>
     </div>
 

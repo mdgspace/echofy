@@ -353,23 +353,23 @@ func AddUserInfoToDb(username string, userId string, userAgent string, ip string
 }
 
 func GetUserInfo(userId string) string {
-	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()
-	var _info models.UserInfo
-	err := json.Unmarshal([]byte(info), &_info)
-	if err != nil {
+	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()	
+    var _info models.UserInfo
+    err := json.Unmarshal([]byte(info), &_info)
+	if(err != nil){
 		logging.LogException(err)
 		panic(err)
 	}
 	formattedInfo := fmt.Sprintf(
-		"UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
-		_info.UserID,
-		_info.Username,
-		_info.IP,
-		_info.Location,
-		_info.OS,
-		_info.Agent,
-		_info.Channel,
-	)
+        "UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
+        _info.UserID,
+        _info.Username,
+        _info.IP,
+        _info.Location,
+        _info.OS,
+        _info.Agent,
+        _info.Channel,
+    )
 	return formattedInfo
 }
 

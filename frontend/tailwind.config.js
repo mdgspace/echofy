@@ -23,16 +23,24 @@ module.exports = {
         'span-21': 'span 21 / span 21',
         'span-24': 'span 24 / span 24',
         'span-23': 'span 23 / span 23',
+        'span-18': 'span 18 / span 18',
+        'span-17': 'span 17 / span 17'
       },
       gridRow: {
         'span-10': 'span 10 / span 10',
       },
       colors: {
-        'bg-orange': '#F95131AB',
-        'txt-grey' : '#3F3F3F',
-        'txt-mdg-username' : '#AAAAAA'
+        'bg-gray': 'B3B3B3',
+        'txt-gray' : '#3F3F3F',
+        'txt-mdg-username' : '#AAAAAA',
+        'customBlue' : '#3670F5',
       },
+      fontFamily:{
+        'Lato': ['Lato', 'sans-serif'],
+        'Roboto': ['Roboto', 'sans-serif'],
+      }
     },
     plugins: [],
+
   }
 }
