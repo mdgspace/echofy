@@ -162,7 +162,13 @@ func MsgListener(ctx context.Context) {
 				} else if commandObj.Command == "/addproject" {
 					if(commandObj.ChannelID == channelIDs["admin"]){
 						utils.ShowAddProjectModal(commandObj.TriggerID)
-					} 
+					}
+				} else if commandObj.Command == "/deleteproject" {
+					if(commandObj.ChannelID == channelIDs["admin"]){
+						isreply = true
+						projectName := strings.Trim(fmt.Sprintf("%v", commandBody), " []")
+						reply = db.DeleteProject(projectName)
+					}
 				}else {
 					reply = "Invalid command: " + commandObj.Command
 				}

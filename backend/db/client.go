@@ -481,12 +481,12 @@ func isValidProjectCategory(category models.ProjectCategory) bool {
 	}
 }
 
-func DeleteProject(projectName string) error {
+func DeleteProject(projectName string) string {
 	
 	if !projectExists(projectName) {
 		err := fmt.Errorf("project %s does not exist", projectName)
 		logging.LogException(err)
-		return err
+		return err.Error()
 	}
 
 	
@@ -494,10 +494,10 @@ func DeleteProject(projectName string) error {
 	_, err := redisClient.Del(redisClient.Context(), key).Result()
 	if err != nil {
 		logging.LogException(err)
-		return err
+		return err.Error()
 	}
 
-	return nil
+	return fmt.Sprintf("project %v deleted succesfully" , projectName)
 }
 
 func projectExists( projectName string) bool {

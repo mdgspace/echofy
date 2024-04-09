@@ -288,7 +288,7 @@ func ShowAddProjectModal(triggerID string) {
 						ActionID:    "project_app_store_link",
 						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project app store link"},
 					},
-					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project app store link"},
+					Label:    &slack.TextBlockObject{Type: "plain_text", Text: "Project app store link"},
 					Optional: true,
 				},
 				slack.InputBlock{
@@ -299,7 +299,7 @@ func ShowAddProjectModal(triggerID string) {
 						ActionID:    "project_github_link",
 						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project github link"},
 					},
-					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project github link"},
+					Label:    &slack.TextBlockObject{Type: "plain_text", Text: "Project github link"},
 					Optional: true,
 				},
 				slack.InputBlock{
@@ -310,7 +310,7 @@ func ShowAddProjectModal(triggerID string) {
 						ActionID:    "project_play_store_link",
 						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project play store link"},
 					},
-					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project play store link"},
+					Label:    &slack.TextBlockObject{Type: "plain_text", Text: "Project play store link"},
 					Optional: true,
 				},
 			},
