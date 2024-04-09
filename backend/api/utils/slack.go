@@ -192,8 +192,22 @@ func generateProjectBlocks(projectMap map[models.ProjectCategory][]models.Projec
                 Type: "section",
                 Text: &slack.TextBlockObject{
                     Type: "mrkdwn",
-                    Text: fmt.Sprintf("*%s*\nShort Description: %s\nLong Description: %s",
-					project.Name, project.ShortDesc, project.LongDesc),
+                    Text:fmt.Sprintf(
+						"*Name*: %s\n"+
+						"*Short Description*: %s\n"+
+						"*Long Description*: %s\n"+
+						"*Image Link*: %s\n"+
+						"*App Store Link*: %s\n"+
+						"*GitHub Link*: %s\n"+
+						"*Play Store Link*: %s",
+						project.Name, 
+						project.ShortDesc, 
+						project.LongDesc, 
+						project.ImageLink, 
+						project.AppStoreLink, 
+						project.GithubLink, 
+						project.PlayStoreLink,
+					),							
                 },
             })
         }
@@ -255,6 +269,49 @@ func ShowAddProjectModal(triggerID string) {
 						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project long description"},
 					},
 					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project Long Description"},
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_image_link",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_image_link",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project image link"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project image link"},
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_app_store_link",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_app_store_link",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project app store link"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project app store link"},
+					Optional: true,
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_github_link",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_github_link",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project github link"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project github link"},
+					Optional: true,
+				},
+				slack.InputBlock{
+					Type:    "input",
+					BlockID: "project_play_store_link",
+					Element: &slack.PlainTextInputBlockElement{
+						Type:        "plain_text_input",
+						ActionID:    "project_play_store_link",
+						Placeholder: &slack.TextBlockObject{Type: "plain_text", Text: "Enter project play store link"},
+					},
+					Label: &slack.TextBlockObject{Type: "plain_text", Text: "Project play store link"},
+					Optional: true,
 				},
 			},
 		},
