@@ -89,7 +89,7 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			if(err.Error() == "websocket: close 1000 (normal)"){
+			if err.Error() == "websocket: close 1000 (normal)" {
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", rootTS)
 				delete(privateChatWS, userID)
 				return nil
@@ -107,6 +107,7 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 			Sender:    name,
 			Timestamp: rootTS,
 		}
+		sendSlackToPrivateUser(newMsg, userID)
 		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), rootTS, userID)
 		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send success")) //This is just so that we can check at frontend regularly that connection is alive
 		if err != nil {
