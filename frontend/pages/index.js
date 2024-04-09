@@ -113,22 +113,26 @@ const goToChatbot = () =>{
 
 </div >
 <div  className="flex flex-col justify-center items-center ">
-<button className="flex h-20 w-20 mx-20 px-20 my-5 w-1/2 justify-center items-center gap-2  rounded-full bg-blue-500" onClick={goToChatbot} >
-<p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
-  Talk to our ChatBot
-</p>
+<button
+  className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+  onClick={goToChatbot}
+>
+  <p className="font-roboto font-medium text-lg tracking-tighter">
+    Talk to our ChatBot
+  </p>
 </button>
+
 <Modal isOpen={isModalOpen} onClose={closeModal}>
 
         <button onClick={closeModal}>Close Modal</button>
       </Modal>
 
-<button className="flex h-20 w-20 mx-20 px-20 my-5 w-1/2 justify-center items-center gap-2  rounded-full bg-blue-500" onClick={goToPrivateChat}>
+<button className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={goToPrivateChat}>
 <p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
       Private Chat on Slack
 </p>
 </button>
-<button className="flex h-20 w-20 mx-20 px-20 my-5 w-1/2 justify-center items-center gap-2  rounded-full bg-blue-500" onClick={goToPublicChat}>
+<button className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={goToPublicChat}>
 <p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
 Public MDG Chat Forum
 </p>
