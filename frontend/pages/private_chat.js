@@ -122,14 +122,15 @@ function closeMail() {
     socket.addEventListener("message", (event) => {
       try {
         let data = "";
-        console.log(event.data);
+
         if (
           event.data != "Messsage send successful" &&
           event.data != "Welcome to MDG Chat!"
         //   event.data != ""
         ) {
-          data = JSON.parse(event.data);
+          data = event.data
           console.log(data);
+
 
         }
         const allMessages = [];

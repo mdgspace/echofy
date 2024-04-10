@@ -157,7 +157,7 @@ function closeMail() {
           setMessages(allMessages);
         } else {
           if (data.text && data.sender && data.timestamp) {
-            let isSent = data.sender === username;
+            let  isSent = data.sender === username;
             setMessages((prevMessages) => [
               ...prevMessages,
               {

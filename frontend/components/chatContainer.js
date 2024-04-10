@@ -44,6 +44,8 @@ export default function ChatContainer({ messages, messagesEndRef }) {
       <div ref={messagesEndRef} /> 
     </div>
   );
+
+  
   
 
   
