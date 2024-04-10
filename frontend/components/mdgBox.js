@@ -11,23 +11,20 @@ import { use, useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-
+import { fetchProjects } from '../services/api/projectsApi';
 export default function Box() {
 
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    async function fetchProjects(){
+    async function fetchProjectsData(){
 
-      const res = await axios("http://localhost:1323/projects");
-      console.log(res.data);
-      const data = await res.data;
+      const data = await fetchProjects();
       setProjects(data);
-      console.log(data);
     }
     
 
-    fetchProjects();
+    fetchProjectsData();
 
   },[]);
 

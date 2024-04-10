@@ -213,7 +213,7 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin) {
       event.data !== "Welcome to MDG Chat!"
     ) {
       const data = JSON.parse(event.data);
-
+      console.log(data)
       handleUserID(data);
 
       if (handleBannedUser(data, navigateToLogin)) {
