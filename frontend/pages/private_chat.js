@@ -26,6 +26,7 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail";
+import { Avatar } from "@mui/material";
  
 
 export default function Home() {
@@ -55,7 +56,7 @@ function closeMail() {
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
+const username = getSessionUser();
   useEffect(() => {
     // Access localStorage only when in the browser environment
     const savedSoundEnabled = localStorage.getItem('soundEnabled');
@@ -89,7 +90,7 @@ function closeMail() {
 
 
   useEffect(() => {
-    const username = getSessionUser();
+
     if (!username || username === "null" || username === "undefined") {
       router.push("/login");
     }
@@ -128,54 +129,102 @@ function closeMail() {
           event.data != "Welcome to MDG Chat!"
         //   event.data != ""
         ) {
-          data = event.data
+          const res = event.data
+          console.log(res)
+          data = JSON.parse(res);
+
           console.log(data);
 
 
-        }
-        const allMessages = [];
 
-        const addMessages = (messageData, isSent) => {
-          for (const timestamp in messageData) {
-            const messageObj = JSON.parse(messageData[timestamp]);
-            allMessages.push({
-              text: messageObj.text,
-              isSent: isSent,
-              username: messageObj.sender,
-              timestamp: parseFloat(timestamp),
-              avatar: messageObj.url,
-            });
-          }
-        };
-        let hasBulkMessages = false;
-        if (data["Sent by others"]) {
-          addMessages(data["Sent by others"], false);
-          hasBulkMessages = true;
         }
-        if (data["Sent by you"]) {
-          addMessages(data["Sent by you"], true);
-          hasBulkMessages = true;
-        }
-        if (hasBulkMessages) {
-          allMessages.sort((a, b) => a.timestamp - b.timestamp);
-          setMessages(allMessages);
-        } else {
-          if (data.text && data.sender && data.timestamp) {
-            let isSent = data.sender === username;
-            setMessages((prevMessages) => [
-              ...prevMessages,
-              {
+        
+        const allMessages = [];
+        if (data.text && data.sender && data.timestamp){
+            if(data.sender === username){
+              allMessages.push({
                 text: data.text,
-                isSent: isSent,
+                isSent: true,
                 username: data.sender,
                 timestamp: parseFloat(data.timestamp),
-                avatar: data.url,
-              },
-            ]);
-            if(soundEnabled) playSound(isSent);
-            if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
-          }
+                avatar: data.url || Avatar,
+              });
+
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                  text: data.text,
+                  isSent: true,
+                  username: data.sender,
+                  timestamp: parseFloat(data.timestamp),
+                  avatar: data.url || Avatar,
+                },
+              ]);
+            } else{
+              allMessages.push({
+                text: data.text,
+                isSent: false,
+                username: data.sender,
+                timestamp: parseFloat(data.timestamp),
+                avatar: data.url || Avatar,
+              });
+
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                  text: data.text,
+                  isSent: false,
+                  username: data.sender,
+                  timestamp: parseFloat(data.timestamp),
+                  avatar: data.url || Avatar,
+                },
+              ]);
+            }
         }
+        console.log(messages)
+
+
+        // const addMessages = (messageData, isSent) => {
+        //   for (const timestamp in messageData) {
+        //     const messageObj = JSON.parse(messageData[timestamp]);
+        //     allMessages.push({
+        //       text: messageObj.text,
+        //       isSent: isSent,
+        //       username: messageObj.sender,
+        //       timestamp: parseFloat(timestamp),
+        //       avatar: messageObj.url,
+        //     });
+        //   }
+        // };
+        // let hasBulkMessages = false;
+        // if (data["Sent by others"]) {
+        //   addMessages(data["Sent by others"], false);
+        //   hasBulkMessages = true;
+        // }
+        // if (data["Sent by you"]) {
+        //   addMessages(data["Sent by you"], true);
+        //   hasBulkMessages = true;
+        // }
+        // if (hasBulkMessages) {
+        //   allMessages.sort((a, b) => a.timestamp - b.timestamp);
+        //   setMessages(allMessages);
+        // } else {
+        //   if (data.text && data.sender && data.timestamp) {
+        //     let isSent = data.sender === username;
+        //     setMessages((prevMessages) => [
+        //       ...prevMessages,
+        //       {
+        //         text: data.text,
+        //         isSent: isSent,
+        //         username: data.sender,
+        //         timestamp: parseFloat(data.timestamp),
+        //         avatar: data.url,
+        //       },
+        //     ]);
+        //     if(soundEnabled) playSound(isSent);
+        //     if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
+        //   }
+        // }
       } catch (error) {
         console.log(error)
         //todo-> enable sentry logger here

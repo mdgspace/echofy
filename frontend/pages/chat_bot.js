@@ -40,7 +40,8 @@ export default function Home() {
 
   const router = useRouter();
   const {topic} = router.query;
- const  newTopic = JSON.stringify(topic);
+  const  newTopic = {topic}
+  const socketTopic = newTopic.topic;
  console.log(newTopic);
   console.log({topic});
 
@@ -110,7 +111,7 @@ function closeMail() {
     console.log(userId)
     console.log(username);
     const channel = 'chatbot';
-    const socketTopic = newTopic
+
     const url = buildWebSocketURL(userId, username , channel, socketTopic);
     console.log(url);
     const handleOpen = () => {

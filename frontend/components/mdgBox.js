@@ -42,6 +42,7 @@ export default function Box() {
 
   const projectList = projects.filter(project => project.Category === 'Projects');
   const eventList = projects.filter(project => project.Category === 'Events');
+  console.log(eventList)
 
     return (
         <>
@@ -116,7 +117,7 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex" key = {index} >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-Lato leading-normal tracking-tight" onClick={handleDivClick}></div>
+      <div className="grow shrink basis-0 text-zinc-600 text-base font-medium font-Lato leading-normal tracking-tight" onClick={handleDivClick}>{project.Name}</div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
