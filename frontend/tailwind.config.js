@@ -30,7 +30,8 @@ module.exports = {
         'span-10': 'span 10 / span 10',
       },
       colors: {
-        'bg-gray': 'B3B3B3',
+        'bg-gray': '#B3B3B3',
+        'light-grey' : "#F8F8F8" ,
         'txt-gray' : '#3F3F3F',
         'txt-mdg-username' : '#AAAAAA',
         'customBlue' : '#3670F5',

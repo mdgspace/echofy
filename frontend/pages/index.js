@@ -27,14 +27,15 @@ import {logo} from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail"
 import Modal from "../components/modal";
-import login from "./login";
-import {useHistory} from "react-router-dom";
+import LoginModal from "../components/loginModal";
 export default function Home() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [redirect, setRedirect] = useState("");
 
-  const openModal = () => {
+  const openModal = (redirect) => {
     setIsModalOpen(true); 
+    setRedirect(redirect)
   };
 
   const closeModal = () => {
@@ -42,60 +43,31 @@ export default function Home() {
 }
 
   const goToPublicChat = () => {
-    router.push('/login'); // Use the router to navigate to the "/chat" route
-    openModal();
-    localStorage.setItem('chatType', 'public'); // Store the chat type in local storage
+    openModal("public");
      // Open the modal after navigating
   };
 
 const goToPrivateChat = () => {
-  router.push('/login'); // Use the router to navigate to the "/chat" route
-    openModal();
-    localStorage.setItem('chatType', 'private'); 
+   openModal("private");
 
 };
 
 const goToChatbot = () =>{
-  router.push('/login');
-  openModal();
-  localStorage.setItem('chatType', 'chatbot');
+  openModal("chatbot");
 }
 
 
   
   return (
     <>
-    
-<div className = "sticky top-0 z-10">
-      <Navbar />
-</div>
-    
     <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
-      
-
       <div className="grid grid-cols-24 w-full h-screen">
-
-
         <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
           <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
             <Box />
           </div>
-          
-          
-          
         </div>
-
-
-
-        
-        {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
-          <RightPane
-            soundEnabled={soundEnabled}
-            setSoundEnabled={setSoundEnabled}
-            notificationsEnabled={notificationsEnabled}
-            setNotificationsEnabled={setNotificationsEnabled}
-          />
-        </div>*/}
+        {isModalOpen && <LoginModal onClose={closeModal} redirect = {redirect}/>}
 
 <div className="col-span-17 mx-[3vw] bg-gray-100 max-md:col-span-24 mt-5 ">
 <div className="flex flex-col h-screen">
@@ -121,11 +93,6 @@ const goToChatbot = () =>{
     Talk to our ChatBot
   </p>
 </button>
-
-<Modal isOpen={isModalOpen} onClose={closeModal}>
-
-        <button onClick={closeModal}>Close Modal</button>
-      </Modal>
 
 <button className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={goToPrivateChat}>
 <p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
