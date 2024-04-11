@@ -26,7 +26,6 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail";
-import {useHistory} from "react-router-dom";
  
 
 export default function Home() {
@@ -105,9 +104,9 @@ function closeMail() {
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/login"));
+      processWebSocketMessage(event, setMessages, () => router.push("/"));
     const handleClose = (event) =>
-      handleWebSocketClose(event, () => router.push("/login"));
+      handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
     const socket = initializeWebSocketConnection(
       url,

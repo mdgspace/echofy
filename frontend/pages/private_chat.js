@@ -105,9 +105,9 @@ const username = getSessionUser();
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/login"));
+      processWebSocketMessage(event, setMessages, () => router.push("/"));
     const handleClose = (event) =>
-      handleWebSocketClose(event, () => router.push("/login"));
+      handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
     const socket = initializeWebSocketConnection(
       url,
