@@ -24,7 +24,6 @@ import { BsStarFill } from "react-icons/bs";
 import slack from ".././assets/slack.svg";
 import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
-import Navbar from "../components/navbar";
 import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
 import { useRouter } from "next/router";
@@ -40,7 +39,7 @@ export default function Home() {
   const router = useRouter();
   const {topic} = router.query;
   const  newTopic = {topic}
-  const socketTopic = newTopic.topic;
+  const socketTopic = newTopic.topic??"Appetizer";
  console.log(newTopic);
   console.log({topic});
 
@@ -66,7 +65,7 @@ function closeMail() {
   }
 
 
-  const socketRef = useRef(null);
+  const socketRef = useRef(null);topic
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -266,15 +265,12 @@ function closeMail() {
 
   return (
     <>
-    
-<div className = "sticky top-0 z-10">
-      <Navbar />
-</div>
+
     
     <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
       
 
-      <div className="grid grid-cols-24 w-full h-screen">
+      <div className="grid grid-cols-24 w-full h-screen mt-2">
 
 
         <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
@@ -283,14 +279,14 @@ function closeMail() {
           </div>
           
           <div className="self-stretch h-12 justify-start items-start gap-2 inline-flex mx-4 my-5 bg-white">
-    <div className="grow shrink basis-0 h-12 bg-blue-500 rounded-full flex-col justify-center items-center gap-2 inline-flex   ">
+    <div className="grow shrink basis-0 h-12 bg-customBlue rounded-full flex-col justify-center items-center gap-2 inline-flex   ">
       <div className="self-stretch h-96 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
         <div className="text-center text-white text-sm font-medium font-Roboto leading-tight tracking-tight ">START NEW CHAT</div>
       </div>
     </div>
-    <div className="grow shrink basis-0 h-12 rounded-full border border-blue-500 flex-col justify-center items-center gap-2 inline-flex">
+    <div className="grow shrink basis-0 h-12 rounded-full border border-customBlue flex-col justify-center items-center gap-2 inline-flex">
       <div className="self-stretch h-10 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-blue-500 text-sm font-medium font-Roboto leading-tight tracking-tight">JOIN MDG’s PUBLIC CHAT</div>
+        <div className="text-center text-customBlue text-sm font-medium font-Roboto leading-tight tracking-tight">JOIN MDG’s PUBLIC CHAT</div>
       </div>
     </div>
   </div>
@@ -298,13 +294,13 @@ function closeMail() {
 
 
 
-        <div className="col-span-17 mx-[3vw] bg-gray-100 max-md:col-span-24" mt-10>
+        <div className="col-span-17  bg-gray-100 max-md:col-span-24" mt-10>
           <div className="flex flex-col h-screen">
           <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
             <div className="flex items-center">
               
               <Image src= {logo} alt="logo" width={33.477} height={28.51} />
-              <div class="text-blue-500 font-roboto font-semibold text-lg leading-7 ml-5" >
+              <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
       Jinora Chat Bot</div>
             </div>
     
@@ -343,7 +339,7 @@ function closeMail() {
 
 
       
-     <Mail isOpen={isMailOpen} onClose={closeMail} />
+        {isMailOpen && <Mail  onClose={closeMail} /> } 
 
     </div>
     

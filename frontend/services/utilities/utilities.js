@@ -1,5 +1,9 @@
+"use client"
+
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+
+
 
 export function getSessionUser() {
   const username = sessionStorage.getItem("username");

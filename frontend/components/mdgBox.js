@@ -5,7 +5,6 @@ import security_app from '../assets/security_app.svg'
 import soc from '../assets/soc.svg'
 import election_portal from '../assets/election_portal.svg'
 import ecert from '../assets/ecert.svg'
-import { GoArrowLeft } from "react-icons/go";
 import {projects} from './projectData'
 import { use, useState } from 'react';
 import { useEffect } from 'react';
@@ -46,13 +45,10 @@ export default function Box() {
 
     return (
         <>
-         <div className="h-screen overflow-y-scroll bg-gray ">
+         <div className="overflow-y-scroll h-[98vh] bg-gray">
          <div className="w-96 h-10 rounded-2xl justify-start items-center gap-3 inline-flex mr-2 ">
   <div className="rounded-full justify-center items-center gap-2.5 flex ">
     <div className="p-2 justify-center items-center gap-2.5 flex">
-      <div className="w-6 h-6 relative"  >
-        <GoArrowLeft size={28}/>
-      </div>
     </div>
   </div>
   <div className="w-36  text-xl font-semibold font-sans leading-7">Projects ({projectList.length})</div>
@@ -60,8 +56,8 @@ export default function Box() {
 
 {projectList.map((project, index) => (
   <div key={index}>
-  <div className="w-96 h-32 p-4 bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex ">
-    <div className="w-96 h-32 p-4  bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex bg-gray-100">
+  <div className="w-96 h-32 p-4 rounded-xl justify-start items-center gap-3 inline-flex ">
+    <div className="w-96 h-32 p-4  rounded-xl justify-start items-center gap-3 inline-flex bg-light-grey">
   <div className="w-24 h-24 relative ">
     <div className="w-24 h-24 left-0 top-0 absolute">
       <div className="w-32 h-32 left-[-19.13px] top-[-76.25px] absolute ">
@@ -101,8 +97,8 @@ export default function Box() {
 
 {eventList.map((project, index) => (
   <div key={index}>
-  <div className="w-96 h-32 p-4 bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex" >
-    <div className="w-96 h-32 p-4  bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex ">
+  <div className="w-96 h-32 p-4 bg-light-grey rounded-xl justify-start items-center gap-3 inline-flex" >
+    <div className="w-96 h-32 p-4  bg-light-grey rounded-xl justify-start items-center gap-3 inline-flex ">
   <div className="w-24 h-24 relative ">
     <div className="w-24 h-24 left-0 top-0 absolute ">
       <div className="w-32 h-32 left-[-19.13px] top-[-76.25px] absolute">
