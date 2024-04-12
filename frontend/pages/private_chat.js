@@ -103,7 +103,7 @@ export default function Home() {
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/"));
+      processWebSocketMessage(event, setMessages, () => router.push("/") , false);
     const handleClose = (event) =>
       handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;

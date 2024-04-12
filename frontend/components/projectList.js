@@ -9,8 +9,8 @@ export const ProjectList = ({ projects, category }) => {
                 {category} ({projects.length})
             </div>
             <div class="flex flex-col gap-2 rounded-xl font-Lato h-[48vh] overflow-y-auto">
-                {projects.map((project) => (
-                    <ProjectCard name={project.Name} shortDesc={project.ShortDesc} ImageLink={project.ImageLink} Github={project.GithubLink} PlayStore={project.PlayStoreLink} AppStore={project.AppStoreLink} />
+                {projects.map((project , index) => (
+                    <ProjectCard key = {index} name={project.Name} shortDesc={project.ShortDesc} ImageLink={project.ImageLink} Github={project.GithubLink} PlayStore={project.PlayStoreLink} AppStore={project.AppStoreLink} />
                 ))}
             </div>
         </div>

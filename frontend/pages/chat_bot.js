@@ -6,6 +6,8 @@ import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
+  formatChatbotUserText,
+  getIsSentForChatBot,
   getSessionUser,
   getSessionUserId,
   handleWebSocketClose,
@@ -115,7 +117,7 @@ function closeMail() {
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/"));
+      processWebSocketMessage(event, setMessages, () => router.push("/") , true);
     const handleClose = (event) =>
       handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
@@ -133,36 +135,15 @@ function closeMail() {
 
     socket.addEventListener("message", (event) => {
       try {
-        const username = getSessionUser();
-        console.log(username);
-
-        let data = "";
-        if (
-          event.data != "Messsage send successful" &&
-          event.data != "Welcome to MDG Chat!"
-        ) {
-          data = event.data
-        }
-        console.log()
-
+        const username = getSessionUser()
+        let data = event.data;
+        const isSent = getIsSentForChatBot(event.data)
         const allMessages = [];
-        // if(username){
-        //     const jsonResponse =  JSON.stringify({text:data , isSent:true})
-        //     allMessages.push({text:jsonResponse.text , isSent:true});
-        // }else{
-        //     const jsonResponse =  JSON.stringify({text:data , isSent:false})
-        //     allMessages.push({text:jsonResponse.text , isSent:false});
-        // }
-        if(username){
-            var jsonResponse =  JSON.stringify({text:data , isSent:true})
-            allMessages.push({text:jsonResponse.text , isSent:true});
-        }else{
-            var jsonResponse = JSON.stringify({text:data , isSent:false})
-        allMessages.push({text:jsonResponse.text , isSent:false});
-        }
-
-
+        var jsonResponse = JSON.stringify({ text: isSent? formatChatbotUserText(data) : data, isSent: isSent , username : isSent? username : "Echofy"})
+        allMessages.push({ text: data, isSent: getIsSentForChatBot(event.data) });
         setMessages((prevMessages) => [...prevMessages, jsonResponse]);
+        
+
 
 
         // const addMessages = (messageData, isSent) => {

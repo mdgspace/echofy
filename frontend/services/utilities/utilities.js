@@ -210,11 +210,17 @@ function alertAbnormalClose(reason, navigateToLogin) {
   } catch (error) {}
 }
 
-export function processWebSocketMessage(event, setMessages, navigateToLogin) {
+export function processWebSocketMessage(event, setMessages, navigateToLogin , isChatbot) {
+   if(isChatbot) {
+    if(typeof event.data === Object) {
+      handleUserID(event.data)
+    }
+   }
   try {
     if (
       event.data !== "Messsage send successful" &&
       event.data !== "Welcome to MDG Chat!"
+      && !isChatbot
     ) {
       const data = JSON.parse(event.data);
       console.log(data)
@@ -267,4 +273,22 @@ function getTimestampFromDate(dateString) {
   const timestamp = Math.floor(date.getTime() / 1000);
 
   return timestamp;
+}
+
+
+export function getIsSentForChatBot(message)  {
+  if (message.split(':')[0] === "You")
+  {
+    return true
+  }else {
+    return false
+  }
+}
+
+
+export function formatChatbotUserText(message) { 
+  if (message.split(':')[0] === "You")
+  {
+    return message.split(':')[1]
+  }
 }
