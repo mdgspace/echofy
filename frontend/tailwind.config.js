@@ -37,6 +37,7 @@ module.exports = {
         'gray-secondary': "#49454F",
         'txt-mdg-username' : '#8A8A8A',
         'customBlue' : '#3670F5',
+        'semiblack' : "#414042"
       },
       fontFamily:{
         'Lato': ['"Lato"', 'sans-serif'],
