@@ -27,7 +27,8 @@ import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
 import { useRouter } from "next/router";
- 
+import { ChatNavbar } from "../components/chatNavbar";
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -40,8 +41,6 @@ export default function Home() {
   const {topic} = router.query;
   const  newTopic = {topic}
   const socketTopic = newTopic.topic??"Appetizer";
- console.log(newTopic);
-  console.log({topic});
 
 
   function openMail() {
@@ -163,12 +162,8 @@ function closeMail() {
         }
 
 
-        
+        setMessages((prevMessages) => [...prevMessages, jsonResponse]);
 
-        console.log(jsonResponse);
-
-        setMessages((prevMessages) => [...prevMessages,jsonResponse]);
-        
 
         // const addMessages = (messageData, isSent) => {
         //   for (const timestamp in messageData) {
@@ -265,105 +260,25 @@ function closeMail() {
 
   return (
     <>
-
-    
-    <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
-      
-
-      <div className="grid grid-cols-24 w-full h-screen mt-2">
-
-
-        <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
-          <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
-            <Box />
-          </div>
-          
-          <div className="self-stretch h-12 justify-start items-start gap-2 inline-flex mx-4 my-5 bg-white">
-    <div className="grow shrink basis-0 h-12 bg-customBlue rounded-full flex-col justify-center items-center gap-2 inline-flex   ">
-      <div className="self-stretch h-96 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-white text-sm font-medium font-Roboto leading-tight tracking-tight ">START NEW CHAT</div>
-      </div>
-    </div>
-    <div className="grow shrink basis-0 h-12 rounded-full border border-customBlue flex-col justify-center items-center gap-2 inline-flex">
-      <div className="self-stretch h-10 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-customBlue text-sm font-medium font-Roboto leading-tight tracking-tight">JOIN MDG’s PUBLIC CHAT</div>
-      </div>
-    </div>
-  </div>
-        </div>
-
-
-
-        <div className="col-span-17  bg-gray-100 max-md:col-span-24" mt-10>
-          <div className="flex flex-col h-screen">
-          <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
-            <div className="flex items-center">
-              
-              <Image src= {logo} alt="logo" width={33.477} height={28.51} />
-              <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
-      Jinora Chat Bot</div>
+      <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
+        <div className="grid grid-cols-24 w-full h-screen mt-2">
+          <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
+            <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
+              <Box />
             </div>
-    
-    <div className =  "flex flex-row items-center justify-between px-4">
-    <div>
-      <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                    href="https://bit.ly/mdgspace-slack-invite"
-                    target="_blank">
-      <Image src={slack} alt="slack" width={29} height={29} />
-      </a>
-      
-    </div>
-    <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
-    <p  className="text-gray-600 font-lato text-base font-normal leading-7">
-
-    Chat with MDG members
-      </p>
-    </div>
-
-    <div>
-      <a >
-      <Image src={mail} alt="mail" width={29} height={29} />
-      </a>
-      
-    </div>
-    
-    <div className="text-gray-600 font-lato text-base font-normal leading-7 mx-3">
-      
-        <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
-            Request a mail reply
-        </p>
-
-
-
-
-
-
-      
-        {isMailOpen && <Mail  onClose={closeMail} /> } 
-
-    </div>
-    
-    </div>
-    
-  </div>
-                            <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
-                                  <ChatbotContainer
-                                    messages={messages}
-                                    messagesEndRef={messagesEndRef} 
-                                />  
-                                <div>
-
-                <div>
-                    
-                    {/* {messages.map((message, index) => {
-                            const parsedMessage = JSON.parse(message);
-                            
-                            return <div key={index}>{parsedMessage.text}</div>;
-                    })} */}
-                </div>
             </div>
-                            </div>
-            <div className="h-[0vh]">
+          <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
+          <div class="flex flex-col h-screen w-full gap-4 justify-around items-center">
+              <div className="w-full flex flex-row items-center justify-around">
+                <ChatNavbar currentPage={"chatbot"} />
+              </div>
+            <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]" >
+              <ChatbotContainer
+                messages={messages}
+                messagesEndRef={messagesEndRef}
+              />
+            </div>
+            <div className="w-full">
               <ChatInputBox
                 updateMessages={updateMessages}
                 socketRef={socketRef}
@@ -371,17 +286,8 @@ function closeMail() {
             </div>
           </div>
         </div>
-        {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
-          <RightPane
-            soundEnabled={soundEnabled}
-            setSoundEnabled={setSoundEnabled}
-            notificationsEnabled={notificationsEnabled}
-            setNotificationsEnabled={setNotificationsEnabled}
-          />
-        </div>*/}
-      
       </div>
-    </div>
+    </div >
     </>
   );
 }

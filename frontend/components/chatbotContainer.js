@@ -20,12 +20,12 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
   }, [messages]);
 
   return (
-    <div className="p-4" >
+    <div className="h-[85vh] p-4" >
       <ul className = "space-y-4 " >
         {filteredMessages?.map((message, index) => {
             const parsedMessage = JSON.parse(message);
-            console.log(2,parsedMessage);
-            console.log(parsedMessage.isSent)
+            // console.log(2,parsedMessage);
+            // console.log(parsedMessage.isSent)
             return(
                 <li key={index} className={`flex items-start ${message.isSent ? "justify-end" : "justify-start"} mb-4 mx-6 `}>
             <div className={`relative flex ${parsedMessage.isSent ? "flex-row-reverse" : ""}`}>
@@ -46,7 +46,7 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
 
             )
           
-})};
+})}
       </ul>
       <div ref={messagesEndRef} /> 
     </div>
