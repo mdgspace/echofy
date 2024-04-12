@@ -18,7 +18,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
   }, [messages]);
 
   return (
-    <div className="h-[85vh]">
+    <div className="h-[80vh]]">
       <ul>
         {messages?.map((message, index) => (
           <li key={index} className={`flex items-start ${message.isSent ? "justify-end" : "justify-start"} mb-4 mx-6 `}>
