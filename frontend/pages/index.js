@@ -60,7 +60,7 @@ export default function Home() {
           </div>
           {isModalOpen && <LoginModal onClose={closeModal} redirect={redirect} />}
 
-          <div className="col-span-17 flex flex-col justify-center items-center bg-gray-100 max-md:col-span-24 rounded-xl mr-[1vw]">
+          <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div className="w-1/2">
               <div class="flex flex-col justify-center items-center ">
                 <div className="flex flex-col justify-center items-center gap-6 ">

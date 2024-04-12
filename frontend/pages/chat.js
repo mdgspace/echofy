@@ -25,9 +25,12 @@ import slack from ".././assets/slack.svg";
 import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
-import {useHistory} from "react-router-dom";
+
+import { ChatNavbar } from "../components/chatNavbar";
+
+
 import { leaveChat } from "../services/utilities/utilities";
- 
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -253,92 +256,32 @@ useEffect(()=>{
     <>
       <div className="main text-slate-950 bg- w-full h-screen bg-contain">
         <div className="grid grid-cols-24 w-full h-screen mt-2">
-
-
         <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
-            <div className="flex flex-col items-center">
-            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl">
+            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
               <Box />
             </div>
-            </div>
           </div>
-
-
-
-          <div className="col-span-17 rounded-xl bg-gray-100 max-md:col-span-24" mt-10>
-            <div className="flex flex-col h-screen">
-              <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
-                <div className="flex items-center">
-
-                  <Image src={logo} alt="logo" width={33.477} height={28.51} />
-                  <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
-                    Jinora Chat Bot</div>
-                </div>
-
-                <div className="flex flex-row items-center justify-between px-4">
-                  <div>
-                    <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                      href="https://bit.ly/mdgspace-slack-invite"
-                      target="_blank">
-                      <Image src={slack} alt="slack" width={29} height={29} />
-                    </a>
-
-                  </div>
-                  <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
-                    <p className="text-gray-600 font-lato text-base font-normal leading-7 " onClick={handleTalkToBotClick}>
-                      Talk to Bot
-
-                    </p>
-                  </div>
-
-                  <div>
-                    <a >
-                      <Image src={mail} alt="mail" width={29} height={29} />
-                    </a>
-
-                  </div>
-
-                  <div className="text-gray-600 font-lato text-base font-normal leading-7 mx-3">
-
-                    <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
-                      Request a mail reply
-                    </p>
-
-
-
-
-
-      
-     <Mail isOpen={isMailOpen} onClose={closeMail} username= {getSessionUser()} userId = {getSessionUserId()} channel = "public"  timestamp ='0'   />
-
-                  </div>
-
-                </div>
-
+          <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
+            <div class="flex flex-col h-screen w-full gap-4 justify-around items-center">
+              <div className="w-full flex flex-row items-center justify-around">
+              <ChatNavbar currentPage={"public"} />
               </div>
-              <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
+            <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]" >
                 <ChatContainer
                   messages={messages}
                   messagesEndRef={messagesEndRef}
                 />
               </div>
-              <div className="h-[0vh]">
+              <div className="w-full">
                 <ChatInputBox
                   updateMessages={updateMessages}
                   socketRef={socketRef}
                 />
-              </div>
             </div>
-          </div>
-          {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
-          <RightPane
-            soundEnabled={soundEnabled}
-            setSoundEnabled={setSoundEnabled}
-            notificationsEnabled={notificationsEnabled}
-            setNotificationsEnabled={setNotificationsEnabled}
-          />
-        </div>*/}
 
+            </div>
+            
+          </div>
         </div>
       </div>
     </>
