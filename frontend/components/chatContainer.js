@@ -23,13 +23,13 @@ export default function ChatContainer({ messages, messagesEndRef }) {
       <ul>
         {messages?.map((message, index) => (
           <li key={index} className={`flex items-start ${message.isSent ? "justify-end" : "justify-start"} mb-4 mx-6 `}>
-            <div className={`relative flex ${message.isSent ? "flex-row-reverse" : ""}`}>
+            <div className={`relative flex font-Lato text-base ${message.isSent ? "flex-row-reverse" : ""}`}>
               <div className="flex-shrink-0 w-12 h-12">
                 <Image src={message.avatar || Avatar} width="48" height="48" alt="" className="rounded-full" />
               </div>
               <div
-                className={`rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[max-content] max-w-[100vw] px-4 py-2 m-2 ${
-                  message.isSent ? "bg-customBlue text-white " : " bg-gray-100 text-gray-800 "
+                className={`w-[max-content] max-w-[100vw] px-4 py-2 m-2 ${
+                  message.isSent ? "bg-customBlue text-white rounded-l-[32px] rounded-br-[32px] " : " bg-white  text-gray-800 rounded-r-[32px] rounded-bl-[32px]"
                 } break-words`}
               >
 

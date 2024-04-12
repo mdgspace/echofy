@@ -35,7 +35,7 @@ module.exports = {
         'light-grey' : "#F8F8F8" ,
         'txt-gray' : '#5E5E5E',
         'gray-secondary': "#49454F",
-        'txt-mdg-username' : '#AAAAAA',
+        'txt-mdg-username' : '#8A8A8A',
         'customBlue' : '#3670F5',
       },
       fontFamily:{

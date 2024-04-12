@@ -49,11 +49,12 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
     return (
         <>
         
-         <div className="flex justify-center items-center h-full px-5 pt-20" >
-            <div className="relative w-full bg-transparent py-10 mx-1">
-                <div className="">
+         <div className="flex justify-center items-center h-full px-5" >
+            <div className="relative w-full bg-transparent  mx-1">
+                {/* to be done after attachment support is added */}
+                {/* <div className="">
                     <FaPlus className="absolute left-2 top-1/2 transform -translate-y-1/2 text--500" />
-                </div>
+                </div> */}
                 <input
                     type="text"
                     placeholder={isTimeout? "Timed out for 5 seconds" : "New Message"}

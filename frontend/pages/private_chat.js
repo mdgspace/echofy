@@ -26,6 +26,7 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 import { Avatar } from "../assets/avatar.svg";
+import { ChatNavbar } from "../components/chatNavbar";
  
 
 export default function Home() {
@@ -306,53 +307,13 @@ const username = getSessionUser();
         <div className="col-span-17  bg-gray-100 max-md:col-span-24" mt-10>
           <div className="flex flex-col h-screen">
           <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
-            <div className="flex items-center">
-              
-              <Image src= {logo} alt="logo" width={33.477} height={28.51} />
-              <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
-      Jinora Chat Bot</div>
-            </div>
+           
     
-    <div className =  "flex flex-row items-center justify-between px-4">
-    <div>
-      <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                    href="https://bit.ly/mdgspace-slack-invite"
-                    target="_blank">
-      <Image src={slack} alt="slack" width={29} height={29} />
-      </a>
-      
-    </div>
-    <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
-    <p  className="text-gray-600 font-lato text-base font-normal leading-7" onClick = {handleTalkToBotClick}>
-
-    Talk to Bot
-      </p>
-    </div>
-
-    <div>
-      <a >
-      <Image src={mail} alt="mail" width={29} height={29} />
-      </a>
-      
-    </div>
+   
     
-    <div className="text-gray-600 font-lato text-base font-normal leading-7 mx-3">
-      
-        <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
-            Request a mail reply
-        </p>
-
-
-
-
-
-      
-        {isMailOpen && <Mail  onClose={closeMail} /> } 
-
-    </div>
-    
-    </div>
-    
+          <div className="w-full flex flex-row items-center justify-around">
+              <ChatNavbar currentPage={"private"} />
+              </div>    
   </div>
             <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
               <ChatContainer
