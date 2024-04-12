@@ -6,7 +6,6 @@ import Image from 'next/image'
 import moment from 'moment';
 
 export default function ChatContainer({ messages, messagesEndRef }) {
-  console.log(1,messages);
   const formatTime = (timestamp) => {
     const date = new Date(timestamp * 1000);
     return moment(date).format('hh:mm A');
