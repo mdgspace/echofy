@@ -20,3 +20,25 @@ export function projectURLbuildr(){
   const baseUrl = `${protocol}://${host}:${port}/projects`;
   return baseUrl;
 }
+
+export function leaveChatURLbuildr(userID){
+  const host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const port = process.env.NEXT_PUBLIC_BACKEND_PORT;
+  const protocol = process.env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === 'development' ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}:${port}/chat/leave`;
+  const params = new URLSearchParams({
+    userID: userID
+  });
+
+  return `${baseUrl}?${params.toString()}`
+}
+
+
+export function subscribeURLbuildr(){
+  const host = process.env.NEXT_PUBLIC_BACKEND_HOST;
+  const port = process.env.NEXT_PUBLIC_BACKEND_PORT;
+  const protocol = process.env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === 'development' ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}:${port}/subscribe`;
+  return baseUrl;
+}
+

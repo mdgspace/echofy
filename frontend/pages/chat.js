@@ -14,7 +14,7 @@ import {
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 import { AiFillAccountBook } from "react-icons/ai";
@@ -27,6 +27,7 @@ import logo from "../assets/logo.svg";
 import Navbar from "../components/navbar";
 import Mail from "../components/mail";
 import {useHistory} from "react-router-dom";
+import { leaveChat } from "../services/utilities/utilities";
  
 
 export default function Home() {
@@ -182,6 +183,33 @@ function closeMail() {
     };
   }, [initializeWebSocketConnection , soundEnabled]);
 
+useEffect(()=>{
+    const leaveChatOnNavigation = () => {
+      leaveChat(getSessionUserId());
+      console.log("leaving chat on navaigation")
+    
+    }
+    const handleBeforeUnload = (e) => {
+      leaveChat(getSessionUserId());
+      e.preventDefault()
+      e.returnValue = "";
+      console.log("leaving chat on beforeunload")
+    }
+
+    router.events.on("RouteChangeStart",leaveChatOnNavigation);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      router.events.off("routeChangeStart", leaveChatOnNavigation);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    
+}, []);
+
+
+
+
   useEffect(() => {
     
   }, [messages]);
@@ -222,6 +250,7 @@ function closeMail() {
    router.push("/chat_bot")
    localStorage.setItem('chatType','chatbot') // write logic to display bot popup
   }
+
   return (
     <>
     
@@ -300,7 +329,7 @@ function closeMail() {
 
 
       
-     <Mail isOpen={isMailOpen} onClose={closeMail} />
+     <Mail isOpen={isMailOpen} onClose={closeMail} username= {getSessionUser()} userId = {getSessionUserId()} channel = "public"  timestamp ='0'   />
 
     </div>
     

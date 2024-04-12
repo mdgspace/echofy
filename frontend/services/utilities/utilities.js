@@ -1,3 +1,5 @@
+"use client"
+
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -250,4 +252,17 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin) {
       prevMessages.filter((message) => message.timestamp !== deleteTimestamp)
     );
   }
+}
+
+
+
+
+function getTimestampFromDate(dateString) {
+
+  const date = new Date(dateString);
+
+
+  const timestamp = Math.floor(date.getTime() / 1000);
+
+  return timestamp;
 }

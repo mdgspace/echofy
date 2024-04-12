@@ -17,6 +17,7 @@ export default function Box() {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
+    
     async function fetchProjectsData(){
 
       const data = await fetchProjects();
@@ -40,8 +41,9 @@ export default function Box() {
    }
 
 
-  const projectList = projects.filter(project => project.Category === 'Projects');
-  const eventList = projects.filter(project => project.Category === 'Events');
+
+  const projectList = projects?.filter(project => project.Category === 'Projects');
+  const eventList = projects?.filter(project => project.Category === 'Events');
   console.log(eventList)
 
     return (
@@ -61,7 +63,7 @@ export default function Box() {
 {projectList.map((project, index) => (
   <div key={index}>
   <div className="w-96 h-32 p-4 bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex ">
-    <div className="w-96 h-32 p-4  bg-stone-50 rounded-xl justify-start items-center gap-3 inline-flex bg-gray-100">
+    <div className="w-96 h-32 p-4  bg-gray-100 rounded-xl justify-start items-center gap-3 inline-flex bg-gray-100">
   <div className="w-24 h-24 relative ">
     <div className="w-24 h-24 left-0 top-0 absolute">
       <div className="w-32 h-32 left-[-19.13px] top-[-76.25px] absolute ">
@@ -76,7 +78,7 @@ export default function Box() {
   </div>
   <div className="grow shrink basis-0 flex-col justify-start items-start gap-3 inline-flex "  >
     <div className="self-stretch justify-between items-center inline-flex">
-      <div className="grow shrink basis-0  text-base font-medium font-Lato leading-normal tracking-tight" onClick = {handleDivClick}>{project.Name}</div>
+      <div className="grow shrink basis-0  text-base font-medium font-Lato leading-normal tracking-tight" onClick = {handleDivClick}>Appetizer</div>
       <div className="w-8 h-8 relative">{project.Url1}</div>
       <div className="w-6 h-6 relative">{project.Url2}</div>
     </div>
