@@ -10,10 +10,6 @@ export default function Mail ({isOpen , onClose ,username, userId, channel, time
   const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-      console.log('email', email)
-
-      console.log(timestamp)
-      console.log(channel)
       await subscribe(email, username, userId, channel, timestamp)
       onClose();
     }catch(error){
@@ -21,9 +17,20 @@ export default function Mail ({isOpen , onClose ,username, userId, channel, time
     }
   }
 
-    if(!isOpen){
-        return null;
+  const popupRef = React.useRef();
+
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        onClose();
+      }
     }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [popupRef, onClose]);
+
+
 
 
     return (
@@ -41,18 +48,16 @@ export default function Mail ({isOpen , onClose ,username, userId, channel, time
         className="w-full px-4 py-2 border border-gray-300 rounded-lg placeholder-center"
       /> 
     </div>
-    <button
+    <div
       onClick={handleSubmit}
       className="bg-blue-500 hover:bg-blue-700 text-white font-Roboto font-bold py-2 px-4 rounded-lg w-full"
     >
       Submit
     </div>
   </div>
-</div>
-
-
-      );
-    }
+  </div>
+    );
+  }
 
 
 
