@@ -8,7 +8,14 @@ import { fetchProjects } from '../services/api/projectsApi';
 import { ProjectList } from './projectList';
 
 
-export default function Box() {
+export default function Box({channel}) {
+  const router = useRouter();
+  const arr = ['public' , 'private' , 'chatbot']
+  const newArr = arr.filter((item) => item !== channel)
+
+
+const isShown = router.pathname === '/';
+
 
   const [projects, setProjects] = useState([]);
 
@@ -22,7 +29,7 @@ export default function Box() {
 
   }, []);
 
-  const router = useRouter();
+  
   const [topic, setTopic] = useState(" ");
   const handleDivClick = (e) => {
     const content = e.target.textContent;
@@ -48,6 +55,24 @@ export default function Box() {
           <ProjectList projects={eventList} category="Events" />
         </div>
       </div>
+
+      {
+        !isShown &&
+        (<div className="self-stretch h-12 justify-start  gap-2 flex items-center">
+        <div className="flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2" >
+          <div className="p-2.5">
+            <div className="text-white text-sm font-small text-Roboto leading-tight tracking-tight text-center ">Join {newArr[0]} chat</div>
+          </div>
+        </div>
+        <div className="flex-grow bg-blue rounded-full border bg-white border-customBlue hover:bg-gray-50 hover:cursor-pointer flex-2 text-center">
+          <div className="p-2.5">
+            <div className=" text-sm text-customBlue  font-medium font-roboto leading-tight tracking-tight ">Join {newArr[1]} chat</div>
+          </div>
+        </div>
+      </div>)
+      
+      }
+      
 
     </>
   );
