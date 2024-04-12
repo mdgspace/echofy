@@ -7,23 +7,24 @@ import Image from 'next/image'
 import moment from 'moment';
 
 export default function ChatContainer({ messages, messagesEndRef }) {
-  const [parsedMessage, setParsedMessage] = useState ([])
-  const formatTime = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    return moment(date).format('hh:mm A');
-  };
-
+  const [filteredMessage, setFilteredMessage] = useState([])
 
   React.useEffect(() => {
+    
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
+  React.useEffect(() => {
+    setFilteredMessage(messages)
+    console.log(filteredMessage)
+  }, [messages])
+
   return (
     <div className="h-[85vh]">
       <ul>
-        {messages?.map((message, index) => {
+        {filteredMessage?.map((message, index) => {
           message = JSON.parse(message)
           return (
             <li key={index} className={`flex items-start ${message.isSent ? "justify-end" : "justify-start"} mb-4 mx-6 `}>
@@ -41,7 +42,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
                   message.isSent ? "bg-customBlue text-white rounded-l-[32px] rounded-br-[32px] mr-6" : " bg-white  text-semiblack rounded-r-[32px] rounded-bl-[32px] ml-12"
                 } break-words`}
               >
-                <div className="py-2">{message.text}</div>
+                <div className="py-2 whitespace-pre-wrap">{message.text}</div>
               </div>
               </div>
               </div>

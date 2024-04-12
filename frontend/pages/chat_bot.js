@@ -241,10 +241,10 @@ function closeMail() {
 
   return (
     <>
-      <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
+      <div className="main text-slate-950 bg-white w-full h-screen bg-contain ">
         <div className="grid grid-cols-24 w-full h-screen mt-2">
-          <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
-            <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
+          <div className="justify-between col-span-7 bg-white rounded-r-xl max-md:hidden">
+            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
               <Box />
             </div>
             </div>

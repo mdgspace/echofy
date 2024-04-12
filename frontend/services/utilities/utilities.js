@@ -212,8 +212,9 @@ function alertAbnormalClose(reason, navigateToLogin) {
 
 export function processWebSocketMessage(event, setMessages, navigateToLogin , isChatbot) {
    if(isChatbot) {
-    if(typeof event.data === Object) {
-      handleUserID(event.data)
+    const userIdRegex = /\buserID\b/;
+    if(userIdRegex.test(event.data)) {
+      handleUserID(JSON.parse(event.data))
     }
    }
   try {
