@@ -33,7 +33,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
               </div>
               <div class="flex flex-col">
               <div
-                className={`w-[max-content] max-w-[50vw] px-4 py-2 mx-2   ${
+                className={`w-[max-content] min-w-[4vw] max-w-[50vw] px-4 py-2 mx-2   ${
                   message.isSent ? "bg-customBlue text-white rounded-l-[32px] rounded-br-[32px] mr-6" : " bg-white  text-semiblack rounded-r-[32px] rounded-bl-[32px] ml-12"
                 } break-words`}
               >
