@@ -16,7 +16,7 @@ import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
 import ChatBot from "../assets/chatbot.svg"
-import SlackLogo from "../assets/Slack.svg"
+import SlackLogo from "../assets/slack.svg"
 import Modal from "../components/modal";
 import LoginModal from "../components/loginModal";
 export default function Home() {
