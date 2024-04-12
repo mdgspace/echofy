@@ -14,7 +14,7 @@ import {
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 import { AiFillAccountBook } from "react-icons/ai";
@@ -220,6 +220,31 @@ export default function Home() {
     router.push("/chat_bot")
     localStorage.setItem('chatType', 'chatbot') // write logic to display bot popup
   }
+   useEffect(()=>{
+    const leaveChatOnNavigation = () => {
+      leaveChat( getSessionUserId());
+      console.log("----------------------------------")
+      console.log("leaving chat on navaigation")
+    
+    }
+    const handleBeforeUnload = (e) => {
+      leaveChat( getSessionUserId());
+      e.preventDefault()
+      e.returnValue = "";
+      console.log("leaving chat on beforeunload")
+    }
+
+    router.events.on("RouteChangeStart" ,leaveChatOnNavigation);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      router.events.off("routeChangeStart", leaveChatOnNavigation);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    
+},[]);
+
   return (
     <>
       <div className="main text-slate-950 bg- w-full h-screen bg-contain">

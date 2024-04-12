@@ -12,7 +12,7 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
     return moment(date).format('hh:mm A');
   };
 
-  var filteredMessages = messages.slice(2);
+  var filteredMessages = messages.slice(1);
   React.useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -20,8 +20,8 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
   }, [messages]);
 
   return (
-    <div className="">
-      <ul>
+    <div className="p-4" >
+      <ul className = "space-y-4 " >
         {filteredMessages?.map((message, index) => {
             const parsedMessage = JSON.parse(message);
             console.log(2,parsedMessage);
@@ -33,7 +33,7 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
                 <Image src={message.avatar || Avatar} width="48" height="48" alt="" className="rounded-full" />
               </div>
               <div
-                className={`rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[max-content] max-w-[100vw] px-4 py-2 m-2 ${
+                className={`rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[max-content] max-w-[60vw] px-4 py-2 m-2 ${
                   parsedMessage.isSent ? "bg-customBlue text-white " : " bg-gray-100 text-gray-800 "
                 } break-words`}
               >

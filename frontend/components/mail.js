@@ -1,18 +1,30 @@
 import React from 'react'
+import { useState } from 'react';
+import subscribe from '../services/api/subscribeApi';
 
-export default function Mail ({ onClose}){
-  const popupRef = React.useRef();
-
-    React.useEffect(() => {
-      function handleClickOutside(event) {
-        if (popupRef.current && !popupRef.current.contains(event.target)) {
-          onClose();
-        }
-      }
+export default function Mail ({isOpen , onClose ,username, userId, channel, timestamp}){
   
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [popupRef, onClose]);
+  
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try{
+      console.log('email', email)
+
+      console.log(timestamp)
+      console.log(channel)
+      await subscribe(email, username, userId, channel, timestamp)
+      onClose();
+    }catch(error){
+      console.log('error' , error);
+    }
+  }
+
+    if(!isOpen){
+        return null;
+    }
+
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-50">
@@ -24,12 +36,14 @@ export default function Mail ({ onClose}){
       <input
         type="email"
         placeholder="Email"
-        className="w-full px-4 py-2  rounded-lg text-center placeholder-gray-secondary  placeholder-center"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg placeholder-center"
       /> 
     </div>
-    <div
-      onClick={onClose}
-      className="bg-customBlue hover:bg-blue-700 text-white text-center font-Roboto font-medium py-2 px-4 rounded-full w-full"
+    <button
+      onClick={handleSubmit}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-Roboto font-bold py-2 px-4 rounded-lg w-full"
     >
       Submit
     </div>
@@ -39,6 +53,7 @@ export default function Mail ({ onClose}){
 
       );
     }
+
 
 
       
