@@ -12,7 +12,7 @@ export default function ChatbotContainer({ messages, messagesEndRef }) {
     return moment(date).format('hh:mm A');
   };
 
-  var filteredMessages = messages.slice(1);
+  var filteredMessages = messages.slice(2);
   React.useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });

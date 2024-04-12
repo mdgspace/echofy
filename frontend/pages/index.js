@@ -15,17 +15,8 @@ import {
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
-import notif from "../assets/sounds/notif.mp3";
-import notifRecieve from "../assets/sounds/notif-recieve.mp3";
-import { AiFillAccountBook } from "react-icons/ai";
-import { AiFillCamera } from "react-icons/ai";
-// import boxData from "../services/utilities/box-data";
-import { BsStarFill } from "react-icons/bs";
-import {slack} from ".././assets/slack.svg";
-import {mail} from ".././assets/mail.svg";
-import {logo} from "../assets/logo.svg";
-import Navbar from "../components/navbar";
-import Mail from "../components/mail"
+import ChatBot from "../assets/chatbot.svg"
+import SlackLogo from "../assets/slack.svg"
 import Modal from "../components/modal";
 import LoginModal from "../components/loginModal";
 export default function Home() {
@@ -34,89 +25,80 @@ export default function Home() {
   const [redirect, setRedirect] = useState("");
 
   const openModal = (redirect) => {
-    setIsModalOpen(true); 
+    setIsModalOpen(true);
     setRedirect(redirect)
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-}
+  }
 
   const goToPublicChat = () => {
     openModal("public");
-     // Open the modal after navigating
+    // Open the modal after navigating
   };
 
-const goToPrivateChat = () => {
-   openModal("private");
+  const goToPrivateChat = () => {
+    openModal("private");
 
-};
+  };
 
-const goToChatbot = () =>{
-  openModal("chatbot");
-}
+  const goToChatbot = () => {
+    openModal("chatbot");
+  }
 
 
-  
+
   return (
     <>
-    <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
-      <div className="grid grid-cols-24 w-full h-screen">
-        <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
-          <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
-            <Box />
+      <div className="main bg-white w-full bg-contain h-[98vh]">
+        <div className="grid grid-cols-24 w-full mt-2 h-[98vh]">
+          <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
+            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
+              <Box />
+            </div>
+          </div>
+          {isModalOpen && <LoginModal onClose={closeModal} redirect={redirect} />}
+
+          <div className="col-span-17 flex flex-col justify-center items-center bg-gray-100 max-md:col-span-24 rounded-xl mr-[1vw]">
+            <div className="w-1/2">
+              <div class="flex flex-col justify-center items-center ">
+                <div className="flex flex-col justify-center items-center gap-6 ">
+                  <div class="text-customBlue font-Lato font-medium text-5xl text-center">
+                    Welcocme to Echofy
+                  </div>
+                  <div class="text-txt-gray font-Lato text-center font-lato font-medium text-lg">
+                    We've developed this resource to address any inquiries you may have regarding the MDG Space group at IIT Roorkee, including its events and projects. You can engage with our chatbot or reach out to us directly on Slack. We're eager to assist you.
+                  </div>
+                </div>
+
+              </div >
+              <div className="flex flex-col justify-center items-center gap-4 mt-8">
+                <div
+                  className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50"
+                  onClick={goToChatbot}
+                >
+                  <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
+                    <Image src={ChatBot}/>
+                    TALK TO OUR CHATBOT
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPrivateChat}>
+                  <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
+                  <Image src={SlackLogo} className="text-sky-400"/>PRIVATE CHAT ON SLACK
+                  </p>
+                </div>
+                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPublicChat}>
+                  <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
+                  <Image src={SlackLogo}/>PUBLIC MDG CHAT FORUM
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        {isModalOpen && <LoginModal onClose={closeModal} redirect = {redirect}/>}
-
-<div className="col-span-17 mx-[3vw] bg-gray-100 max-md:col-span-24 mt-5 ">
-<div className="flex flex-col h-screen">
-
-<div class="flex flex-col justify-center items-center w-1339 h-980 p-50 md:p-32 lg:p-340 gap-16 lg:gap-64 flex-shrink-0">
-
-<div className="flex flex-col justify-center items-center  ">
-    <div class="text-blue-500 font-lato font-medium text-4xl leading-72 tracking-wide">
-    Welcocme to Echofy 
-    </div>
-    <div class="text-gray-600 text-center font-lato font-medium text-lg leading-33 mt-5 tracking-wide">
-    We've developed this resource to address any inquiries you may have regarding the MDG Space group at IIT Roorkee, including its events and projects. You can engage with our chatbot or reach out to us directly on Slack. We're eager to assist you.
-    </div>
-</div>
-
-</div >
-<div  className="flex flex-col justify-center items-center ">
-<button
-  className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-  onClick={goToChatbot}
->
-  <p className="font-roboto font-medium text-lg tracking-tighter">
-    Talk to our ChatBot
-  </p>
-</button>
-
-<button className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={goToPrivateChat}>
-<p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
-      Private Chat on Slack
-</p>
-</button>
-<button className="flex items-center justify-center h-20 w-1/2 mx-20 my-5 px-8 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" onClick={goToPublicChat}>
-<p className="text-white text-center font-roboto font-medium text-lg leading-20 tracking-tighter">
-Public MDG Chat Forum
-</p>
-</button>
-
-
-</div>
-
-
-
-  
-
-</div>
-</div>
-      
       </div>
-    </div>
     </>
   );
 }

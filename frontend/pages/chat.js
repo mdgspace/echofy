@@ -24,9 +24,8 @@ import { BsStarFill } from "react-icons/bs";
 import slack from ".././assets/slack.svg";
 import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
-import Navbar from "../components/navbar";
 import Mail from "../components/mail";
- 
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -34,16 +33,15 @@ export default function Home() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isMailOpen, setIsMailOpen] = useState(false);
-  
+
   const router = useRouter();
 
   function openMail() {
     setIsMailOpen(true);
   }
 
-function closeMail() {
+  function closeMail() {
     setIsMailOpen(false);
-    console.log(isMailOpen)
   }
 
   function updateMessages(newMessage, username) {
@@ -85,7 +83,7 @@ function closeMail() {
   const playSound = useCallback((isSent) => {
     const sound = isSent ? new Audio(notif) : new Audio(notifRecieve);
     sound.play();
-  }, [soundEnabled]); 
+  }, [soundEnabled]);
 
 
   useEffect(() => {
@@ -98,7 +96,7 @@ function closeMail() {
     console.log(username);
 
     const channel = "public";
-    const url = buildWebSocketURL(userId, username , channel);
+    const url = buildWebSocketURL(userId, username, channel);
     console.log(url);
     const handleOpen = () => {
       //todo-> toast connected to server
@@ -117,7 +115,7 @@ function closeMail() {
     );
     socketRef.current = socket;
 
-     
+
 
     socket.addEventListener("message", (event) => {
       try {
@@ -156,7 +154,7 @@ function closeMail() {
           setMessages(allMessages);
         } else {
           if (data.text && data.sender && data.timestamp) {
-            let  isSent = data.sender === username;
+            let isSent = data.sender === username;
             setMessages((prevMessages) => [
               ...prevMessages,
               {
@@ -167,7 +165,7 @@ function closeMail() {
                 avatar: data.url,
               },
             ]);
-            if(soundEnabled) playSound(isSent);
+            if (soundEnabled) playSound(isSent);
             if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
           }
         }
@@ -179,10 +177,10 @@ function closeMail() {
     return () => {
       socket.close();
     };
-  }, [initializeWebSocketConnection , soundEnabled]);
+  }, [initializeWebSocketConnection, soundEnabled]);
 
   useEffect(() => {
-    
+
   }, [messages]);
 
   useEffect(() => {
@@ -213,114 +211,96 @@ function closeMail() {
     }
   }, []);
 
-  const handleQueriesClick = () => { 
+  const handleQueriesClick = () => {
     // write logic to display faq popup
   }
 
   const handleTalkToBotClick = () => {
-   router.push("/chat_bot")
-   localStorage.setItem('chatType','chatbot') // write logic to display bot popup
+    router.push("/chat_bot")
+    localStorage.setItem('chatType', 'chatbot') // write logic to display bot popup
   }
   return (
     <>
-    
-<div className = "sticky top-0 z-10">
-      <Navbar />
-</div>
-    
-    <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
-      
-
-      <div className="grid grid-cols-24 w-full h-screen">
+      <div className="main text-slate-950 bg- w-full h-screen bg-contain">
+        <div className="grid grid-cols-24 w-full h-screen mt-2">
 
 
-        <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
-          <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
-            <Box />
-          </div>
-          
-          <div className="self-stretch h-12 justify-start items-start gap-2 inline-flex mx-4 my-5 bg-white">
-    <div className="grow shrink basis-0 h-12 bg-blue-500 rounded-full flex-col justify-center items-center gap-2 inline-flex   ">
-      <div className="self-stretch h-96 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-white text-sm font-medium font-Roboto leading-tight tracking-tight ">START NEW CHAT</div>
-      </div>
-    </div>
-    <div className="grow shrink basis-0 h-12 rounded-full border border-blue-500 flex-col justify-center items-center gap-2 inline-flex">
-      <div className="self-stretch h-10 px-6 py-2.5 justify-center items-center gap-2 inline-flex">
-        <div className="text-center text-blue-500 text-sm font-medium font-Roboto leading-tight tracking-tight">Talk to Bot</div>
-      </div>
-    </div>
-  </div>
-        </div>
-
-
-
-        <div className="col-span-17 mx-[3vw] bg-gray-100 max-md:col-span-24" mt-10>
-          <div className="flex flex-col h-screen">
-          <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
-            <div className="flex items-center">
-              
-              <Image src= {logo} alt="logo" width={33.477} height={28.51} />
-              <div class="text-blue-500 font-roboto font-semibold text-lg leading-7 ml-5" >
-      Jinora Chat Bot</div>
+        <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
+            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl">
+              <Box />
             </div>
-    
-    <div className =  "flex flex-row items-center justify-between px-4">
-    <div>
-      <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
-                    href="https://bit.ly/mdgspace-slack-invite"
-                    target="_blank">
-      <Image src={slack} alt="slack" width={29} height={29} />
-      </a>
-      
-    </div>
-    <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
-    <p  className="text-gray-600 font-lato text-base font-normal leading-7 " onClick={handleTalkToBotClick}>
-    Talk to Bot
-
-      </p>
-    </div>
-
-    <div>
-      <a >
-      <Image src={mail} alt="mail" width={29} height={29} />
-      </a>
-      
-    </div>
-    
-    <div className="text-gray-600 font-lato text-base font-normal leading-7 mx-3">
-      
-        <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
-            Request a mail reply
-        </p>
-
-
-
-
-
-      
-     <Mail isOpen={isMailOpen} onClose={closeMail} />
-
-    </div>
-    
-    </div>
-    
-  </div>
-            <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
-              <ChatContainer
-                messages={messages}
-                messagesEndRef={messagesEndRef} 
-              />
-            </div>
-            <div className="h-[0vh]">
-              <ChatInputBox
-                updateMessages={updateMessages}
-                socketRef={socketRef}
-              />
             </div>
           </div>
-        </div>
-        {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
+
+
+
+          <div className="col-span-17 rounded-xl bg-gray-100 max-md:col-span-24" mt-10>
+            <div className="flex flex-col h-screen">
+              <div class="flex  h-14 p-3 justify-between items-center flex-shrink-0 self-stretch rounded-xl bg-white  mx-2 my-3 ">
+                <div className="flex items-center">
+
+                  <Image src={logo} alt="logo" width={33.477} height={28.51} />
+                  <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
+                    Jinora Chat Bot</div>
+                </div>
+
+                <div className="flex flex-row items-center justify-between px-4">
+                  <div>
+                    <a className="hover:cursor-pointer text-right flex flex-col justify-end text-bg-orange lg:text-2xl hover:no-underline hover:text-orange-600 transition duration-300 "
+                      href="https://bit.ly/mdgspace-slack-invite"
+                      target="_blank">
+                      <Image src={slack} alt="slack" width={29} height={29} />
+                    </a>
+
+                  </div>
+                  <div className="text-gray-600 font-lato text-base font-normal leading- mx-5" >
+                    <p className="text-gray-600 font-lato text-base font-normal leading-7 " onClick={handleTalkToBotClick}>
+                      Talk to Bot
+
+                    </p>
+                  </div>
+
+                  <div>
+                    <a >
+                      <Image src={mail} alt="mail" width={29} height={29} />
+                    </a>
+
+                  </div>
+
+                  <div className="text-gray-600 font-lato text-base font-normal leading-7 mx-3">
+
+                    <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
+                      Request a mail reply
+                    </p>
+
+
+
+
+
+
+                     {isMailOpen && <Mail  onClose={closeMail} /> } 
+
+                  </div>
+
+                </div>
+
+              </div>
+              <div className="h-[100vh] pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%] bg-gray-100" >
+                <ChatContainer
+                  messages={messages}
+                  messagesEndRef={messagesEndRef}
+                />
+              </div>
+              <div className="h-[0vh]">
+                <ChatInputBox
+                  updateMessages={updateMessages}
+                  socketRef={socketRef}
+                />
+              </div>
+            </div>
+          </div>
+          {/*<div className="col-span-1 max-md:hidden max-sm:hidden">
           <RightPane
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
@@ -328,9 +308,9 @@ function closeMail() {
             setNotificationsEnabled={setNotificationsEnabled}
           />
         </div>*/}
-      
+
+        </div>
       </div>
-    </div>
     </>
   );
 }
