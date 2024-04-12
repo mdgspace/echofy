@@ -14,7 +14,7 @@ import {
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
 import { AiFillAccountBook } from "react-icons/ai";
@@ -55,7 +55,7 @@ function closeMail() {
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-const username = getSessionUser();
+
   useEffect(() => {
     // Access localStorage only when in the browser environment
     const savedSoundEnabled = localStorage.getItem('soundEnabled');
@@ -89,7 +89,7 @@ const username = getSessionUser();
 
 
   useEffect(() => {
-
+    const username = getSessionUser();
     if (!username || username === "null" || username === "undefined") {
       router.push("/login");
     }
@@ -273,6 +273,32 @@ const username = getSessionUser();
     router.push("/chat_bot")
     localStorage.setItem('chatType','chatbot') // write logic to display bot popup
    }
+
+   useEffect(()=>{
+    const leaveChatOnNavigation = () => {
+      leaveChat( getSessionUserId());
+      console.log("----------------------------------")
+      console.log("leaving chat on navaigation")
+    
+    }
+    const handleBeforeUnload = (e) => {
+      leaveChat( getSessionUserId());
+      e.preventDefault()
+      e.returnValue = "";
+      console.log("leaving chat on beforeunload")
+    }
+
+    router.events.on("RouteChangeStart" ,leaveChatOnNavigation);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      router.events.off("routeChangeStart", leaveChatOnNavigation);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    
+},[]);
+
   return (
     <>
     

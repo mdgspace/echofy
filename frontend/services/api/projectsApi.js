@@ -5,6 +5,7 @@ export const fetchProjects = async () => {
         const url = projectURLbuildr();
         const res = await axios.get(url);
         return res.data;
+       
     }catch(error){
         console.log(error);
     }
