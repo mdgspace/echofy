@@ -44,7 +44,7 @@ export const ProjectCard = ({ name, shortDesc, ImageLink, Github, PlayStore, App
             </div>
             <div className="w-3/4 content flex flex-col mr-2">
                 <div className="header flex flex-row justify-between">
-                    <div id="nameDiv"className="text-lg hover:cursor-pointer hover:text-customBlue " onClick={handleClick}>
+                    <div className="text-lg hover:cursor-pointer hover:text-customBlue " onClick={handleClick}>
                         {name}
                     </div>
                     <div class="links">
