@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { MdSend } from "react-icons/md"; 
 import { FaPlus } from "react-icons/fa";
+import sendLogo from "../assets/send.svg"
+import Image from "next/image";
 export default function ChatInputBox({ updateMessages, socketRef }) {
     const [newMessage, setNewMessage] = useState("");
     const [isTimeout, setIsTimeout] = useState(false);
@@ -47,8 +49,8 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
     return (
         <>
         
-         <div className="flex justify-center items-center h-full px-5 py-6" >
-            <div className="relative w-full bg-transparent  mx-1">
+         <div className="flex justify-center items-center h-full px-5 py-6 border-none" >
+            <div className="relative w-full bg-transparent  mx-1 border-none">
                 {/* to be done after attachment support is added */}
                 {/* <div className="">
                     <FaPlus className="absolute left-2 top-1/2 transform -translate-y-1/2 text--500" />
@@ -60,15 +62,15 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyPress}
                     disabled={isTimeout}
-                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue text-Lato"
+                    className="w-full p-3 pl-10 border-none rounded-lg placeholder-customBlue font-medium text-customBlue text-Lato"
                 />
-                <button
+                <div
                     onClick={handleSendClick}
                     disabled={isTimeout}
-                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? '' : 'bg--500'} text-white rounded-full p-2`}
+                    className={`absolute  right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? '' : 'bg--500'} text-white rounded-full p-2 `}
                 >
-                    <MdSend className={`w-6 h-6 ${isTimeout ? 'text-gray-100' : 'text-white'}`} />
-                </button>
+                    <Image src={sendLogo} alt="sendButton" className={`w-6 h-6 hover:cursor-pointer hover:text-colour-900 ${isTimeout ? 'text-gray-100' : 'text-white'}`} />
+                </div>
             </div>
         </div>
         </>
