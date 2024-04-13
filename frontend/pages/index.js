@@ -17,11 +17,12 @@ import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
 import ChatBot from "../assets/chatbot.svg"
 import SlackLogo from "../assets/slack.svg"
-import Modal from "../components/modal";
 import LoginModal from "../components/loginModal";
+import ChatBotLoginModal from "../components/chatbotLoginModal";
 export default function Home() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatBotModalOpen ,setISChatBotModalOpen ] = useState(false);
   const [redirect, setRedirect] = useState("");
 
   const openModal = (redirect) => {
@@ -29,8 +30,17 @@ export default function Home() {
     setRedirect(redirect)
   };
 
+
+  const openChatBotModal = () => {
+    setISChatBotModalOpen(true)
+  }
+
   const closeModal = () => {
     setIsModalOpen(false);
+  }
+
+  const closeChatBotLoginModal = () => {
+    setISChatBotModalOpen(false)
   }
 
   const goToPublicChat = () => {
@@ -44,7 +54,7 @@ export default function Home() {
   };
 
   const goToChatbot = () => {
-    openModal("chatbot");
+    openChatBotModal()
   }
 
 
@@ -59,6 +69,7 @@ export default function Home() {
             </div>
           </div>
           {isModalOpen && <LoginModal onClose={closeModal} redirect={redirect} />}
+          {isChatBotModalOpen && <ChatBotLoginModal onClose={closeChatBotLoginModal} />}
 
           <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div className="w-1/2">
@@ -67,7 +78,7 @@ export default function Home() {
                   <div class="text-customBlue font-Lato font-medium text-5xl text-center">
                     Welcocme to Echofy
                   </div>
-                  <div class="text-txt-gray font-Lato text-center font-lato font-medium text-lg">
+                  <div class="text-txt-gray font-Lato text-center text-ato font-medium text-lg">
                     We've developed this resource to address any inquiries you may have regarding the MDG Space group at IIT Roorkee, including its events and projects. You can engage with our chatbot or reach out to us directly on Slack. We're eager to assist you.
                   </div>
                 </div>

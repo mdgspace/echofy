@@ -8,7 +8,7 @@ import {
     checkAndPromptSessionChange,
   } from "../services/utilities/utilities";
 
-const LoginModal = ({ onClose  , redirect }) => {
+const ChatBotLoginModal = ({ onClose  }) => {
   const popupRef = useRef();
   const [username, setUsername] = useState("");
   const router = useRouter();
@@ -37,13 +37,11 @@ const LoginModal = ({ onClose  , redirect }) => {
 
 
   async function handleChatWithUsClick() {
-    const chatType = redirect;
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-    if(chatType == "public"){
       if (currentUser && currentUserId) {
         if (currentUser === username) {
-          router.push("/chat");
+          router.push("/chat_bot");
         } else {
           const hasChanged = await checkAndPromptSessionChange(
             currentUser,
@@ -54,36 +52,14 @@ const LoginModal = ({ onClose  , redirect }) => {
             }
           );
           if (hasChanged) {
-            router.push("/chat");
+            router.push("/chat_bot");
           }
         }
       } else {
         setSessionUser(username);
-        router.push("/chat");
+        router.push("/chat_bot");
       }
-    }
-    else if(chatType == "private"){
-      if (currentUser && currentUserId) {
-        if (currentUser === username) {
-          router.push("/private_chat");
-        } else {
-          const hasChanged = await checkAndPromptSessionChange(
-            currentUser,
-            username,
-            () => {
-              removeSessionUserId();
-              setSessionUser(username);
-            }
-          );
-          if (hasChanged) {
-            router.push("/private_chat");
-          }
-        }
-      } else {
-        setSessionUser(username);
-        router.push("/private_chat");
-      }
-    }
+    
   }
 
   return (
@@ -111,7 +87,7 @@ const LoginModal = ({ onClose  , redirect }) => {
               className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
               onClick={handleChatWithUsClick}
             >
-              CHAT WITH US
+              START ASKING
             </div>  
         </div>
      
@@ -120,4 +96,4 @@ const LoginModal = ({ onClose  , redirect }) => {
   );
 };
 
-export default LoginModal;
+export default ChatBotLoginModal;
