@@ -38,8 +38,10 @@ export async function checkAndPromptSessionChange(
         title: "Change Username?",
         text: `You already have a running session with the username "${currentUsername}". Do you want to change your username?`,
         icon: "question",
+        iconColor:"#3670F5",
+
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
+        confirmButtonColor: "3670F5",
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, change it!",
       });
@@ -53,7 +55,9 @@ export async function checkAndPromptSessionChange(
             title: "Username too long",
             text: `Please choose a username with less than 20 characters`,
             icon: "warning",
-            confirmButtonColor: "#f66151",
+
+            iconColor:"#3670F5",
+            confirmButtonColor: "3670F5",
             confirmButtonText: "OK",
             didOpen: (popup) => {
               popup.style.borderRadius = "1rem";
@@ -102,7 +106,9 @@ function alertBannedUser(reason, navigateToLogin) {
       title: "You have been banned",
       text: `${reason}`,
       icon: "error",
-      confirmButtonColor: "#f66151",
+
+      confirmButtonColor: "#3670F5",
+      iconColor:"#3670F5",
       confirmButtonText: "OK",
       didOpen: (popup) => {
         popup.style.borderRadius = "1rem";
@@ -127,8 +133,10 @@ function alertSameUsername(reason, navigateToLogin) {
       title: "Username already exists",
       text: "Please choose a different username",
       icon: "warning",
+
+      iconColor:"#3670F5",
       imageAlt: "Username Taken",
-      confirmButtonColor: "#f66151",
+      confirmButtonColor: "#3670F5",
       confirmButtonText: "OK",
       didOpen: (popup) => {
         popup.style.borderRadius = "1rem";
@@ -151,7 +159,9 @@ function alertBadRequest(reason, navigateToLogin) {
       title: "Bad request",
       text: `Please try again ${reason}`,
       icon: "warning",
-      confirmButtonColor: "#f66151",
+
+      iconColor:"#3670F5",
+      confirmButtonColor: "#3670F5",
       confirmButtonText: "OK",
       didOpen: (popup) => {
         popup.style.borderRadius = "1rem";
@@ -174,7 +184,9 @@ function alertServerError(reason, navigateToLogin) {
       title: "Server error",
       text: `Please try again ${reason}`,
       icon: "warning",
-      confirmButtonColor: "#f66151",
+
+      iconColor:"#3670F5",
+      confirmButtonColor: "#3670F5",
       confirmButtonText: "OK",
       didOpen: (popup) => {
         popup.style.borderRadius = "1rem";
@@ -197,7 +209,9 @@ function alertAbnormalClose(reason, navigateToLogin) {
       title: "Connection lost",
       text: `Please try again or with a different username ${reason}`,
       icon: "warning",
-      confirmButtonColor: "#f66151",
+
+      iconColor:"#3670F5",
+      confirmButtonColor: "#3670F5",
       confirmButtonText: "OK",
       didOpen: (popup) => {
         popup.style.borderRadius = "1rem";
