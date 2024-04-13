@@ -309,7 +309,7 @@ export function parseMessageText(text){
 
   // Function to replace `code` text
   const replaceCodeText = (message) => {
-    return message.replace(/`(.*?)`/g, '<code className="!bg-gray-400" style="background-color:#dbdbd7 ; color:#3670F5" >$1</code>');
+    return message.replace(/`(.*?)`/g, '<code className="!bg-gray-400" style="background-color:#dbdbd7 ; color:#3670F5 ; font-size:16px; padding-left:2px ; padding-right:2px" >$1</code>');
   };
 
   // Apply all formatting functions

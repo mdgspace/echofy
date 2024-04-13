@@ -1,6 +1,6 @@
 import gh from "../assets/github.svg"
 import ps from "../assets/Playstore.svg"
-import as from "../assets/Apple.svg"
+import as from "../assets/Apple_logo_grey.svg"
 import Image from "next/image"
 
 

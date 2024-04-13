@@ -58,7 +58,7 @@ const isShown = router.pathname === '/';
 
         {
         !isShown &&
-        (<div className="w-full h-[3vh]  mt-4  gap-2 flex items-center">
+        (<div className="w-full h-[3vh] gap-2 flex items-center">
         <div className="w-1/2 flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2 hover:to-blue-900 " >
           <div className="p-2.5">
             <div className="text-white text-sm font-small text-Roboto leading-tight tracking-tight text-center text-Roboto font-medium "  >JOIN {finalArr[0]} CHAT</div>
