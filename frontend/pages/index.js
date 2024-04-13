@@ -75,7 +75,7 @@ export default function Home() {
               </div >
               <div className="flex flex-col justify-center items-center gap-4 mt-8">
                 <div
-                  className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50"
+                  className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50 hover:cursor-pointer"
                   onClick={goToChatbot}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
@@ -84,12 +84,12 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPrivateChat}>
+                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 hover:cursor-pointer  focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPrivateChat}>
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
                   <Image src={SlackLogo} className="text-sky-400"/>PRIVATE CHAT ON SLACK
                   </p>
                 </div>
-                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPublicChat}>
+                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none hover:cursor-pointer focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPublicChat}>
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
                   <Image src={SlackLogo}/>PUBLIC MDG CHAT FORUM
                   </p>
