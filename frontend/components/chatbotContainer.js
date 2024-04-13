@@ -18,9 +18,22 @@ export default function ChatContainer({ messages, messagesEndRef }) {
   }, [messages]);
 
   React.useEffect(() => {
-    setFilteredMessage(messages)
-    console.log(filteredMessage)
-  }, [messages])
+    const filterMessages = () => {
+      const newMessages = messages.filter(message => {
+        try {
+          message = JSON.parse(message)
+          const messageData = JSON.parse(message.text);
+          return !(messageData.userID && messageData.userID.startsWith('chatbot'));
+        } catch (error) {
+          return true;
+        }
+      });
+
+      return newMessages;
+    };
+    const newFilteredMessages = filterMessages();
+    setFilteredMessage(newFilteredMessages);
+  },)
 
   return (
     <div className="h-[85vh]">
