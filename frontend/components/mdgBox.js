@@ -58,13 +58,13 @@ const isShown = router.pathname === '/';
 
         {
         !isShown &&
-        (<div className="self-stretch  h-[3vh]  justify-start  gap-2 flex items-center">
-        <div className="flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2 hover:to-blue-900 " >
+        (<div className="w-full h-[3vh]  mt-4  gap-2 flex items-center">
+        <div className="w-1/2 flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2 hover:to-blue-900 " >
           <div className="p-2.5">
             <div className="text-white text-sm font-small text-Roboto leading-tight tracking-tight text-center text-Roboto font-medium "  >JOIN {finalArr[0]} CHAT</div>
           </div>
         </div>
-        <div className="flex-grow bg-blue rounded-full border bg-white border-customBlue hover:bg-gray-50 hover:cursor-pointer flex-2 text-center">
+        <div className=" w-1/2 flex-grow bg-blue rounded-full border bg-white border-customBlue hover:bg-gray-50 hover:cursor-pointer flex-2 text-center">
           <div className="p-2.5">
             <div className=" text-sm text-customBlue border-collapse font-roboto leading-tight tracking-tight text-Roboto font-medium ">JOIN {finalArr[1]} CHAT</div>
           </div>

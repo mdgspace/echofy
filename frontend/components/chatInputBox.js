@@ -60,7 +60,7 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyPress}
                     disabled={isTimeout}
-                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue"
+                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue text-Lato"
                 />
                 <button
                     onClick={handleSendClick}
