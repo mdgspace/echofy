@@ -262,7 +262,7 @@ useEffect(()=>{
             </div>
           </div>
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
-            <div class="flex flex-col h-screen w-full gap-4 justify-around items-center">
+            <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
               <ChatNavbar currentPage={"public"} />
               </div>
