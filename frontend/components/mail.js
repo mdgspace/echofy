@@ -34,23 +34,24 @@ export default function Mail ({isOpen , onClose ,username, userId, channel, time
 
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-50">
-  <div ref={popupRef} className="flex flex-col justify-center items-center gap-4 w-80 md:w-96 h-auto p-8 border border-gray-200 rounded-lg shadow-md bg-gray-100 px-10 py-20">
-    <p className="text-black font-Lato font-medium text-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-60 ">
+  <div ref={popupRef} className="flex flex-col justify-center items-center gap-4 w-80 md:w-96 h-fit p-8 border border-gray-200 rounded-lg shadow-md bg-gray-100 px-10 py-20">
+    <p className="text-black font-Lato font-medium text-lg hover: ">
       Enter your email to get a reply
     </p>
-    <div className="flex flex-col justify-center items-center py-4 w-full">
+    <div className="flex flex-col justify-center items-center py-7  w-full">
       <input
         type="email"
-        placeholder="Email"
+        placeholder="Mail"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg placeholder-center"
+        className="w-full px-4 py-3 border-none rounded-lg placeholder-center text-center font-medium text-black "
+        
       /> 
     </div>
     <div
       onClick={handleSubmit}
-      className="bg-blue-500 hover:bg-blue-700 text-white font-Roboto font-bold py-2 px-4 rounded-lg w-full"
+      className="bg-customBlue hover:bg-blue-700 text-white font-Roboto font-semibold py-3 px-4 rounded-lg w-full text-center "
     >
       Submit
     </div>
