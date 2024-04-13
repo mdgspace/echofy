@@ -5,6 +5,7 @@ import Avatar from "../assets/avatar.svg"
 import Echofy from "../assets/logo.svg"
 import Image from 'next/image'
 import moment from 'moment';
+import { parseMessageText } from "../services/utilities/utilities";
 
 export default function ChatContainer({ messages, messagesEndRef }) {
   const [filteredMessage, setFilteredMessage] = useState([])
@@ -42,7 +43,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
                   message.isSent ? "bg-customBlue text-white rounded-l-[32px] rounded-br-[32px] mr-6" : " bg-white  text-semiblack rounded-r-[32px] rounded-bl-[32px] ml-12"
                 } break-words`}
               >
-                <div className="py-2 whitespace-pre-wrap">{message.text}</div>
+                <div className="py-2 whitespace-pre-wrap text-Lato">{message.isSent ? message.text : parseMessageText(message.text)}</div>
               </div>
               </div>
               </div>

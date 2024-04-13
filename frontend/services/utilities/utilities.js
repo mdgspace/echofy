@@ -293,3 +293,30 @@ export function formatChatbotUserText(message) {
     return message.split(':')[1]
   }
 }
+
+
+export function parseMessageText(text){
+  // Function to replace URLs with clickable links
+  const replaceURLs = (message) => {
+    const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return message.replace(urlRegex, url => `<a href="${url}">${url}</a>`);
+  };
+
+  // Function to replace **bold** text
+  const replaceBoldText = (message) => {
+    return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  };
+
+  // Function to replace `code` text
+  const replaceCodeText = (message) => {
+    return message.replace(/`(.*?)`/g, '<code className="!bg-gray-400" style="background-color:#dbdbd7 ; color:#3670F5" >$1</code>');
+  };
+
+  // Apply all formatting functions
+  let formattedText = replaceURLs(text);
+  formattedText = replaceBoldText(formattedText);
+  formattedText = replaceCodeText(formattedText);
+
+  // Return formatted text as JSX using dangerouslySetInnerHTML (be cautious with untrusted content to avoid XSS attacks)
+  return <div dangerouslySetInnerHTML={{ __html: formattedText }} />;
+};
