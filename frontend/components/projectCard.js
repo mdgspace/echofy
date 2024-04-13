@@ -2,9 +2,20 @@ import gh from "../assets/github.svg"
 import ps from "../assets/Playstore.svg"
 import as from "../assets/Apple_logo_grey.svg"
 import Image from "next/image"
-
+import { useRouter } from "next/router"
 
 export const ProjectCard = ({ name, shortDesc, ImageLink, Github, PlayStore, AppStore }) => {
+
+    const router = useRouter();
+    const handleClick = () => {
+       const extractedText = name
+
+
+        router.push({
+            pathname: '/chat_bot',
+            query: { topic: extractedText },
+        })
+    }
 
     const isGithub = Github != ""
     const isPlaystore = PlayStore != ""
@@ -33,7 +44,7 @@ export const ProjectCard = ({ name, shortDesc, ImageLink, Github, PlayStore, App
             </div>
             <div className="w-3/4 content flex flex-col mr-2">
                 <div className="header flex flex-row justify-between">
-                    <div className="text-lg hover:cursor-pointer hover:text-customBlue">
+                    <div id="nameDiv"className="text-lg hover:cursor-pointer hover:text-customBlue " onClick={handleClick}>
                         {name}
                     </div>
                     <div class="links">
