@@ -43,8 +43,8 @@ export const ChatNavbar = ({currentPage}) => {
      
 
     return (
-        <div class="flex flex-row justify-between w-[95%] px-6 rounded-lg h-[4.5rem] bg-white items-center">
-            <div class="flex flex-row items-center justify-center">
+        <div class="flex  flex-row justify-between w-[95%] px-4 py-4 mt-3 rounded-lg h-[3.5rem] bg-white items-center">
+            <div class="flex flex-row items-center justify-center py-4">
                 <Image src={logo} className="text-customBlue" alt="logo" width={40} height={40} />
                 <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5" >
                     {leftText}

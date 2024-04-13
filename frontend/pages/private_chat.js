@@ -251,7 +251,7 @@ export default function Home() {
         <div className="grid grid-cols-24 w-full h-screen mt-2">
         <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
-              <Box />
+              <Box channel={"private"} />
             </div>
           </div>
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
@@ -280,3 +280,4 @@ export default function Home() {
     </>
   );
 }
+
