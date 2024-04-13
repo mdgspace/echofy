@@ -57,7 +57,7 @@ export const ChatNavbar = ({currentPage}) => {
                 </div>
                 <div class="flex flex-row gap-2">
                 <Image src={mail} alt="mail" width={29} height={29} />
-                <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
+                <p onClick={openMail} className="text-gray-600 text-Lato text-base font-normal leading-7">
                       Request a mail reply
                     </p>
 
