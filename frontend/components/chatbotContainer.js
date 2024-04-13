@@ -18,15 +18,31 @@ export default function ChatContainer({ messages, messagesEndRef }) {
   }, [messages]);
 
   React.useEffect(() => {
-    setFilteredMessage(messages)
-    console.log(filteredMessage)
-  }, [messages])
+    const filterMessages = () => {
+      const newMessages = messages.filter(message => {
+        try {
+          message = JSON.parse(message)
+          const messageData = JSON.parse(message.text);
+          return !(messageData.userID && messageData.userID.startsWith('chatbot'));
+        } catch (error) {
+          return true;
+        }
+      });
+
+      return newMessages;
+    };
+
+    // Apply the filtering function and update the state
+    const newFilteredMessages = filterMessages();
+    setFilteredMessage(newFilteredMessages);
+  },)
 
   return (
     <div className="h-[85vh]">
       <ul>
         {filteredMessage?.map((message, index) => {
           message = JSON.parse(message)
+          // console.log(filteredMessage)
           return (
             <li key={index} className={`flex items-start ${message.isSent ? "justify-end" : "justify-start"} mb-4 mx-6 `}>
             <div className={`relative flex font-Lato text-base ${message.isSent ? "flex-row-reverse" : ""}`}>
