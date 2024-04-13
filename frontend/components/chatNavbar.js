@@ -56,8 +56,8 @@ export const ChatNavbar = ({currentPage}) => {
                     {/* todo -> implement leave chat here with login modal   */}
                 </div>
                 <div class="flex flex-row gap-2">
-                <Image src={mail} alt="mail" width={29} height={29} />
-                <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7">
+                <Image src={mail} alt="mail" width={29} height={29 } />
+                <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7 hover:cursor-pointer hover:text-customBlue ">
                       Request a mail reply
                     </p>
 
