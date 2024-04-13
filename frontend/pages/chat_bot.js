@@ -6,6 +6,8 @@ import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
+  formatChatbotUserText,
+  getIsSentForChatBot,
   getSessionUser,
   getSessionUserId,
   handleWebSocketClose,
@@ -115,7 +117,7 @@ function closeMail() {
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/"));
+      processWebSocketMessage(event, setMessages, () => router.push("/") , true);
     const handleClose = (event) =>
       handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
@@ -133,36 +135,15 @@ function closeMail() {
 
     socket.addEventListener("message", (event) => {
       try {
-        const username = getSessionUser();
-        console.log(username);
-
-        let data = "";
-        if (
-          event.data != "Messsage send successful" &&
-          event.data != "Welcome to MDG Chat!"
-        ) {
-          data = event.data
-        }
-        console.log()
-
+        const username = getSessionUser()
+        let data = event.data;
+        const isSent = getIsSentForChatBot(event.data)
         const allMessages = [];
-        // if(username){
-        //     const jsonResponse =  JSON.stringify({text:data , isSent:true})
-        //     allMessages.push({text:jsonResponse.text , isSent:true});
-        // }else{
-        //     const jsonResponse =  JSON.stringify({text:data , isSent:false})
-        //     allMessages.push({text:jsonResponse.text , isSent:false});
-        // }
-        if(username){
-            var jsonResponse =  JSON.stringify({text:data , isSent:true})
-            allMessages.push({text:jsonResponse.text , isSent:true});
-        }else{
-            var jsonResponse = JSON.stringify({text:data , isSent:false})
-        allMessages.push({text:jsonResponse.text , isSent:false});
-        }
-
-
+        var jsonResponse = JSON.stringify({ text: isSent? formatChatbotUserText(data) : data, isSent: isSent , username : isSent? username : "Echofy"})
+        allMessages.push({ text: data, isSent: getIsSentForChatBot(event.data) });
         setMessages((prevMessages) => [...prevMessages, jsonResponse]);
+        
+
 
 
         // const addMessages = (messageData, isSent) => {
@@ -260,10 +241,10 @@ function closeMail() {
 
   return (
     <>
-      <div className="main text-slate-950 bg- w-full h-screen bg-contain ">
+      <div className="main text-slate-950 bg-white w-full h-screen bg-contain ">
         <div className="grid grid-cols-24 w-full h-screen mt-2">
-          <div className="justify-between col-span-7 bg-gray-50 rounded-r-xl max-md:hidden">
-            <div className="flex flex-col items-center gap-4 p-5 w-562 h-1000 bg-white rounded-xl">
+          <div className="justify-between col-span-7 bg-white rounded-r-xl max-md:hidden">
+            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
               <Box channel={"chatbot"} />
             </div>
             </div>

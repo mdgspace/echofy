@@ -25,8 +25,11 @@ export const ProjectCard = ({ name, shortDesc, ImageLink, Github, PlayStore, App
 
     return (
         <div className="flex flex-row bg-light-grey rounded-xl py-2">
-            <div className="w-1/4">
-                <img src={ImageLink} className="w-full object-cover" alt="Project Image" />
+            <div className="w-1/4 px-2">
+                <div class="w-full object-contain aspect-square rounded-lg">
+                <img src={ImageLink} className="rounded-lg w-full" alt="Project Image" />
+                </div>
+                
             </div>
             <div className="w-3/4 content flex flex-col mr-2">
                 <div className="header flex flex-row justify-between">

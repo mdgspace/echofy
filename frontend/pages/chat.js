@@ -107,7 +107,7 @@ export default function Home() {
       //todo-> toast connected to server
     }
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/"));
+      processWebSocketMessage(event, setMessages, () => router.push("/") , false);
     const handleClose = (event) =>
       handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
@@ -254,7 +254,7 @@ useEffect(()=>{
 
   return (
     <>
-      <div className="main text-slate-950 bg- w-full h-screen bg-contain">
+      <div className="main text-slate-950 bg-white w-full h-screen bg-contain">
         <div className="grid grid-cols-24 w-full h-screen mt-2">
         <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">

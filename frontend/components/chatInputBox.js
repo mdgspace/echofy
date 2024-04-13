@@ -19,8 +19,6 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
             setNewMessage("");
             messageTimesRef.current.push(Date.now());
             checkForTimeout();
-            console.log("message sent");
-            console.log(newMessage)
         } else {
             //todo : add an alert in case of websocket is not connected, redirect user to login screen
         }
@@ -62,7 +60,7 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
                     onChange={handleInputChange}
                     onKeyDown={handleKeyPress}
                     disabled={isTimeout}
-                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue"
+                    className="w-full p-3 pl-10 border rounded-lg placeholder-customBlue text-customBlue text-Lato"
                 />
                 <button
                     onClick={handleSendClick}
