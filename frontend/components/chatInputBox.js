@@ -47,7 +47,7 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
     return (
         <>
         
-         <div className="flex justify-center items-center h-full px-5" >
+         <div className="flex justify-center items-center h-full px-5 py-6" >
             <div className="relative w-full bg-transparent  mx-1">
                 {/* to be done after attachment support is added */}
                 {/* <div className="">
