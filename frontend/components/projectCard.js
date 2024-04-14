@@ -14,7 +14,7 @@ export const ProjectCard = ({ name, shortDesc, ImageLink, Github, PlayStore, App
         router.push({
             pathname: '/chat_bot',
             query: { topic: extractedText },
-        })
+        }).then(() => window.location.reload())
     }
 
     const isGithub = Github != ""

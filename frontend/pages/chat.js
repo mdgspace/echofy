@@ -32,6 +32,7 @@ import { ChatNavbar } from "../components/chatNavbar";
 
 import { leaveChat } from "../services/api/leaveChatApi";
 
+
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
