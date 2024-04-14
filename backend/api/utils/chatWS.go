@@ -96,11 +96,11 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 		if profanityutils.IsMsgProfane(string(msg)) {
 			handleProfaneUser(ws, name, string(msg), rootTS, "private")
 		}
-		SendMsg(globals.GetChannelID("private"), string(msg), name, rootTS)
+		msgTS := SendMsg(globals.GetChannelID("private"), string(msg), name, rootTS)
 		newMsg := models.Message{
 			Text:      string(msg),
 			Sender:    name,
-			Timestamp: rootTS,
+			Timestamp: msgTS,
 		}
 		sendSlackToPrivateUser(newMsg, userID)
 		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), rootTS, userID)
