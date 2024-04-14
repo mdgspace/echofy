@@ -13,6 +13,7 @@ import {
   handleWebSocketClose,
   handleWebSocketError,
   processWebSocketMessage,
+  removeSessionUserId
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
@@ -28,6 +29,7 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
+import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
 
 import { ChatbotNavbar } from "../components/chatbotNavbar";
@@ -108,7 +110,7 @@ function closeMail() {
   useEffect(() => {
     const username = getSessionUser();
     if (!username || username === "null" || username === "undefined") {
-      router.push("/login");
+      router.push("/");
     }
     const userId = getSessionUserId();
     console.log(userId)
@@ -199,6 +201,30 @@ function closeMail() {
     localStorage.setItem("chatType", "public");
   }
 
+  useEffect(()=>{
+    const leaveChatOnNavigation = () => {
+      leaveChat( getSessionUserId());
+      console.log("----------------------------------")
+      console.log("leaving chat on navaigation")
+      removeSessionUserId();
+    
+    }
+    const handleBeforeUnload = (e) => {
+      leaveChat( getSessionUserId());
+      console.log("leaving chat on beforeunload")
+    }
+
+    router.events.on("RouteChangeStart" ,leaveChatOnNavigation);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      router.events.off("routeChangeStart", leaveChatOnNavigation);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    
+},[router]);
+
   return (
     <>
       <div className="main text-slate-950 bg-white w-full h-screen bg-contain ">
@@ -209,7 +235,7 @@ function closeMail() {
             </div>
             </div>
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
-          <div class="flex flex-col h-screen w-full gap-4 justify-around items-center">
+          <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
                 <ChatbotNavbar currentPage={"chatbot"} />
               </div>

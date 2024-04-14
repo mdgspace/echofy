@@ -11,6 +11,7 @@ import {
   handleWebSocketClose,
   handleWebSocketError,
   processWebSocketMessage,
+  removeSessionUserId,
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
@@ -94,7 +95,7 @@ export default function Home() {
   useEffect(() => {
     const username = getSessionUser();
     if (!username || username === "null" || username === "undefined") {
-      router.push("/login");
+      router.push("/");
     }
     const userId = getSessionUserId();
     console.log(userId)
@@ -126,7 +127,7 @@ export default function Home() {
       try {
         let data = "";
         if (
-          event.data != "Messsage send successful" &&
+          event.data != "Message send successful" &&
           event.data != "Welcome to MDG Chat!"
         ) {
           data = JSON.parse(event.data);
@@ -188,25 +189,25 @@ useEffect(()=>{
     const leaveChatOnNavigation = () => {
       leaveChat(getSessionUserId());
       console.log("leaving chat on navaigation")
+      removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
+      // e.preventDefault()
+      // e.returnValue = "hehehe";
       leaveChat(getSessionUserId());
-      e.preventDefault()
-      e.returnValue = "";
       console.log("leaving chat on beforeunload")
+
     }
 
-    router.events.on("RouteChangeStart",leaveChatOnNavigation);
+    router.events.on("routeChangeStart",leaveChatOnNavigation);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       router.events.off("routeChangeStart", leaveChatOnNavigation);
       window.removeEventListener("beforeunload", handleBeforeUnload);
-    }
-
-    
-}, []);
+    }    
+}, [router]);
 
 
 
@@ -262,7 +263,7 @@ useEffect(()=>{
             </div>
           </div>
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
-            <div class="flex flex-col h-screen w-full gap-4 justify-around items-center">
+            <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
               <ChatNavbar currentPage={"public"} />
               </div>

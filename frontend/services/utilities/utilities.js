@@ -233,8 +233,9 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin , is
    }
   try {
     if (
-      event.data !== "Messsage send successful" &&
-      event.data !== "Welcome to MDG Chat!"
+      event.data !== "Message send successful" &&
+      event.data !== "Welcome to MDG Chat!" &&
+      event.data !== "Message send successful"
       && !isChatbot
     ) {
       const data = JSON.parse(event.data);
@@ -334,3 +335,15 @@ export function parseMessageText(text){
   // Return formatted text as JSX using dangerouslySetInnerHTML (be cautious with untrusted content to avoid XSS attacks)
   return <div dangerouslySetInnerHTML={{ __html: formattedText }} />;
 };
+
+export async function getAvatar(){
+  let avatarId =   sessionStorage.getItem("avatarId");
+  
+  if(avatarId == null || isNaN(avatarId) || avatarId < 0 || avatarId > 14){
+    avatarId = Math.floor(Math.random() * 15);
+    sessionStorage.setItem("avatarId", avatarId);
+  }
+
+  return avatarId;
+
+}
