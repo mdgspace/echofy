@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "autoprefixer": "^10.4.16",
@@ -12,6 +13,7 @@
     "moment": "^2.29.4",
     "next": "latest",
     "postcss": "^8.4.31",
+    "prettier": "^3.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.12.0",

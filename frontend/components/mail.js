@@ -1,21 +1,26 @@
-import React from 'react'
-import { useState } from 'react';
-import subscribe from '../services/api/subscribeApi';
+import React from "react";
+import { useState } from "react";
+import subscribe from "../services/api/subscribeApi";
 
-export default function Mail ({isOpen , onClose ,username, userId, channel, timestamp}){
-  
-  
+export default function Mail({
+  isOpen,
+  onClose,
+  username,
+  userId,
+  channel,
+  timestamp,
+}) {
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      await subscribe(email, username, userId, channel, timestamp)
+    try {
+      await subscribe(email, username, userId, channel, timestamp);
       onClose();
-    }catch(error){
-      console.log('error' , error);
+    } catch (error) {
+      console.log("error", error);
     }
-  }
+  };
 
   const popupRef = React.useRef();
 
@@ -30,40 +35,31 @@ export default function Mail ({isOpen , onClose ,username, userId, channel, time
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
 
-
-
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-60 ">
-  <div ref={popupRef} className="flex flex-col justify-center items-center gap-4 w-80 md:w-96 h-fit p-8 border border-gray-200 rounded-lg shadow-md bg-gray-100 px-10 py-20">
-    <p className="text-black font-Lato text-Lato font-medium text-lg ">
-      Enter your email to get a reply
-    </p>
-    <div className="flex flex-col justify-center items-center py-7  w-full">
-      <input
-        type="email"
-        placeholder="Mail"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full px-4 py-3 border-none rounded-lg placeholder-center text-center font-medium text-black "
-        
-      /> 
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-60 ">
+      <div
+        ref={popupRef}
+        className="flex flex-col justify-center items-center gap-4 w-80 md:w-96 h-fit p-8 border border-gray-200 rounded-lg shadow-md bg-gray-100 px-10 py-20"
+      >
+        <p className="text-black font-Lato text-Lato font-medium text-lg ">
+          Enter your email to get a reply
+        </p>
+        <div className="flex flex-col justify-center items-center py-7  w-full">
+          <input
+            type="email"
+            placeholder="Mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 border-none rounded-lg placeholder-center text-center font-medium text-black "
+          />
+        </div>
+        <div
+          onClick={handleSubmit}
+          className="bg-customBlue hover:bg-blue-700 hover:cursor-pointer text-white font-Roboto font-semibold py-3 px-4 rounded-lg w-full text-center "
+        >
+          Submit
+        </div>
+      </div>
     </div>
-    <div
-      onClick={handleSubmit}
-      className="bg-customBlue hover:bg-blue-700 hover:cursor-pointer text-white font-Roboto font-semibold py-3 px-4 rounded-lg w-full text-center "
-    >
-      Submit
-    </div>
-  </div>
-  </div>
-    );
-  }
-
-
-
-      
-  
-
-
-
+  );
+}

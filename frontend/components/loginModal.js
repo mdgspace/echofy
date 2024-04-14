@@ -1,14 +1,14 @@
-import React, { useEffect, useRef , useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-    getSessionUser,
-    getSessionUserId,
-    setSessionUser,
-    removeSessionUserId,
-    checkAndPromptSessionChange,
-  } from "../services/utilities/utilities";
+  getSessionUser,
+  getSessionUserId,
+  setSessionUser,
+  removeSessionUserId,
+  checkAndPromptSessionChange,
+} from "../services/utilities/utilities";
 
-const LoginModal = ({ onClose  , redirect }) => {
+const LoginModal = ({ onClose, redirect }) => {
   const popupRef = useRef();
   const [username, setUsername] = useState("");
   const router = useRouter();
@@ -35,12 +35,11 @@ const LoginModal = ({ onClose  , redirect }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
 
-
   async function handleChatWithUsClick() {
     const chatType = redirect;
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-    if(chatType == "public"){
+    if (chatType == "public") {
       if (currentUser && currentUserId) {
         if (currentUser === username) {
           router.push("/chat");
@@ -51,7 +50,7 @@ const LoginModal = ({ onClose  , redirect }) => {
             () => {
               removeSessionUserId();
               setSessionUser(username);
-            }
+            },
           );
           if (hasChanged) {
             router.push("/chat");
@@ -61,8 +60,7 @@ const LoginModal = ({ onClose  , redirect }) => {
         setSessionUser(username);
         router.push("/chat");
       }
-    }
-    else if(chatType == "private"){
+    } else if (chatType == "private") {
       if (currentUser && currentUserId) {
         if (currentUser === username) {
           router.push("/private_chat");
@@ -73,7 +71,7 @@ const LoginModal = ({ onClose  , redirect }) => {
             () => {
               removeSessionUserId();
               setSessionUser(username);
-            }
+            },
           );
           if (hasChanged) {
             router.push("/private_chat");
@@ -88,14 +86,16 @@ const LoginModal = ({ onClose  , redirect }) => {
 
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
-        <div ref={popupRef} className="p-6 rounded-xl shadow-2xl text-Lato relative w-96 h-96 bg-light-grey flex flex-col justify-center items-center">
+      <div
+        ref={popupRef}
+        className="p-6 rounded-xl shadow-2xl text-Lato relative w-96 h-96 bg-light-grey flex flex-col justify-center items-center"
+      >
         <div class="flex flex-col justify-center items-center gap-8">
-            <div class="w-60 text-center text-md">
+          <div class="w-60 text-center text-md">
             Pick your username and login
+          </div>
 
-            </div>
-      
-      <div className="rounded-xl text-[#49454F] w-60 flex justify-center items-center">
+          <div className="rounded-xl text-[#49454F] w-60 flex justify-center items-center">
             <input
               type="text"
               placeholder="Username"
@@ -106,17 +106,15 @@ const LoginModal = ({ onClose  , redirect }) => {
             />
           </div>
 
-          
-            <div
-              className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
-              onClick={handleChatWithUsClick}
-            >
-              CHAT WITH US
-            </div>  
+          <div
+            className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
+            onClick={handleChatWithUsClick}
+          >
+            CHAT WITH US
+          </div>
         </div>
-     
-          </div>
-          </div>
+      </div>
+    </div>
   );
 };
 

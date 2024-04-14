@@ -1,15 +1,15 @@
-import React, { useEffect, useRef , useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-    getSessionUser,
-    getSessionUserId,
-    setSessionUser,
-    removeSessionUserId,
-    checkAndPromptSessionChange,
-  } from "../services/utilities/utilities";
+  getSessionUser,
+  getSessionUserId,
+  setSessionUser,
+  removeSessionUserId,
+  checkAndPromptSessionChange,
+} from "../services/utilities/utilities";
 import { TopicDropdownForLogin } from "./topicDropdownforLogin";
 
-const ChatBotLoginModal = ({ onClose  }) => {
+const ChatBotLoginModal = ({ onClose }) => {
   const popupRef = useRef();
   const [username, setUsername] = useState("");
   const [topic, setTopic] = useState("SELECT A TOPIC");
@@ -37,43 +37,43 @@ const ChatBotLoginModal = ({ onClose  }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
 
-
   async function handleChatWithUsClick() {
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-      if (currentUser && currentUserId) {
-        if (currentUser === username) {
-          router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
-        } else {
-          const hasChanged = await checkAndPromptSessionChange(
-            currentUser,
-            username,
-            () => {
-              removeSessionUserId();
-              setSessionUser(username);
-            }
-          );
-          if (hasChanged) {
-            router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
-          }
-        }
-      } else {
-        setSessionUser(username);
+    if (currentUser && currentUserId) {
+      if (currentUser === username) {
         router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
+      } else {
+        const hasChanged = await checkAndPromptSessionChange(
+          currentUser,
+          username,
+          () => {
+            removeSessionUserId();
+            setSessionUser(username);
+          },
+        );
+        if (hasChanged) {
+          router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
+        }
       }
-    
+    } else {
+      setSessionUser(username);
+      router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
+    }
   }
 
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
-        <div ref={popupRef} className="p-6 rounded-xl shadow-2xl text-Lato relative w-96 h-96 bg-light-grey flex flex-col justify-center items-center">
+      <div
+        ref={popupRef}
+        className="p-6 rounded-xl shadow-2xl text-Lato relative w-96 h-96 bg-light-grey flex flex-col justify-center items-center"
+      >
         <div class="flex flex-col justify-center items-center gap-8">
-            <div class="w-60 text-center text-md">
+          <div class="w-60 text-center text-md">
             Pick your username and login
+          </div>
 
-            </div>
-      
-      <div className="rounded-xl text-[#49454F] w-60 flex justify-center items-center">
+          <div className="rounded-xl text-[#49454F] w-60 flex justify-center items-center">
             <input
               type="text"
               placeholder="Username"
@@ -82,21 +82,19 @@ const ChatBotLoginModal = ({ onClose  }) => {
               onChange={handleUsernameChange}
               onKeyDown={handleEnterClick}
             />
-      </div>
+          </div>
 
-      <TopicDropdownForLogin topic={topic} setTopic={setTopic} />
+          <TopicDropdownForLogin topic={topic} setTopic={setTopic} />
 
-          
-            <div
-              className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
-              onClick={handleChatWithUsClick}
-            >
-              START ASKING
-            </div>  
+          <div
+            className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
+            onClick={handleChatWithUsClick}
+          >
+            START ASKING
+          </div>
         </div>
-     
-          </div>
-          </div>
+      </div>
+    </div>
   );
 };
 

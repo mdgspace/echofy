@@ -15,33 +15,32 @@ import {
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
 import { useRouter } from "next/navigation";
-import ChatBot from "../assets/chatbot.svg"
-import SlackLogo from "../assets/slack.svg"
+import ChatBot from "../assets/chatbot.svg";
+import SlackLogo from "../assets/slack.svg";
 import LoginModal from "../components/loginModal";
 import ChatBotLoginModal from "../components/chatbotLoginModal";
 export default function Home() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isChatBotModalOpen ,setISChatBotModalOpen ] = useState(false);
+  const [isChatBotModalOpen, setISChatBotModalOpen] = useState(false);
   const [redirect, setRedirect] = useState("");
 
   const openModal = (redirect) => {
     setIsModalOpen(true);
-    setRedirect(redirect)
+    setRedirect(redirect);
   };
 
-
   const openChatBotModal = () => {
-    setISChatBotModalOpen(true)
-  }
+    setISChatBotModalOpen(true);
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
-  }
+  };
 
   const closeChatBotLoginModal = () => {
-    setISChatBotModalOpen(false)
-  }
+    setISChatBotModalOpen(false);
+  };
 
   const goToPublicChat = () => {
     openModal("public");
@@ -50,14 +49,11 @@ export default function Home() {
 
   const goToPrivateChat = () => {
     openModal("private");
-
   };
 
   const goToChatbot = () => {
-    openChatBotModal()
-  }
-
-
+    openChatBotModal();
+  };
 
   return (
     <>
@@ -68,8 +64,12 @@ export default function Home() {
               <Box />
             </div>
           </div>
-          {isModalOpen && <LoginModal onClose={closeModal} redirect={redirect} />}
-          {isChatBotModalOpen && <ChatBotLoginModal onClose={closeChatBotLoginModal} />}
+          {isModalOpen && (
+            <LoginModal onClose={closeModal} redirect={redirect} />
+          )}
+          {isChatBotModalOpen && (
+            <ChatBotLoginModal onClose={closeChatBotLoginModal} />
+          )}
 
           <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div className="w-1/2">
@@ -79,30 +79,41 @@ export default function Home() {
                     Welcome to Echofy
                   </div>
                   <div class="text-txt-gray font-Lato text-center text-ato font-medium text-lg">
-                    We've developed this resource to address any inquiries you may have regarding the MDG Space group at IIT Roorkee, including its events and projects. You can engage with our chatbot or reach out to us directly on Slack. We're eager to assist you.
+                    We've developed this resource to address any inquiries you
+                    may have regarding the MDG Space group at IIT Roorkee,
+                    including its events and projects. You can engage with our
+                    chatbot or reach out to us directly on Slack. We're eager to
+                    assist you.
                   </div>
                 </div>
-
-              </div >
+              </div>
               <div className="flex flex-col justify-center items-center gap-4 mt-8">
                 <div
                   className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50 hover:cursor-pointer"
                   onClick={goToChatbot}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                    <Image src={ChatBot}/>
+                    <Image src={ChatBot} />
                     TALK TO OUR CHATBOT
                   </p>
                 </div>
 
-                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 hover:cursor-pointer  focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPrivateChat}>
+                <div
+                  className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 hover:cursor-pointer  focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50"
+                  onClick={goToPrivateChat}
+                >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                  <Image src={SlackLogo} className="text-sky-400"/>PRIVATE CHAT ON SLACK
+                    <Image src={SlackLogo} className="text-sky-400" />
+                    PRIVATE CHAT ON SLACK
                   </p>
                 </div>
-                <div className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none hover:cursor-pointer focus:ring-2 focus:ring-customBlue focus:ring-opacity-50" onClick={goToPublicChat}>
+                <div
+                  className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none hover:cursor-pointer focus:ring-2 focus:ring-customBlue focus:ring-opacity-50"
+                  onClick={goToPublicChat}
+                >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                  <Image src={SlackLogo}/>PUBLIC MDG CHAT FORUM
+                    <Image src={SlackLogo} />
+                    PUBLIC MDG CHAT FORUM
                   </p>
                 </div>
               </div>
@@ -113,8 +124,3 @@ export default function Home() {
     </>
   );
 }
-
-
-
-
-

@@ -29,9 +29,7 @@ import Mail from "../components/mail";
 
 import { ChatNavbar } from "../components/chatNavbar";
 
-
 import { leaveChat } from "../services/api/leaveChatApi";
-
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -62,8 +60,10 @@ export default function Home() {
 
   useEffect(() => {
     // Access localStorage only when in the browser environment
-    const savedSoundEnabled = localStorage.getItem('soundEnabled');
-    const savedNotificationsEnabled = localStorage.getItem('notificationsEnabled');
+    const savedSoundEnabled = localStorage.getItem("soundEnabled");
+    const savedNotificationsEnabled = localStorage.getItem(
+      "notificationsEnabled",
+    );
 
     // If we have settings saved, update our state
     if (savedSoundEnabled !== null) {
@@ -76,21 +76,26 @@ export default function Home() {
 
   useEffect(() => {
     // Save to localStorage when soundEnabled changes
-    localStorage.setItem('soundEnabled', JSON.stringify(soundEnabled));
+    localStorage.setItem("soundEnabled", JSON.stringify(soundEnabled));
   }, [soundEnabled]);
 
   useEffect(() => {
     // Save to localStorage when notificationsEnabled changes
-    localStorage.setItem('notificationsEnabled', JSON.stringify(notificationsEnabled));
+    localStorage.setItem(
+      "notificationsEnabled",
+      JSON.stringify(notificationsEnabled),
+    );
   }, [notificationsEnabled]);
 
   // ... the rest of your component
 
-  const playSound = useCallback((isSent) => {
-    const sound = isSent ? new Audio(notif) : new Audio(notifRecieve);
-    sound.play();
-  }, [soundEnabled]);
-
+  const playSound = useCallback(
+    (isSent) => {
+      const sound = isSent ? new Audio(notif) : new Audio(notifRecieve);
+      sound.play();
+    },
+    [soundEnabled],
+  );
 
   useEffect(() => {
     const username = getSessionUser();
@@ -99,16 +104,19 @@ export default function Home() {
     }
     const userId = getSessionUserId();
 
-
-
     const channel = "public";
     const url = buildWebSocketURL(userId, username, channel);
 
     const handleOpen = () => {
       //todo-> toast connected to server
-    }
+    };
     const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/") , false);
+      processWebSocketMessage(
+        event,
+        setMessages,
+        () => router.push("/"),
+        false,
+      );
     const handleClose = (event) =>
       handleWebSocketClose(event, () => router.push("/"));
     const handleError = handleWebSocketError;
@@ -117,11 +125,9 @@ export default function Home() {
       handleOpen,
       handleMessage,
       handleClose,
-      handleError
+      handleError,
     );
     socketRef.current = socket;
-
-
 
     socket.addEventListener("message", (event) => {
       try {
@@ -131,7 +137,6 @@ export default function Home() {
           event.data != "Welcome to MDG Chat!"
         ) {
           data = JSON.parse(event.data);
-
         }
         const allMessages = [];
         const addMessages = (messageData, isSent) => {
@@ -176,45 +181,38 @@ export default function Home() {
           }
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         //todo-> enable sentry logger here
       }
     });
     return () => {
       socket.close();
     };
-  }, [initializeWebSocketConnection , soundEnabled]);
+  }, [initializeWebSocketConnection, soundEnabled]);
 
-useEffect(()=>{
+  useEffect(() => {
     const leaveChatOnNavigation = () => {
       leaveChat(getSessionUserId());
 
       removeSessionUserId();
-    
-    }
+    };
     const handleBeforeUnload = (e) => {
       // e.preventDefault()
       // e.returnValue = "hehehe";
       leaveChat(getSessionUserId());
-      console.log("leaving chat on beforeunload")
+      console.log("leaving chat on beforeunload");
+    };
 
-    }
-
-    router.events.on("routeChangeStart",leaveChatOnNavigation);
+    router.events.on("routeChangeStart", leaveChatOnNavigation);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       router.events.off("routeChangeStart", leaveChatOnNavigation);
       window.removeEventListener("beforeunload", handleBeforeUnload);
-    }    
-}, [router]);
+    };
+  }, [router]);
 
-
-
-
-  useEffect(() => {
-
-  }, [messages]);
+  useEffect(() => {}, [messages]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -246,18 +244,18 @@ useEffect(()=>{
 
   const handleQueriesClick = () => {
     // write logic to display faq popup
-  }
+  };
 
   const handleTalkToBotClick = () => {
-    router.push("/chat_bot")
-    localStorage.setItem('chatType', 'chatbot') // write logic to display bot popup
-  }
+    router.push("/chat_bot");
+    localStorage.setItem("chatType", "chatbot"); // write logic to display bot popup
+  };
 
   return (
     <>
       <div className="main text-slate-950 bg-white w-full h-screen bg-contain">
         <div className="grid grid-cols-24 w-full h-screen mt-2">
-        <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
+          <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
               <Box channel={"public"} />
             </div>
@@ -265,9 +263,9 @@ useEffect(()=>{
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
-              <ChatNavbar currentPage={"public"} />
+                <ChatNavbar currentPage={"public"} />
               </div>
-            <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]" >
+              <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
                 <ChatContainer
                   messages={messages}
                   messagesEndRef={messagesEndRef}
@@ -278,10 +276,8 @@ useEffect(()=>{
                   updateMessages={updateMessages}
                   socketRef={socketRef}
                 />
+              </div>
             </div>
-
-            </div>
-            
           </div>
         </div>
       </div>

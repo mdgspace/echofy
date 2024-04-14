@@ -1,14 +1,13 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { fetchProjects } from '../services/api/projectsApi';
-import { useEffect , useRef } from 'react';
+import React, { useState } from "react";
+import { fetchProjects } from "../services/api/projectsApi";
+import { useEffect, useRef } from "react";
 
-export const TopicDropdownForLogin = ({topic, setTopic}) => {
+export const TopicDropdownForLogin = ({ topic, setTopic }) => {
   const popupRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
-//   const [topic, setTopic] = useState("SELECT A TOPIC")
-
+  //   const [topic, setTopic] = useState("SELECT A TOPIC")
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -26,10 +25,12 @@ export const TopicDropdownForLogin = ({topic, setTopic}) => {
   const handleClick = (e) => {
     const content = e.target.textContent;
     setTopic(content);
-  }
+  };
 
-  const projectList = projects.filter(project => project.Category === 'Projects');
-  const eventList = projects.filter(project => project.Category === 'Events');
+  const projectList = projects.filter(
+    (project) => project.Category === "Projects",
+  );
+  const eventList = projects.filter((project) => project.Category === "Events");
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -43,7 +44,10 @@ export const TopicDropdownForLogin = ({topic, setTopic}) => {
   }, [popupRef, isOpen]);
 
   return (
-    <div ref={popupRef} className="text-customBlue hover:cursor-pointer text-Lato">
+    <div
+      ref={popupRef}
+      className="text-customBlue hover:cursor-pointer text-Lato"
+    >
       <div
         className="text-customBlue hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-full text-base px-5 py-2.5 text-center inline-flex items-center"
         onClick={toggleDropdown}
@@ -71,12 +75,15 @@ export const TopicDropdownForLogin = ({topic, setTopic}) => {
           <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 shadow-lg mt-5 rounded-lg">
             <div className="max-h-48 overflow-y-auto">
               <ul className="py-2 text-lg">
-                <li className="font-bold text-customBlue ml-2 text-txt-gray">Projects</li>
+                <li className="font-bold text-customBlue ml-2 text-txt-gray">
+                  Projects
+                </li>
                 {projectList.map((project, index) => (
                   <li key={index}>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-customBlue hover:bg-gray-100 dark:hover:bg-customBlue dark:hover:text-white" onClick={handleClick}
+                      className="block px-4 py-2 text-customBlue hover:bg-gray-100 dark:hover:bg-customBlue dark:hover:text-white"
+                      onClick={handleClick}
                     >
                       {project.Name}
                     </a>
@@ -86,12 +93,15 @@ export const TopicDropdownForLogin = ({topic, setTopic}) => {
             </div>
             <div className="max-h-48 overflow-y-auto">
               <ul className="py-2 text-lg">
-                <li className="font-bold text-customBlue ml-2 text-txt-gray">Events</li>
+                <li className="font-bold text-customBlue ml-2 text-txt-gray">
+                  Events
+                </li>
                 {eventList.map((event, index) => (
                   <li key={index}>
                     <a
                       href="#"
-                      className="block px-4 py-2 text-customBlue hover:bg-gray-100 dark:hover:bg-customBlue dark:hover:text-white " onClick={handleClick}
+                      className="block px-4 py-2 text-customBlue hover:bg-gray-100 dark:hover:bg-customBlue dark:hover:text-white "
+                      onClick={handleClick}
                     >
                       {event.Name}
                     </a>
@@ -103,10 +113,5 @@ export const TopicDropdownForLogin = ({topic, setTopic}) => {
         </div>
       )}
     </div>
-
-
-
   );
 };
-
-
