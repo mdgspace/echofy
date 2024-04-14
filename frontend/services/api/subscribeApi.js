@@ -19,7 +19,7 @@ const subscribe = async(email, username, userId, channel , timestamp) => {
         });
 
         if(response.status === 200){
-            console.log("mono randi")
+
             return response.data;   
         }
     }catch(error){

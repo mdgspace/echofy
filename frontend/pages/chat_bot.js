@@ -53,18 +53,18 @@ export default function Home() {
 
 function closeMail() {
     setIsMailOpen(false);
-    console.log(isMailOpen)
+
   }
 
   function updateMessages(newMessage) {
-    console.log("-------------------------------")
+
     setMessages([
       ...messages,
         JSON.stringify({text:newMessage , isSent:true})
         
     ]);
-    console.log( JSON.stringify({text:newMessage , isSent:true}))
-    console.log("----------------------------------")
+
+
   }
 
 
@@ -109,12 +109,12 @@ function closeMail() {
       router.push("/");
     }
     const userId = getSessionUserId();
-    console.log(userId)
-    console.log(username);
+
+
     const channel = 'chatbot';
 
     const url = buildWebSocketURL(userId, username , channel, socketTopic);
-    console.log(url);
+
     const handleOpen = () => {
       //todo-> toast connected to server
     }
@@ -244,14 +244,14 @@ function closeMail() {
   useEffect(()=>{
     const leaveChatOnNavigation = () => {
       leaveChat( getSessionUserId());
-      console.log("----------------------------------")
-      console.log("leaving chat on navaigation")
+
+
       removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
       leaveChat( getSessionUserId());
-      console.log("leaving chat on beforeunload")
+
     }
 
     router.events.on("RouteChangeStart" ,leaveChatOnNavigation);
