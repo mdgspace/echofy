@@ -29,7 +29,7 @@ import Mail from "../components/mail";
 import { ChatNavbar } from "../components/chatNavbar";
 
 
-import { leaveChat } from "../services/utilities/utilities";
+import { leaveChat } from "../services/api/leaveChatApi";
 
 
 export default function Home() {
