@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { leaveChatURLbuildr } from '../url-builder/url-builder';
+import { removeSessionUserId } from '../utilities/utilities';
 
 export async function leaveChat(userID) {
     if (userID) {
@@ -7,9 +8,8 @@ export async function leaveChat(userID) {
       { 
         const url = leaveChatURLbuildr(userID);
         const response = await axios.post(url, {});
-        console.log('response', response);
       }catch (error) {
-        console.error('Error leaving chat:', error);
+        // console.error("Error in leaving chat:", error)
       }
   
   

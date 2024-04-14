@@ -11,9 +11,11 @@ import {
   handleWebSocketClose,
   handleWebSocketError,
   processWebSocketMessage,
+  removeSessionUserId,
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
+import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
 import notif from "../assets/sounds/notif.mp3";
 import notifRecieve from "../assets/sounds/notif-recieve.mp3";
@@ -90,7 +92,7 @@ export default function Home() {
   useEffect(() => {
     const username = getSessionUser();
     if (!username || username === "null" || username === "undefined") {
-      router.push("/login");
+      router.push("/");
     }
     const userId = getSessionUserId();
     console.log(userId)
@@ -122,11 +124,11 @@ export default function Home() {
       try {
         let data = "";
         if (
-          event.data != "Messsage send successful" &&
+          event.data != "Message send successful" &&
           event.data != "Welcome to MDG Chat!"
         ) {
           data = JSON.parse(event.data);
-          console.log(data);
+          console.log("data" , data);
         }
         const allMessages = [];
         const addMessages = (messageData, isSent) => {
@@ -225,12 +227,11 @@ export default function Home() {
       leaveChat( getSessionUserId());
       console.log("----------------------------------")
       console.log("leaving chat on navaigation")
+      removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
       leaveChat( getSessionUserId());
-      e.preventDefault()
-      e.returnValue = "";
       console.log("leaving chat on beforeunload")
     }
 
@@ -243,7 +244,7 @@ export default function Home() {
     }
 
     
-},[]);
+},[router]);
 
   return (
     <>

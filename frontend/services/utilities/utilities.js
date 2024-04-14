@@ -233,8 +233,9 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin , is
    }
   try {
     if (
-      event.data !== "Messsage send successful" &&
-      event.data !== "Welcome to MDG Chat!"
+      event.data !== "Message send successful" &&
+      event.data !== "Welcome to MDG Chat!" &&
+      event.data !== "Message send successful"
       && !isChatbot
     ) {
       const data = JSON.parse(event.data);

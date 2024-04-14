@@ -59,7 +59,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
     };
     const newFilteredMessages = filterMessages();
     setFilteredMessage(newFilteredMessages);
-  },)
+  },[messages])
 
   return (
     <div className="h-[85vh]">
