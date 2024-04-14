@@ -13,6 +13,7 @@ import {
   handleWebSocketClose,
   handleWebSocketError,
   processWebSocketMessage,
+  removeSessionUserId
 } from "../services/utilities/utilities";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
@@ -28,6 +29,7 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
+import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
 import { ChatNavbar } from "../components/chatNavbar";
 
@@ -104,7 +106,7 @@ function closeMail() {
   useEffect(() => {
     const username = getSessionUser();
     if (!username || username === "null" || username === "undefined") {
-      router.push("/login");
+      router.push("/");
     }
     const userId = getSessionUserId();
     console.log(userId)
@@ -238,6 +240,30 @@ function closeMail() {
     router.push("/chat");
     localStorage.setItem("chatType", "public");
   }
+
+  useEffect(()=>{
+    const leaveChatOnNavigation = () => {
+      leaveChat( getSessionUserId());
+      console.log("----------------------------------")
+      console.log("leaving chat on navaigation")
+      removeSessionUserId();
+    
+    }
+    const handleBeforeUnload = (e) => {
+      leaveChat( getSessionUserId());
+      console.log("leaving chat on beforeunload")
+    }
+
+    router.events.on("RouteChangeStart" ,leaveChatOnNavigation);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      router.events.off("routeChangeStart", leaveChatOnNavigation);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+
+    
+},[router]);
 
   return (
     <>

@@ -65,21 +65,25 @@ func RemoveMsgFromDB(channelID, timestamp string) {
 
 Returns a string of marshalled messages
 */
-func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) map[string]string {
+func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) (map[string]string, map[string]string) {
 	// iterate over all message keys and get their values
-	messages := make(map[string]string)
+	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("private:*:%v", arrivalTimeStamp), numKeys).Iterator()
 	for iter.Next(ctx) {
 		a, _ := redisClient.MGet(ctx, iter.Val()).Result()
 		str, _ := a[0].(string)
-		messages[strings.Split(iter.Val(), ":")[2]] = str
+		if strings.Split(iter.Val(), ":")[1] == arrivalTimeStamp {
+			currUserSentMsg[strings.Split(iter.Val(), ":")[2]] = str
+		} else {
+			otherUserSentMsg[strings.Split(iter.Val(), ":")[2]] = str
+		}
 	}
 	if err := iter.Err(); err != nil {
 		logging.LogException(err)
 		panic(err)
 	}
-	return messages
+	return currUserSentMsg, otherUserSentMsg
 }
 
 /*
