@@ -181,7 +181,6 @@ export default function Home() {
           }
         }
       } catch (error) {
-        console.log(error);
         //todo-> enable sentry logger here
       }
     });
@@ -200,7 +199,6 @@ export default function Home() {
       // e.preventDefault()
       // e.returnValue = "hehehe";
       leaveChat(getSessionUserId());
-      console.log("leaving chat on beforeunload");
     };
 
     router.events.on("routeChangeStart", leaveChatOnNavigation);

@@ -156,7 +156,6 @@ export default function Home() {
         });
         setMessages((prevMessages) => [...prevMessages, jsonResponse]);
       } catch (error) {
-        console.log(error);
         //todo-> enable sentry logger here
       }
     });

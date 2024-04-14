@@ -179,7 +179,6 @@ export default function Home() {
           }
         }
       } catch (error) {
-        console.log(error);
         //todo-> enable sentry logger here
       }
     });

@@ -24,8 +24,6 @@ const subscribe = async (email, username, userId, channel, timestamp) => {
       return response.data;
     }
   } catch (error) {
-    console.log(email, username, userId, channel, timestamp);
-    console.error("Error subscribing:", error);
     throw error.response.data;
   }
 };

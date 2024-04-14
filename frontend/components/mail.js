@@ -18,7 +18,7 @@ export default function Mail({
       await subscribe(email, username, userId, channel, timestamp);
       onClose();
     } catch (error) {
-      console.log("error", error);
+       //todo -> enable sentry logger here
     }
   };
 
