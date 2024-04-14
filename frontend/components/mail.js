@@ -1,21 +1,21 @@
 import React from "react";
 import { useState } from "react";
 import subscribe from "../services/api/subscribeApi";
+import { getSessionUser, getSessionUserId } from "../services/utilities/utilities";
 
 export default function Mail({
   isOpen,
   onClose,
-  username,
-  userId,
   channel,
-  timestamp,
 }) {
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
+    let userId = getSessionUserId();
+    let username = getSessionUser();
     e.preventDefault();
     try {
-      await subscribe(email, username, userId, channel, timestamp);
+      await subscribe(email, username, userId, channel, userId);
       onClose();
     } catch (error) {
        //todo -> enable sentry logger here
