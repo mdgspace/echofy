@@ -76,7 +76,7 @@ export default function Home() {
               <div class="flex flex-col justify-center items-center ">
                 <div className="flex flex-col justify-center items-center gap-6 ">
                   <div class="text-customBlue font-Lato font-medium text-5xl text-center">
-                    Welcocme to Echofy
+                    Welcome to Echofy
                   </div>
                   <div class="text-txt-gray font-Lato text-center text-ato font-medium text-lg">
                     We've developed this resource to address any inquiries you may have regarding the MDG Space group at IIT Roorkee, including its events and projects. You can engage with our chatbot or reach out to us directly on Slack. We're eager to assist you.
