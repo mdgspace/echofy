@@ -71,7 +71,7 @@
         </div>
         {isOpen && (
           <div className="relative inline-block  text-customBlue">
-            <div className="absolute z-10 right-0 w-56  divide-y divide-gray-100 rounded-lg shadow-lg mt-5">
+            <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 rounded-lg shadow-lg mt-5">
               <div className="max-h-48 overflow-y-auto">
                 <ul className="py-2 text-lgy">
                   <li className="font-bold text-customBlue ml-2 text-txt-gray">Projects</li>

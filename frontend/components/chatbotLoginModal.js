@@ -7,10 +7,12 @@ import {
     removeSessionUserId,
     checkAndPromptSessionChange,
   } from "../services/utilities/utilities";
+import { TopicDropdownForLogin } from "./topicDropdownforLogin";
 
 const ChatBotLoginModal = ({ onClose  }) => {
   const popupRef = useRef();
   const [username, setUsername] = useState("");
+  const [topic, setTopic] = useState("SELECT A TOPIC");
   const router = useRouter();
 
   function handleUsernameChange(event) {
@@ -41,7 +43,7 @@ const ChatBotLoginModal = ({ onClose  }) => {
     const currentUserId = getSessionUserId();
       if (currentUser && currentUserId) {
         if (currentUser === username) {
-          router.push("/chat_bot");
+          router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
         } else {
           const hasChanged = await checkAndPromptSessionChange(
             currentUser,
@@ -52,12 +54,12 @@ const ChatBotLoginModal = ({ onClose  }) => {
             }
           );
           if (hasChanged) {
-            router.push("/chat_bot");
+            router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
           }
         }
       } else {
         setSessionUser(username);
-        router.push("/chat_bot");
+        router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
       }
     
   }
@@ -80,7 +82,9 @@ const ChatBotLoginModal = ({ onClose  }) => {
               onChange={handleUsernameChange}
               onKeyDown={handleEnterClick}
             />
-          </div>
+      </div>
+
+      <TopicDropdownForLogin topic={topic} setTopic={setTopic} />
 
           
             <div
