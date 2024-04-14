@@ -4,7 +4,7 @@ import ChatContainer from "../components/chatContainer";
 import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, use } from "react";
 import {
   formatChatbotUserText,
   getIsSentForChatBot,
@@ -31,8 +31,8 @@ import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
 import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
-import { ChatNavbar } from "../components/chatNavbar";
 
+import { ChatbotNavbar } from "../components/chatbotNavbar";
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -40,35 +40,33 @@ export default function Home() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isMailOpen, setIsMailOpen] = useState(false);
+  const [topic, setTopic] = useState("Appetizer");
 
   const router = useRouter();
-  const {topic} = router.query;
-  const  newTopic = {topic}
-  const socketTopic = newTopic.topic??"Appetizer";
+
+  useEffect(() => {
+  setTopic(router.query.topic ?? "Appetizer");
+  }, [router.query]);
 
 
-  function openMail() {
+function openMail() {
     setIsMailOpen(true);
   }
 
 function closeMail() {
     setIsMailOpen(false);
-    console.log(isMailOpen)
   }
 
   function updateMessages(newMessage) {
-    console.log("-------------------------------")
     setMessages([
       ...messages,
         JSON.stringify({text:newMessage , isSent:true})
         
     ]);
-    console.log( JSON.stringify({text:newMessage , isSent:true}))
-    console.log("----------------------------------")
   }
 
 
-  const socketRef = useRef(null);topic
+  const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -109,12 +107,11 @@ function closeMail() {
       router.push("/");
     }
     const userId = getSessionUserId();
-    console.log(userId)
-    console.log(username);
     const channel = 'chatbot';
 
-    const url = buildWebSocketURL(userId, username , channel, socketTopic);
-    console.log(url);
+    const topic = router.query;
+    const url = buildWebSocketURL(userId, username , channel, topic.topic ?? "Appetizer");
+    console.log(url)
     const handleOpen = () => {
       //todo-> toast connected to server
     }
@@ -144,52 +141,6 @@ function closeMail() {
         var jsonResponse = JSON.stringify({ text: isSent? formatChatbotUserText(data) : data, isSent: isSent , username : isSent? username : "Echofy"})
         allMessages.push({ text: data, isSent: getIsSentForChatBot(event.data) });
         setMessages((prevMessages) => [...prevMessages, jsonResponse]);
-        
-
-
-
-        // const addMessages = (messageData, isSent) => {
-        //   for (const timestamp in messageData) {
-        //     const messageObj = JSON.parse(messageData[timestamp]);
-        //     allMessages.push({
-        //       text: messageObj.text,
-        //       isSent: isSent,
-        //       username: messageObj.sender,
-        //       timestamp: parseFloat(timestamp),
-        //       avatar: messageObj.url,
-        //     });
-        //   }
-        // };
-        // let hasBulkMessages = false;
-        // if (data["Sent by others"]) {
-        //   addMessages(data["Sent by others"], false);
-        //   hasBulkMessages = true;
-        // }
-        // if (data["Sent by you"]) {
-        //   addMessages(data["Sent by you"], true);
-        //   hasBulkMessages = true;
-        // }
-        // if (hasBulkMessages) {
-        //   allMessages.sort((a, b) => a.timestamp - b.timestamp);
-        //   setMessages(allMessages);
-        // } else {
-        //   if (data.text && data.sender && data.timestamp) {
-        //     let isSent = data.sender === username;
-        //     setMessages((prevMessages) => [
-        //       ...prevMessages,
-        //       {
-        //         // text: data.text,
-        //         // isSent: isSent,
-        //         // username: data.sender,
-        //         // timestamp: parseFloat(data.timestamp),
-        //         // avatar: data.url,
-        //         messageObj
-        //       },
-        //     ]);
-        //     if(soundEnabled) playSound(isSent);
-        //     if (document.hidden) setUnreadCount((prevCount) => prevCount + 1);
-        //   }
-        // }
       } catch (error) {
         console.log(error)
         //todo-> enable sentry logger here
@@ -198,7 +149,7 @@ function closeMail() {
     return () => {
       socket.close();
     };
-  }, [initializeWebSocketConnection , soundEnabled]);
+  }, [initializeWebSocketConnection]);
 
   useEffect(() => {
     
@@ -246,7 +197,6 @@ function closeMail() {
       leaveChat( getSessionUserId());
       console.log("----------------------------------")
       console.log("leaving chat on navaigation")
-      removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
@@ -277,7 +227,7 @@ function closeMail() {
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
           <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
-                <ChatNavbar currentPage={"chatbot"} />
+                <ChatbotNavbar currentPage={"chatbot"} currentTopic={topic} />
               </div>
             <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]" >
               <ChatbotContainer

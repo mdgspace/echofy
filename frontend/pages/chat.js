@@ -32,6 +32,7 @@ import { ChatNavbar } from "../components/chatNavbar";
 
 import { leaveChat } from "../services/api/leaveChatApi";
 
+
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -97,12 +98,8 @@ export default function Home() {
       router.push("/");
     }
     const userId = getSessionUserId();
-    console.log(userId)
-    console.log(username);
-
     const channel = "public";
     const url = buildWebSocketURL(userId, username, channel);
-    console.log(url);
     const handleOpen = () => {
       //todo-> toast connected to server
     }
