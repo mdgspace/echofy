@@ -57,8 +57,8 @@ export default function Home() {
 
   return (
     <>
-      <div className="main bg-white w-full bg-contain h-[98vh]">
-        <div className="grid grid-cols-24 w-full mt-2 h-[98vh]">
+      <div className="main bg-white w-full bg-contain">
+        <div className="grid grid-cols-24 w-full mt-2 h-[95vh]">
           <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
               <Box />

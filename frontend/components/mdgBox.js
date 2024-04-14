@@ -62,7 +62,7 @@ export default function Box({ channel }) {
 
   return (
     <>
-      <div class="flex flex-col gap-3 justify-between items-center">
+      <div class="flex flex-col gap-5 justify-between items-center">
         <div class="Projects">
           <ProjectList
             projects={projectList}

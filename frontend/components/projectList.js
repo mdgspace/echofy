@@ -7,7 +7,7 @@ export const ProjectList = ({ projects, category, heightDecrease }) => {
         {category} ({projects.length})
       </div>
       <div
-        class={`flex flex-col gap-2 rounded-xl font-Lato overflow-y-auto ${!heightDecrease ? "h-[42vh]" : "h-[48vh]"}`}
+        class={`flex flex-col gap-2 rounded-xl font-Lato overflow-y-auto ${!heightDecrease ? "h-[40vh]" : "h-[44vh]"}`}
       >
         {projects.map((project, index) => (
           <ProjectCard
