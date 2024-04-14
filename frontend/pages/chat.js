@@ -98,12 +98,8 @@ export default function Home() {
       router.push("/");
     }
     const userId = getSessionUserId();
-    console.log(userId)
-    console.log(username);
-
     const channel = "public";
     const url = buildWebSocketURL(userId, username, channel);
-    console.log(url);
     const handleOpen = () => {
       //todo-> toast connected to server
     }

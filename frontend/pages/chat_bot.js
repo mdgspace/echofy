@@ -40,14 +40,12 @@ export default function Home() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isMailOpen, setIsMailOpen] = useState(false);
+  const [topic, setTopic] = useState("Appetizer");
 
   const router = useRouter();
 
   useEffect(() => {
-  console.log("-------------------------------")
-  console.log(router)
-  console.log(router.query)
-  const {topic} = router.pathname;
+  setTopic(router.query.topic ?? "Appetizer");
   }, [router.query]);
 
 
@@ -57,18 +55,14 @@ function openMail() {
 
 function closeMail() {
     setIsMailOpen(false);
-    console.log(isMailOpen)
   }
 
   function updateMessages(newMessage) {
-    console.log("-------------------------------")
     setMessages([
       ...messages,
         JSON.stringify({text:newMessage , isSent:true})
         
     ]);
-    console.log( JSON.stringify({text:newMessage , isSent:true}))
-    console.log("----------------------------------")
   }
 
 
@@ -113,14 +107,11 @@ function closeMail() {
       router.push("/");
     }
     const userId = getSessionUserId();
-    console.log(userId)
-    console.log(username);
     const channel = 'chatbot';
 
     const topic = router.query;
-    console.log(router)
     const url = buildWebSocketURL(userId, username , channel, topic.topic ?? "Appetizer");
-    console.log(url , "url");
+    console.log(url)
     const handleOpen = () => {
       //todo-> toast connected to server
     }
@@ -158,7 +149,7 @@ function closeMail() {
     return () => {
       socket.close();
     };
-  }, [initializeWebSocketConnection , soundEnabled, router]);
+  }, [initializeWebSocketConnection]);
 
   useEffect(() => {
     
@@ -206,7 +197,6 @@ function closeMail() {
       leaveChat( getSessionUserId());
       console.log("----------------------------------")
       console.log("leaving chat on navaigation")
-      removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
@@ -237,7 +227,7 @@ function closeMail() {
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
           <div class="flex flex-col h-screen w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
-                <ChatbotNavbar currentPage={"chatbot"} />
+                <ChatbotNavbar currentPage={"chatbot"} currentTopic={topic} />
               </div>
             <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]" >
               <ChatbotContainer

@@ -8,7 +8,7 @@ import slack from ".././assets/slack_blue.svg";
 import { TopicDropdown } from "./topicDropdown";
 
 
-export const ChatbotNavbar = ({currentPage}) => {
+export const ChatbotNavbar = ({currentPage , currentTopic}) => {
     const [isMailOpen, setIsMailOpen] = useState(false);
     const [logo, setLogo] = useState(jinoraLogo);
     const [leftText, setLeftText] = useState("");
@@ -50,15 +50,13 @@ export const ChatbotNavbar = ({currentPage}) => {
                     {leftText}
                 </div>
             </div>
-            <div class="flex flex-row gap-4">
+            <div class="flex flex-row gap-4 items-center">
                 <div class="ele1">
-                    {/* ele 1 */} 
-                    {/* todo -> implement leave chat here with login modal   */}
-                <TopicDropdown/>
+                <TopicDropdown currentTopic={currentTopic}/>
                 </div>
                 <div class="flex flex-row gap-2 ">
                 <Image src={mail} alt="mail" width={29} height={29} />
-                <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2">
+                <p onClick={openMail} className="text-txt-gray font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2">
                       Request a mail reply
                     </p>
 
