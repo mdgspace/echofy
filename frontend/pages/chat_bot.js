@@ -115,7 +115,8 @@ function closeMail() {
 
     const channel = 'chatbot';
 
-    const url = buildWebSocketURL(userId, username , channel, socketTopic);
+    const topic = router.query;
+    const url = buildWebSocketURL(userId, username , channel, topic.topic ?? "Appetizer");
 
     const handleOpen = () => {
       //todo-> toast connected to server
