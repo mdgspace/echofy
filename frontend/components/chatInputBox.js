@@ -51,10 +51,6 @@ export default function ChatInputBox({ updateMessages, socketRef }) {
         
          <div className="flex justify-center items-center h-full px-5 py-6 border-none" >
             <div className="relative w-full bg-transparent  mx-1 border-none">
-                {/* to be done after attachment support is added */}
-                {/* <div className="">
-                    <FaPlus className="absolute left-2 top-1/2 transform -translate-y-1/2 text--500" />
-                </div> */}
                 <input
                     type="text"
                     placeholder={isTimeout? "Timed out for 5 seconds" : "New Message"}

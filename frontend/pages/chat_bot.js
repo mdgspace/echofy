@@ -55,14 +55,18 @@ function openMail() {
 
 function closeMail() {
     setIsMailOpen(false);
+
   }
 
   function updateMessages(newMessage) {
+
     setMessages([
       ...messages,
         JSON.stringify({text:newMessage , isSent:true})
         
     ]);
+
+
   }
 
 
@@ -107,11 +111,13 @@ function closeMail() {
       router.push("/");
     }
     const userId = getSessionUserId();
+
+
     const channel = 'chatbot';
 
     const topic = router.query;
     const url = buildWebSocketURL(userId, username , channel, topic.topic ?? "Appetizer");
-    console.log(url)
+
     const handleOpen = () => {
       //todo-> toast connected to server
     }
@@ -195,13 +201,14 @@ function closeMail() {
   useEffect(()=>{
     const leaveChatOnNavigation = () => {
       leaveChat( getSessionUserId());
-      console.log("----------------------------------")
-      console.log("leaving chat on navaigation")
+
+
+      removeSessionUserId();
     
     }
     const handleBeforeUnload = (e) => {
       leaveChat( getSessionUserId());
-      console.log("leaving chat on beforeunload")
+
     }
 
     router.events.on("RouteChangeStart" ,leaveChatOnNavigation);

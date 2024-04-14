@@ -51,11 +51,6 @@ export const ChatNavbar = ({currentPage}) => {
                 </div>
             </div>
             <div class="flex flex-row gap-4">
-                <div class="ele1">
-                    {/* ele 1 */} 
-                    {/* todo -> implement leave chat here with login modal   */}
-
-                </div>
                 <div class="flex flex-row gap-2 ">
                 <Image src={mail} alt="mail" width={29} height={29} />
                 <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2">

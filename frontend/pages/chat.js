@@ -98,8 +98,12 @@ export default function Home() {
       router.push("/");
     }
     const userId = getSessionUserId();
+
+
+
     const channel = "public";
     const url = buildWebSocketURL(userId, username, channel);
+
     const handleOpen = () => {
       //todo-> toast connected to server
     }
@@ -127,7 +131,7 @@ export default function Home() {
           event.data != "Welcome to MDG Chat!"
         ) {
           data = JSON.parse(event.data);
-          console.log(data);
+
         }
         const allMessages = [];
         const addMessages = (messageData, isSent) => {
@@ -184,7 +188,7 @@ export default function Home() {
 useEffect(()=>{
     const leaveChatOnNavigation = () => {
       leaveChat(getSessionUserId());
-      console.log("leaving chat on navaigation")
+
       removeSessionUserId();
     
     }

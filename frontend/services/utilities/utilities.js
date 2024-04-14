@@ -13,9 +13,10 @@ export function getSessionUser() {
   return username;
 }
 
+
 export function getSessionUserId() {
   const a = sessionStorage.getItem("userID");
-  console.log(a)
+
   return a;
 }
 
@@ -77,7 +78,7 @@ export async function checkAndPromptSessionChange(
 export function handleWebSocketError(event) {
   console.error("WebSocket error observed:", event);
 }
-
+ 
 export function handleWebSocketClose(event, navigateToLogin) {
   if (isUserBanned(event.code)) {
     alertBannedUser(event.reason, navigateToLogin);
@@ -239,7 +240,7 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin , is
       && !isChatbot
     ) {
       const data = JSON.parse(event.data);
-      console.log(data)
+
       handleUserID(data);
 
       if (handleBannedUser(data, navigateToLogin)) {
@@ -252,7 +253,7 @@ export function processWebSocketMessage(event, setMessages, navigateToLogin , is
     }
   } catch (error) {
     console.error("Error parsing or handling the message:", error);
-    console.error(event.data);
+
   }
 
   function handleUserID(data) {
@@ -346,4 +347,4 @@ export async function getAvatar(){
 
   return avatarId;
 
-}
+}  
