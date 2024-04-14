@@ -50,7 +50,7 @@ const isShown = router.pathname === '/';
       router.push("/chat_bot")
     }
     else{
-      router.push("/chat_bot")
+      router.push("/private_chat")
     }
   }
   const [topic, setTopic] = useState(" ");

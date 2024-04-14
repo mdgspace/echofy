@@ -52,8 +52,6 @@ export const ChatNavbar = ({currentPage}) => {
             </div>
             <div class="flex flex-row gap-4">
                 <div class="ele1">
-                    {/* ele 1 */} 
-                    {/* todo -> implement leave chat here with login modal   */}
                 </div>
                 <div class="flex flex-row gap-2">
                 <Image src={mail} alt="mail" width={29} height={29 } />
