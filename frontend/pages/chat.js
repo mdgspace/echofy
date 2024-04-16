@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import ChatInputBox from "../components/chatInputBox";
 import ChatContainer from "../components/chatContainer";
