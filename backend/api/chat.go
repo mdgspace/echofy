@@ -3,6 +3,7 @@ package api
 import (
 	"strings"
 	"time"
+	"regexp"
 
 	"bot/api/utils"
 	customutils "bot/customUtils"
@@ -46,7 +47,21 @@ func JoinChat() echo.HandlerFunc {
 		} else if db.CheckIfUserIDExists(name, userID) {
 			return utils.SendConflictMessage(c, "Wrong user ID")
 		} else if db.GetUserID(name) != "" {
-			return utils.SendConflictMessage(c, "Username taken")
+			userIDTemp := db.GetUserID(name)
+			if channel == "public"{
+				if(strings.Contains(userIDTemp, "public")){
+					return utils.SendBadRequestMessage(c, "Username taken")
+				}
+			} else if channel == "chatbot"{
+				if(strings.Contains(userIDTemp, "chatbot")){
+					return utils.SendBadRequestMessage(c, "Username taken")
+				}
+			} else {
+				pattern := regexp.MustCompile(`^[0-9]*\.?[0-9]+$`)
+				if(pattern.MatchString(userIDTemp)){
+					return utils.SendBadRequestMessage(c, "Username taken")
+				}
+			}
 		}
 		utils.ChatUserHandler(c, name, channel, userID)
 		time.Sleep(time.Second)

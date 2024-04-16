@@ -1,11 +1,11 @@
-import Head from 'next/head';
-import Image from 'next/image';
-import styles from './layout.module.css';
-import utilStyles from '../styles/utils.module.css';
-import Link from 'next/link';
+import Head from "next/head";
+import Image from "next/image";
+import styles from "./layout.module.css";
+import utilStyles from "../styles/utils.module.css";
+import Link from "next/link";
 
-const name = 'Choose the Chat Mode';
-export const siteTitle = 'Jinora';
+const name = "Choose the Chat Mode";
+export const siteTitle = "Jinora";
 
 export default function Layout({ children, home }) {
   return (

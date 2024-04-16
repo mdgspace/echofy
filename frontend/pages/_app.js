@@ -1,9 +1,10 @@
-import { UserProvider } from '../context/userContext';
-import '../styles/globals.css';
+import { UserProvider } from "../context/userContext";
+import "../styles/globals.css";
 
 export default function App({ Component, pageProps }) {
-    return (
+  return (
     <UserProvider>
-    <Component {...pageProps} />
-    </UserProvider>)
-  }
+      <Component {...pageProps} />
+    </UserProvider>
+  );
+}
