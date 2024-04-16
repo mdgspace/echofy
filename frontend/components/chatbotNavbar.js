@@ -55,17 +55,9 @@ export const ChatbotNavbar = ({ currentPage, currentTopic }) => {
         <div class="ele1">
           <TopicDropdown currentTopic={currentTopic} />
         </div>
-        <div class="flex flex-row gap-2 ">
-          <Image src={mail} alt="mail" width={29} height={29} />
-          <p
-            onClick={openMail}
-            className="text-txt-gray font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2"
-          >
-            Request a mail reply
-          </p>
-        </div>
+       
       </div>
-      {isMailOpen && <Mail onClose={closeMail} />}
+
     </div>
   );
 };

@@ -4,14 +4,13 @@ import mail from ".././assets/mail.svg";
 import Image from "next/image";
 import jinoraLogo from "../assets/logo.svg";
 import slack from ".././assets/slack_blue.svg";
-
 import { TopicDropdown } from "./topicDropdown";
 
 export const ChatNavbar = ({ currentPage }) => {
   const [isMailOpen, setIsMailOpen] = useState(false);
   const [logo, setLogo] = useState(jinoraLogo);
   const [leftText, setLeftText] = useState("");
-
+  const [toShow, setToShow] = useState(false);
   function openMail() {
     setIsMailOpen(true);
   }
@@ -25,6 +24,7 @@ export const ChatNavbar = ({ currentPage }) => {
       case "private":
         setLogo(slack);
         setLeftText("MDG SLACK MEMBERS");
+        setToShow(true);
         break;
       case "public":
         setLogo(slack);
@@ -51,18 +51,24 @@ export const ChatNavbar = ({ currentPage }) => {
           {leftText}
         </div>
       </div>
-      <div class="flex flex-row gap-4">
+
+      {toShow &&(
+        <div class="flex flex-row gap-4">
         <div class="flex flex-row gap-2 ">
           <Image src={mail} alt="mail" width={29} height={29} />
           <p
             onClick={openMail}
-            className="text-gray-600 font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2"
+            className="text-gray-600 font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2 pb-2  "
           >
             Request a mail reply
           </p>
         </div>
       </div>
-      {isMailOpen && <Mail onClose={closeMail} />}
-    </div>
+      )
+        
+      }
+      
+      {isMailOpen && currentPage == "private" && <Mail onClose={closeMail} channel="private"/>}
+    </div> 
   );
 };
