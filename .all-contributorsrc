@@ -8,7 +8,6 @@
   "commitConvention": "angular",
   "contributors": [
     {
-
       "login": "Coder-Manan",
       "name": "Manan Garg",
       "avatar_url": "https://avatars.githubusercontent.com/u/92792271?v=4",
@@ -16,7 +15,7 @@
       "contributions": [
         "doc",
         "code"
-       ]
+      ]
     },
     {
       "login": "Aaditya-G",
@@ -36,12 +35,21 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "the-geek-deep",
+      "name": "Deep Umrajkar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121167625?v=4",
+      "profile": "https://github.com/the-geek-deep",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "Echofy",
+  "projectName": "echofy",
   "projectOwner": "mdgspace"
 }
