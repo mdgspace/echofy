@@ -1,8 +1,6 @@
 # Echo
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 _v 1.0.0_
 
@@ -52,12 +50,11 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 <table>
   <tbody>
     <tr>
-
-<td align="center" valign="top" width="14.28%"><a href="https://github.com/Coder-Manan"><img src="https://avatars.githubusercontent.com/u/92792271?v=4?s=100" width="100px;" alt="Manan Garg"/><br /><sub><b>Manan Garg</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Coder-Manan" title="Documentation">📖</a> <a href="https://github.com/mdgspace/Echofy/commits?author=Coder-Manan" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aaditya-G"><img src="https://avatars.githubusercontent.com/u/84654828?v=4?s=100" width="100px;" alt="Zcross"/><br /><sub><b>Zcross</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Aaditya-G" title="Code">💻</a> <a href="https://github.com/mdgspace/Echofy/commits?author=Aaditya-G" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://jeetube.firebaseapp.com/"><img src="https://avatars.githubusercontent.com/u/95746190?v=4?s=100" width="100px;" alt="Ayush Chaudhary"/><br /><sub><b>Ayush Chaudhary</b></sub></a><br /><a href="https://github.com/mdgspace/Echofy/commits?author=Ayush0Chaudhary" title="Code">💻</a></td>
-
-  </tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Coder-Manan"><img src="https://avatars.githubusercontent.com/u/92792271?v=4?s=100" width="100px;" alt="Manan Garg"/><br /><sub><b>Manan Garg</b></sub></a><br /><a href="https://github.com/mdgspace/echofy/commits?author=Coder-Manan" title="Documentation">📖</a> <a href="https://github.com/mdgspace/echofy/commits?author=Coder-Manan" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aaditya-G"><img src="https://avatars.githubusercontent.com/u/84654828?v=4?s=100" width="100px;" alt="Zcross"/><br /><sub><b>Zcross</b></sub></a><br /><a href="https://github.com/mdgspace/echofy/commits?author=Aaditya-G" title="Code">💻</a> <a href="https://github.com/mdgspace/echofy/commits?author=Aaditya-G" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jeetube.firebaseapp.com/"><img src="https://avatars.githubusercontent.com/u/95746190?v=4?s=100" width="100px;" alt="Ayush Chaudhary"/><br /><sub><b>Ayush Chaudhary</b></sub></a><br /><a href="https://github.com/mdgspace/echofy/commits?author=Ayush0Chaudhary" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/the-geek-deep"><img src="https://avatars.githubusercontent.com/u/121167625?v=4?s=100" width="100px;" alt="Deep Umrajkar"/><br /><sub><b>Deep Umrajkar</b></sub></a><br /><a href="https://github.com/mdgspace/echofy/commits?author=the-geek-deep" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
