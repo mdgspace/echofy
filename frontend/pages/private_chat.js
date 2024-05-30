@@ -30,6 +30,8 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 import { ChatNavbar } from "../components/chatNavbar";
+import useIsInIframe from "../services/utilities/useInFrame";
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -246,9 +248,11 @@ export default function Home() {
     };
   }, [router]);
 
+  const isInFrame = useIsInIframe();
+
   return (
     <>
-      <div className="main text-slate-950 bg- w-full h-screen bg-contain">
+      <div className={`main text-slate-950 bg- w-full h-screen bg-contain ${isInFrame ? "mt-8" : "mt-0"}`}>
         <div className="grid grid-cols-24 w-full h-[98vh] mt-2">
           <div className="justify-between flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
