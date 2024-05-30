@@ -19,6 +19,7 @@ import ChatBot from "../assets/chatbot.svg";
 import SlackLogo from "../assets/slack.svg";
 import LoginModal from "../components/loginModal";
 import ChatBotLoginModal from "../components/chatbotLoginModal";
+import useIsInIframe from "../services/utilities/useInFrame";
 export default function Home() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,9 +56,11 @@ export default function Home() {
     openChatBotModal();
   };
 
+  const isInIframe = useIsInIframe();
+
   return (
     <>
-      <div className="main bg-white w-full bg-contain">
+      <div className={`main bg-white w-full bg-contain ${isInIframe ? "mt-8" : "0"}`}>
         <div className="grid grid-cols-24 w-full mt-2 h-[95vh]">
           <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">

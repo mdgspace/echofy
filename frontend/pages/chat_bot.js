@@ -33,6 +33,8 @@ import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbotContainer";
 import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
+import useIsInIframe from "../services/utilities/useInFrame";
+
 
 import { ChatbotNavbar } from "../components/chatbotNavbar";
 
@@ -224,9 +226,11 @@ export default function Home() {
     };
   }, [router]);
 
+  const isInIframe = useIsInIframe();
+
   return (
     <>
-      <div className="main text-slate-950 bg-white w-full bg-contain ">
+      <div className={`main text-slate-950 bg-white w-full bg-contain ${isInIframe ? "mt-8" : "mt-0"}`}>
         <div className="grid grid-cols-24 w-full h-[98vh] mt-2">
           <div className="justify-between col-span-7 bg-white rounded-r-xl max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
