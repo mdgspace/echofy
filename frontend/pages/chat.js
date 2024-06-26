@@ -29,18 +29,18 @@ import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
 
-import { ChatNavbar } from "../components/chatNavbar";
+import { Navbar } from "../components/navbar";
 
 import { leaveChat } from "../services/api/leaveChatApi";
 
-export default function Home() {
+export default function Home(){
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isMailOpen, setIsMailOpen] = useState(false);
-
-  const router = useRouter();
+  const router = useRouter()
+  const {channel}=router.query;
 
   function openMail() {
     setIsMailOpen(true);
@@ -106,7 +106,7 @@ export default function Home() {
     }
     const userId = getSessionUserId();
 
-    const channel = "public";
+    // const channel = channel;
     const url = buildWebSocketURL(userId, username, channel);
 
     const handleOpen = () => {
@@ -253,17 +253,18 @@ export default function Home() {
 
   return (
     <>
+    {(channel=="public")?(
       <div className="main text-slate-950 bg-white w-full bg-contain">
         <div className="grid grid-cols-24 w-full h-[98vh] mt-2">
           <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
-              <Box channel={"public"} />
+              <Box channel={channel} />
             </div>
           </div>
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div class="flex flex-col h-[98vh] w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
-                <ChatNavbar currentPage={"public"} />
+                <Navbar currentPage={channel} currentTopic={''} />
               </div>
               <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
                 <ChatContainer
@@ -281,6 +282,62 @@ export default function Home() {
           </div>
         </div>
       </div>
+):(channel=="private")?(
+<div className="main text-slate-950 bg- w-full h-screen bg-contain">
+
+  <div className="grid grid-cols-24 w-full h-[98vh] mt-2">
+
+    <div className="justify-between flex flex-col items-center col-span-7 bg-white max-md:hidden">
+
+      <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
+
+        <Box channel={channel} />
+
+      </div>
+
+    </div>
+
+    <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
+
+      <div class="flex flex-col h-[98vh] w-full gap-4 justify-between items-center">
+
+        <div className="w-full flex flex-row items-center justify-around">
+
+          <Navbar currentPage={channel} currentTopic={''}/>
+
+        </div>
+
+        <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
+
+          <ChatContainer
+
+            messages={messages}
+
+            messagesEndRef={messagesEndRef}
+
+          />
+
+        </div>
+
+        <div className="w-full">
+
+          <ChatInputBox
+
+            updateMessages={updateMessages}
+
+            socketRef={socketRef}
+
+          />
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>):(<div></div>)}
     </>
   );
 }
