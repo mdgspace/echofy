@@ -39,10 +39,10 @@ const LoginModal = ({ onClose, redirect }) => {
     const chatType = redirect;
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-    if (chatType == "public") {
+    const query={channel:chatType};
       if (currentUser && currentUserId) {
         if (currentUser === username) {
-          router.push("/chat");
+          router.push({pathname:'/chat',query});
         } else {
           const hasChanged = await checkAndPromptSessionChange(
             currentUser,
@@ -53,35 +53,13 @@ const LoginModal = ({ onClose, redirect }) => {
             },
           );
           if (hasChanged) {
-            router.push("/chat");
+            router.push({pathname:'/chat',query});
           }
         }
       } else {
         setSessionUser(username);
-        router.push("/chat");
+        router.push({pathname:'/chat',query});
       }
-    } else if (chatType == "private") {
-      if (currentUser && currentUserId) {
-        if (currentUser === username) {
-          router.push("/private_chat");
-        } else {
-          const hasChanged = await checkAndPromptSessionChange(
-            currentUser,
-            username,
-            () => {
-              removeSessionUserId();
-              setSessionUser(username);
-            },
-          );
-          if (hasChanged) {
-            router.push("/private_chat");
-          }
-        }
-      } else {
-        setSessionUser(username);
-        router.push("/private_chat");
-      }
-    }
   }
 
   return (

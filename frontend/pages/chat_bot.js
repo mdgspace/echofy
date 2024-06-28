@@ -1,4 +1,4 @@
-"use client";
++"use client";
 
 import Image from "next/image";
 import ChatInputBox from "../components/chatInputBox";
@@ -34,7 +34,7 @@ import ChatbotContainer from "../components/chatbotContainer";
 import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
 
-import { ChatbotNavbar } from "../components/chatbotNavbar";
+import { Navbar } from "../components/navbar";
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -236,7 +236,7 @@ export default function Home() {
           <div className="col-span-17 flex flex-col justify-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div class="flex flex-col h-[98vh] w-full gap-4 justify-between items-center">
               <div className="w-full flex flex-row items-center justify-around">
-                <ChatbotNavbar currentPage={"chatbot"} currentTopic={topic} />
+                <Navbar currentPage={"chatbot"} currentTopic={topic} />
               </div>
               <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
                 <ChatbotContainer
