@@ -31,6 +31,7 @@ export const Navbar = ({ currentPage, currentTopic }) => {
       case "public":
         setLogo(slack);
         setLeftText("MDG PUBLIC FORUM");
+        setToShow(true);
         break;
       case "chatbot":
         setLogo(jinoraLogo);
@@ -68,9 +69,9 @@ export const Navbar = ({ currentPage, currentTopic }) => {
               </p>
             </div>
           </div>
-          )
-        (isMailOpen && currentPage == "private" && <Mail onClose={closeMail} channel="private"/>)
-          )}
+          ))}
+        {isMailOpen && currentPage == "private" && <Mail onClose={closeMail} channel="private"/>
+          }
     </div>
   );
 };
