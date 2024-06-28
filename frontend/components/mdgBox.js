@@ -33,11 +33,14 @@ export default function Box({ channel }) {
 
   const handleRoute1 = () => {
     if (channel === "public") {
-      router.push("/private_chat");
+      const query={channel:'private'};
+      router.push({pathname:"/chat",query});
     } else if (channel === "private") {
-      router.push("/chat");
+      const query={channel:'public'};
+      router.push({pathname:"/chat",query});
     } else {
-      router.push("/chat");
+      const query={channel:'public'};
+      router.push({pathname:"/chat",query});
     }
   };
 
@@ -47,7 +50,8 @@ export default function Box({ channel }) {
     } else if (channel === "private") {
       router.push("/chat_bot");
     } else {
-      router.push("/private_chat");
+      const query={channel:'private'};
+      router.push({pathname:"/chat",query});
     }
   };
   const [topic, setTopic] = useState(" ");
