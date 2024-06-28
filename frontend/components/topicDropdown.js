@@ -21,7 +21,12 @@ export const TopicDropdown = (currentTopic) => {
   useEffect(() => {
     async function fetchProjectsData() {
       const data = await fetchProjects();
-      setProjects(data);
+      if(data!=null){
+        setProjects(data);
+      }else{
+        setProjects([]);
+      }
+      
     }
     fetchProjectsData();
   }, []);
