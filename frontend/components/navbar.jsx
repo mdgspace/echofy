@@ -41,8 +41,8 @@ export const Navbar = ({ currentPage, currentTopic }) => {
   }, [currentPage]);
 
   return (
-    <div class="flex  flex-row justify-between w-[95%] px-4 py-4 mt-3 rounded-lg h-[3.5rem] bg-white items-center">
-      <div class="flex flex-row items-center justify-center py-4">
+    <div className="flex  flex-row justify-between w-[95%] px-4 py-4 mt-3 rounded-lg h-[3.5rem] bg-white items-center">
+      <div className="flex flex-row items-center justify-center py-4">
         <Image
           src={logo}
           className="text-customBlue"
@@ -50,19 +50,19 @@ export const Navbar = ({ currentPage, currentTopic }) => {
           width={40}
           height={40}
         />
-        <div class="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5">
+        <div className="text-customBlue font-roboto font-semibold text-lg leading-7 ml-5">
           {leftText}
         </div>
       </div>
         {(currentPage=='chatbot')?(
-      <div class="flex flex-row gap-4 items-center">
-        <div class="ele1">
+      <div className="flex flex-row gap-4 items-center">
+        <div className="ele1">
           <TopicDropdown currentTopic={currentTopic} />
         </div>
       </div>
         ):(toShow &&(
-            <div class="flex flex-row gap-4">  
-            <div class="flex flex-row gap-2 ">
+            <div className="flex flex-row gap-4">  
+            <div className="flex flex-row gap-2 ">
               <Image src={mail} alt="mail" width={29} height={29} />
               <p onClick={openMail} className="text-gray-600 font-lato text-base font-normal leading-7  hover:cursor-pointer hover:text-customBlue mt-1.5 mx-2 pb-2  ">
                 Request a mail reply

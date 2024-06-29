@@ -68,8 +68,8 @@ const ChatBotLoginModal = ({ onClose }) => {
         ref={popupRef}
         className="p-6 rounded-xl shadow-2xl text-Lato relative w-96 h-96 bg-light-grey flex flex-col justify-center items-center"
       >
-        <div class="flex flex-col justify-center items-center gap-8">
-          <div class="w-60 text-center text-md">
+        <div className="flex flex-col justify-center items-center gap-8">
+          <div className="w-60 text-center text-md">
             Pick your username and login
           </div>
 

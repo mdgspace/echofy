@@ -71,9 +71,9 @@ export default function ChatContainer({ messages, messagesEndRef }) {
             <div
               className={`relative flex font-Lato text-base ${message.isSent ? "flex-row-reverse" : ""}`}
             >
-              <div class="flex flex-col">
+              <div className="flex flex-col">
                 <div
-                  class={`flex flex-row gap-2 items-center ${message.isSent ? "flex-row-reverse" : ""}`}
+                  className={`flex flex-row gap-2 items-center ${message.isSent ? "flex-row-reverse" : ""}`}
                 >
                   <div className="flex-shrink-0 w-12 h-12">
                     <Image
@@ -88,7 +88,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
                     {message.username}
                   </div>
                 </div>
-                <div class="flex flex-col">
+                <div className="flex flex-col">
                   <div
                     className={`w-[max-content] min-w-[4vw] max-w-[50vw] px-4 py-2 mx-2   ${
                       message.isSent

@@ -43,7 +43,7 @@ export const ProjectCard = ({
   return (
     <div className="flex flex-row bg-light-grey rounded-xl py-2">
       <div className="w-1/4 px-2">
-        <div class="w-full object-contain aspect-square rounded-lg">
+        <div className="w-full object-contain aspect-square rounded-lg">
           <img
             src={ImageLink}
             className="rounded-lg w-full"
@@ -59,7 +59,7 @@ export const ProjectCard = ({
           >
             {name}
           </div>
-          <div class="links">
+          <div className="links">
             <div className="flex flex-row gap-2 mt-2">
               <div className="flex flex-row gap-2">
                 <div

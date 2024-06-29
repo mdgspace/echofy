@@ -73,12 +73,12 @@ export default function Home() {
 
           <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div className="w-1/2">
-              <div class="flex flex-col justify-center items-center ">
+              <div className="flex flex-col justify-center items-center ">
                 <div className="flex flex-col justify-center items-center gap-6 ">
-                  <div class="text-customBlue font-Lato font-medium text-5xl text-center">
+                  <div className="text-customBlue font-Lato font-medium text-5xl text-center">
                     Welcome to Echofy
                   </div>
-                  <div class="text-txt-gray font-Lato text-center text-ato font-medium text-lg">
+                  <div className="text-txt-gray font-Lato text-center text-ato font-medium text-lg">
                     We've developed this resource to address any inquiries you
                     may have regarding the MDG Space group at IIT Roorkee,
                     including its events and projects. You can engage with our
