@@ -6,8 +6,8 @@ import {
   setSessionUser,
   removeSessionUserId,
   checkAndPromptSessionChange,
-} from "../services/utilities/utilities";
-import { TopicDropdownForLogin } from "./topicDropdownforLogin";
+} from "../../services/utilities/utilities";
+import { TopicDropdownForLogin } from "../topicDropdownforLogin";
 
 const ChatBotLoginModal = ({ onClose }) => {
   const popupRef = useRef();

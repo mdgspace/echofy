@@ -21,7 +21,7 @@ import Avatar13 from "../assets/avatars/avatar_13.svg";
 import Avatar14 from "../assets/avatars/avatar_14.svg";
 import Avatar15 from "../assets/avatars/avatar_15.svg";
 
-import { parseMessageText, getAvatar } from "../services/utilities/utilities";
+import { parseMessageText, getAvatar } from "../../services/utilities/utilities";
 
 export default function ChatContainer({ messages, messagesEndRef }) {
   const [filteredMessage, setFilteredMessage] = useState([]);
