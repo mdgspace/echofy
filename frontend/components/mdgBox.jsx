@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { fetchProjects } from "../services/api/projectsApi";
-import { ProjectList } from "./projectList";
+import { ProjectList } from "./projects/projectList";
 
 export default function Box({ channel }) {
   const router = useRouter();

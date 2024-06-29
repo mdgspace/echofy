@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MdSend } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
-import sendLogo from "../assets/send.svg";
+import sendLogo from "../../assets/send.svg";
 import Image from "next/image";
 export default function ChatInputBox({ updateMessages, socketRef }) {
   const [newMessage, setNewMessage] = useState("");

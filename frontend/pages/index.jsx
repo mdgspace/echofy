@@ -1,6 +1,6 @@
 import Image from "next/image";
-import ChatInputBox from "../components/chatInputBox";
-import ChatContainer from "../components/chatContainer";
+import ChatInputBox from "../components/chat/chatInputBox";
+import ChatContainer from "../components/chat/chatContainer";
 import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import ChatBot from "../assets/chatbot.svg";
 import SlackLogo from "../assets/slack.svg";
 import LoginModal from "../components/loginModal";
-import ChatBotLoginModal from "../components/chatbotLoginModal";
+import ChatBotLoginModal from "../components/chatbot/chatbotLoginModal";
 export default function Home() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
