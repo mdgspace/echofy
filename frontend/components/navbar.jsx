@@ -12,6 +12,7 @@ export const Navbar = ({ currentPage, currentTopic }) => {
   const [logo, setLogo] = useState(jinoraLogo);
   const [leftText, setLeftText] = useState("");
   const [toShow, setToShow] = useState(false);
+  const [topic,setTopic]=useState(currentTopic);
 
   function openMail() {
     setIsMailOpen(true);
@@ -57,7 +58,7 @@ export const Navbar = ({ currentPage, currentTopic }) => {
         {(currentPage=='chatbot')?(
       <div className="flex flex-row gap-4 items-center">
         <div className="ele1">
-          <TopicDropdown currentTopic={currentTopic} />
+          <TopicDropdown login={false} setTopic={setTopic} topic={topic}/>
         </div>
       </div>
         ):(toShow &&(
