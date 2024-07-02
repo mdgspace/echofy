@@ -7,7 +7,7 @@ import {
   removeSessionUserId,
   checkAndPromptSessionChange,
 } from "../../services/utilities/utilities";
-import { TopicDropdownForLogin } from "../topicDropdownforLogin";
+import { TopicDropdown } from "../topicDropdown";
 
 const ChatBotLoginModal = ({ onClose }) => {
   const popupRef = useRef();
@@ -83,9 +83,7 @@ const ChatBotLoginModal = ({ onClose }) => {
               onKeyDown={handleEnterClick}
             />
           </div>
-
-          <TopicDropdownForLogin topic={topic} setTopic={setTopic} />
-
+          <TopicDropdown topic={topic} setTopic={setTopic} login={true}/>
           <div
             className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
             onClick={handleChatWithUsClick}
