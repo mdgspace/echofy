@@ -1,8 +1,8 @@
 +"use client";
 
 import Image from "next/image";
-import ChatInputBox from "../components/chatInputBox";
-import ChatContainer from "../components/chatContainer";
+import ChatInputBox from "../components/chat/chatInputBox";
+import ChatContainer from "../components/chat/chatContainer";
 import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
 import RightPane from "../components/rightPane";
@@ -30,7 +30,7 @@ import slack from ".././assets/slack.svg";
 import mail from ".././assets/mail.svg";
 import logo from "../assets/logo.svg";
 import Mail from "../components/mail";
-import ChatbotContainer from "../components/chatbotContainer";
+import ChatbotContainer from "../components/chatbot/chatbotContainer";
 import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
 
