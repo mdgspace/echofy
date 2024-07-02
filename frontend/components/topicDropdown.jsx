@@ -4,14 +4,9 @@ import React, { useState } from "react";
 import { fetchProjects } from "../services/api/projectsApi";
 import { useEffect, useRef } from "react";
 
-export const TopicDropdown = (currentTopic) => {
+export const TopicDropdown = ({ topic, setTopic,login }) => {
   const popupRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
-  const [topic, setTopic] = useState("");
-
-  useEffect(() => {
-    setTopic(currentTopic);
-  }, [currentTopic]);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -21,19 +16,21 @@ export const TopicDropdown = (currentTopic) => {
   useEffect(() => {
     async function fetchProjectsData() {
       const data = await fetchProjects();
-      if(data!=null){
+      if (data!=null){
         setProjects(data);
       }else{
-        setProjects([]);
+      setProjects([]);
       }
-      
     }
     fetchProjectsData();
   }, []);
 
   const handleClick = (e) => {
     const content = e.target.textContent;
-    window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
+    setTopic(content);
+    if(!login){
+      window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
+    }
   };
 
   const projectList = projects.filter(
@@ -53,13 +50,15 @@ export const TopicDropdown = (currentTopic) => {
   }, [popupRef, isOpen]);
 
   return (
-    <div ref={popupRef} className="text-customBlue  hover:cursor-pointer">
+    <div 
+    ref={popupRef} 
+    className={login?"text-customBlue hover:cursor-pointer text-Lato":"text-customBlue hover:cursor-pointer"}>
       <div
-        className="text-customBlue  hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-lg text-lg px-5 py-2.5 text-center inline-flex items-center"
+        className={login?"text-customBlue hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-full text-base px-5 py-2.5 text-center inline-flex items-center":"text-customBlue  hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-lg text-lg px-5 py-2.5 text-center inline-flex items-center"}
         onClick={toggleDropdown}
         type="div"
       >
-        {`${topic.currentTopic}`}
+        {`${topic}`}
         <svg
           className="w-2.5 h-2.5 ms-3"
           aria-hidden="true"
@@ -77,10 +76,10 @@ export const TopicDropdown = (currentTopic) => {
         </svg>
       </div>
       {isOpen && (
-        <div className="relative inline-block  text-customBlue">
-          <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 rounded-lg shadow-lg mt-5">
+        <div className="relative inline-block text-customBlue">
+          <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 shadow-lg mt-5 rounded-lg">
             <div className="max-h-48 overflow-y-auto">
-              <ul className="py-2 text-lgy">
+              <ul className={login?"py-2 text-lg":"py-2 text-lgy"}>
                 <li className="font-bold text-customBlue ml-2 text-txt-gray">
                   Projects
                 </li>
@@ -98,7 +97,7 @@ export const TopicDropdown = (currentTopic) => {
               </ul>
             </div>
             <div className="max-h-48 overflow-y-auto">
-              <ul className="py-2 text-lgy">
+              <ul className={login?"py-2 text-lg":"py-2 text-lgy"}>
                 <li className="font-bold text-customBlue ml-2 text-txt-gray">
                   Events
                 </li>
