@@ -3,7 +3,7 @@ import { MdSend } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
 import sendLogo from "../../assets/send.svg";
 import Image from "next/image";
-export default function ChatInputBox({ updateMessages, socketRef }) {
+export default function ChatInputBox({ socketRef }) {
   const [newMessage, setNewMessage] = useState("");
   const [isTimeout, setIsTimeout] = useState(false);
   const messageTimesRef = useRef([]);
