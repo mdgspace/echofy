@@ -1,186 +1,63 @@
 +"use client";
-
-import Image from "next/image";
 import ChatInputBox from "../components/chat/chatInputBox";
-import ChatContainer from "../components/chat/chatContainer";
-import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
-import RightPane from "../components/rightPane";
-import { useState, useEffect, useRef, useCallback, use } from "react";
-import {
-  formatChatbotUserText,
-  getIsSentForChatBot,
-  getSessionUser,
-  getSessionUserId,
-  handleWebSocketClose,
-  handleWebSocketError,
-  processWebSocketMessage,
-  removeSessionUserId,
-} from "../services/utilities/utilities";
-import { buildWebSocketURL } from "../services/url-builder/url-builder";
-import { initializeWebSocketConnection } from "../services/api/api";
-
-import notif from "../assets/sounds/notif.mp3";
-import notifRecieve from "../assets/sounds/notif-recieve.mp3";
-import { AiFillAccountBook } from "react-icons/ai";
-import { AiFillCamera } from "react-icons/ai";
+import { useState, useEffect, useRef } from "react";
 // import boxData from "../services/utilities/box-data";
-import { BsStarFill } from "react-icons/bs";
-import slack from ".././assets/slack.svg";
-import mail from ".././assets/mail.svg";
-import logo from "../assets/logo.svg";
-import Mail from "../components/mail";
 import ChatbotContainer from "../components/chatbot/chatbotContainer";
-import { leaveChat } from "../services/api/leaveChatApi";
 import { useRouter } from "next/router";
-
 import { Navbar } from "../components/navbar";
+import useLoadSetting from "../hooks/useLoadSettings";
+import useSettings from "../hooks/useSettings";
+import useWebsocketForChatbot from "../hooks/useWebSocketForChatBot";
+import useVisibilityChange from "../hooks/useVisibilityChange";
+import useLeaveChat from "../hooks/useLeaveChat";
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [isMailOpen, setIsMailOpen] = useState(false);
+  // const [isMailOpen, setIsMailOpen] = useState(false);
   const [topic, setTopic] = useState("Appetizer");
-
   const router = useRouter();
+  const socketRef = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  // function openMail() {
+  //   setIsMailOpen(true);
+  // }
+
+  // function closeMail() {
+  //   setIsMailOpen(false);
+  // }
+
+  // const handleQueriesClick = () => {
+  //   // write logic to display faq popup
+  // };
+
+  // const handleChatWithMDGClick = () => {
+  //   router.push("/chat");
+  //   localStorage.setItem("chatType", "public");
+  // };
+
+  // function updateMessages(newMessage) {
+  //   setMessages([
+  //     ...messages,
+  //     JSON.stringify({ text: newMessage, isSent: true }),
+  //   ]);
+  // }
+
+  useLoadSetting(setSoundEnabled,setNotificationsEnabled);
+  useSettings(soundEnabled,notificationsEnabled);
+  useWebsocketForChatbot(socketRef,setMessages,router);
+  useVisibilityChange(setUnreadCount);
+  useLeaveChat(router);
 
   useEffect(() => {
     setTopic(router.query.topic ?? "Appetizer");
   }, [router.query]);
 
-  function openMail() {
-    setIsMailOpen(true);
-  }
-
-  function closeMail() {
-    setIsMailOpen(false);
-  }
-
-  function updateMessages(newMessage) {
-    setMessages([
-      ...messages,
-      JSON.stringify({ text: newMessage, isSent: true }),
-    ]);
-  }
-
-  const socketRef = useRef(null);
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    // Access localStorage only when in the browser environment
-    const savedSoundEnabled = localStorage.getItem("soundEnabled");
-    const savedNotificationsEnabled = localStorage.getItem(
-      "notificationsEnabled",
-    );
-
-    // If we have settings saved, update our state
-    if (savedSoundEnabled !== null) {
-      setSoundEnabled(JSON.parse(savedSoundEnabled));
-    }
-    if (savedNotificationsEnabled !== null) {
-      setNotificationsEnabled(JSON.parse(savedNotificationsEnabled));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Save to localStorage when soundEnabled changes
-    localStorage.setItem("soundEnabled", JSON.stringify(soundEnabled));
-  }, [soundEnabled]);
-
-  useEffect(() => {
-    // Save to localStorage when notificationsEnabled changes
-    localStorage.setItem(
-      "notificationsEnabled",
-      JSON.stringify(notificationsEnabled),
-    );
-  }, [notificationsEnabled]);
-
-  // ... the rest of your component
-
-  const playSound = useCallback(
-    (isSent) => {
-      const sound = isSent ? new Audio(notif) : new Audio(notifRecieve);
-      sound.play();
-    },
-    [soundEnabled],
-  );
-
-  useEffect(() => {
-    const username = getSessionUser();
-    if (!username || username === "null" || username === "undefined") {
-      router.push("/");
-    }
-    const userId = getSessionUserId();
-
-    const channel = "chatbot";
-
-    const topic = router.query;
-    const url = buildWebSocketURL(
-      userId,
-      username,
-      channel,
-      topic.topic ?? "Appetizer",
-    );
-
-    const handleOpen = () => {
-      //todo-> toast connected to server
-    };
-    const handleMessage = (event) =>
-      processWebSocketMessage(event, setMessages, () => router.push("/"), true);
-    const handleClose = (event) =>
-      handleWebSocketClose(event, () => router.push("/"));
-    const handleError = handleWebSocketError;
-    const socket = initializeWebSocketConnection(
-      url,
-      handleOpen,
-      handleMessage,
-      handleClose,
-      handleError,
-    );
-    socketRef.current = socket;
-
-    socket.addEventListener("message", (event) => {
-      try {
-        const username = getSessionUser();
-        let data = event.data;
-        const isSent = getIsSentForChatBot(event.data);
-        const allMessages = [];
-        var jsonResponse = JSON.stringify({
-          text: isSent ? formatChatbotUserText(data) : data,
-          isSent: isSent,
-          username: isSent ? username : "Echofy",
-        });
-        allMessages.push({
-          text: data,
-          isSent: getIsSentForChatBot(event.data),
-        });
-        setMessages((prevMessages) => [...prevMessages, jsonResponse]);
-      } catch (error) {
-        //todo-> enable sentry logger here
-      }
-    });
-    return () => {
-      socket.close();
-    };
-  }, [initializeWebSocketConnection]);
-
   useEffect(() => {}, [messages]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        setUnreadCount(0);
-      }
-    };
-    window.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleVisibilityChange);
-    return () => {
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleVisibilityChange);
-    };
-  }, []);
 
   useEffect(() => {
     if (unreadCount > 0 && notificationsEnabled) {
@@ -195,34 +72,6 @@ export default function Home() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
-
-  const handleQueriesClick = () => {
-    // write logic to display faq popup
-  };
-
-  const handleChatWithMDGClick = () => {
-    router.push("/chat");
-    localStorage.setItem("chatType", "public");
-  };
-
-  useEffect(() => {
-    const leaveChatOnNavigation = () => {
-      leaveChat(getSessionUserId());
-
-      removeSessionUserId();
-    };
-    const handleBeforeUnload = (e) => {
-      leaveChat(getSessionUserId());
-    };
-
-    router.events.on("RouteChangeStart", leaveChatOnNavigation);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      router.events.off("routeChangeStart", leaveChatOnNavigation);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [router]);
 
   return (
     <>
@@ -246,7 +95,6 @@ export default function Home() {
               </div>
               <div className="w-full">
                 <ChatInputBox
-                  updateMessages={updateMessages}
                   socketRef={socketRef}
                 />
               </div>
