@@ -1,26 +1,11 @@
 import Image from "next/image";
-import ChatInputBox from "../components/chat/chatInputBox";
-import ChatContainer from "../components/chat/chatContainer";
-import arrow from "../assets/arrow.svg";
 import Box from "../components/mdgBox";
-import RightPane from "../components/rightPane";
-import { useState, useEffect, useRef, useCallback } from "react";
-import {
-  getSessionUser,
-  getSessionUserId,
-  handleWebSocketClose,
-  handleWebSocketError,
-  processWebSocketMessage,
-} from "../services/utilities/utilities";
-import { buildWebSocketURL } from "../services/url-builder/url-builder";
-import { initializeWebSocketConnection } from "../services/api/api";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ChatBot from "../assets/chatbot.svg";
 import SlackLogo from "../assets/slack.svg";
 import LoginModal from "../components/loginModal";
 import ChatBotLoginModal from "../components/chatbot/chatbotLoginModal";
 export default function Home() {
-  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChatBotModalOpen, setISChatBotModalOpen] = useState(false);
   const [redirect, setRedirect] = useState("");
@@ -44,7 +29,6 @@ export default function Home() {
 
   const goToPublicChat = () => {
     openModal("public");
-    // Open the modal after navigating
   };
 
   const goToPrivateChat = () => {
