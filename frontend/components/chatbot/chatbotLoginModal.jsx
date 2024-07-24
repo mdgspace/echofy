@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getSessionUser,
-  getSessionUserId,
-  setSessionUser,
-  removeSessionUserId,
-  checkAndPromptSessionChange,
-} from "../../services/utilities/utilities";
+import getSessionUser from "../../utils/session/getSessionUser";
+import getSessionUserId from "../../utils/session/getSessionUserId";
+import setSessionUser from "../../utils/session/setSessionUser";
+import removeSessionUserId from "../../utils/session/removeSessionUserId";
+import checkAndPromptSessionChange from "../../utils/swal/checkAndPromptSessionChange";
 import { TopicDropdown } from "../topicDropdown";
 
 const ChatBotLoginModal = ({ onClose }) => {
@@ -25,14 +23,12 @@ const ChatBotLoginModal = ({ onClose }) => {
     }
   }
 
-  // Close popup if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose();
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
@@ -61,7 +57,6 @@ const ChatBotLoginModal = ({ onClose }) => {
       router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
     }
   }
-
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
       <div
@@ -95,5 +90,4 @@ const ChatBotLoginModal = ({ onClose }) => {
     </div>
   );
 };
-
 export default ChatBotLoginModal;
