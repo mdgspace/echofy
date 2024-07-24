@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-import {
-  formatChatbotUserText,
-  getIsSentForChatBot,
-  getSessionUser,
-  getSessionUserId,
-  handleWebSocketClose,
-  handleWebSocketError,
-  processWebSocketMessage,
-} from "../services/utilities/utilities";
+import formatChatbotUserText from "../utils/chatbot_formatting/formatChatbotUserText";
+import getIsSentForChatBot from "../utils/chatbot_formatting/getIsSentForChatBot";
+import getSessionUser from "../utils/session/getSessionUser";
+import getSessionUserId from "../utils/session/getSessionUserId";
+import handleWebSocketClose from "../utils/websocket/handleWebSocketClose";
+import { handleWebSocketError } from "../utils/websocket/handleWebSocketError";
+import processWebSocketMessage from "../utils/websocket/processWebSocketMessage";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
 
