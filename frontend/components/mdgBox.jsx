@@ -1,8 +1,6 @@
 "use client";
-import Image from "next/image";
-import { use, useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { fetchProjects } from "../services/api/projectsApi";
 import { ProjectList } from "./projects/projectList";
@@ -12,9 +10,7 @@ export default function Box({ channel }) {
   const arr = ["public", "private", "chatbot"];
   const newArr = arr.filter((item) => item !== channel);
   const finalArr = newArr.map((item) => item.toUpperCase());
-
   const isShown = router.pathname === "/";
-
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -86,7 +82,6 @@ export default function Box({ channel }) {
             heightDecrease={isShown}
           />
         </div>
-
         {!isShown && (
           <div className="w-full h-[3vh] gap-2 flex items-center">
             <div className="w-1/2 flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2 hover:to-blue-900 dark:hover:bg-blue-600">
