@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  getSessionUser,
-  getSessionUserId,
-  setSessionUser,
-  removeSessionUserId,
-  checkAndPromptSessionChange,
-} from "../services/utilities/utilities";
+import getSessionUser from "../../utils/session/getSessionUser";
+import getSessionUserId from "../../utils/session/getSessionUserId";
+import setSessionUser from "../../utils/session/setSessionUser";
+import removeSessionUserId from "../../utils/session/removeSessionUserId";
+import checkAndPromptSessionChange from "../../utils/swal/checkAndPromptSessionChange";
 
 const LoginModal = ({ onClose, redirect }) => {
   const popupRef = useRef();
@@ -23,7 +21,6 @@ const LoginModal = ({ onClose, redirect }) => {
     }
   }
 
-  // Close popup if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -61,7 +58,6 @@ const LoginModal = ({ onClose, redirect }) => {
         router.push({pathname:'/chat',query});
       }
   }
-
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
       <div
@@ -72,7 +68,6 @@ const LoginModal = ({ onClose, redirect }) => {
           <div className="w-60 text-center text-md">
             Pick your username and login
           </div>
-
           <div className="rounded-xl text-[#49454F] w-60 flex justify-center items-center">
             <input
               type="text"
@@ -83,7 +78,6 @@ const LoginModal = ({ onClose, redirect }) => {
               onKeyDown={handleEnterClick}
             />
           </div>
-
           <div
             className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
             onClick={handleChatWithUsClick}
@@ -95,5 +89,4 @@ const LoginModal = ({ onClose, redirect }) => {
     </div>
   );
 };
-
 export default LoginModal;
