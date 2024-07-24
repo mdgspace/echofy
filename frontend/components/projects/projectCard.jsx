@@ -13,9 +13,12 @@ export const ProjectCard = ({
   AppStore,
 }) => {
   const router = useRouter();
+  const isGithub = Github != "";
+  const isPlaystore = PlayStore != "";
+  const isAppStore = AppStore != "";
+
   const handleClick = () => {
     const extractedText = name;
-
     router
       .push({
         pathname: "/chat_bot",
@@ -23,10 +26,6 @@ export const ProjectCard = ({
       })
       .then(() => window.location.reload());
   };
-
-  const isGithub = Github != "";
-  const isPlaystore = PlayStore != "";
-  const isAppStore = AppStore != "";
 
   const handleGithub = () => {
     isGithub ? window.open(Github) : null;
@@ -39,7 +38,6 @@ export const ProjectCard = ({
   const handleAppstore = () => {
     isAppStore ? window.open(AppStore) : null;
   };
-
   return (
     <div className="flex flex-row bg-light-grey rounded-xl py-2">
       <div className="w-1/4 px-2">
@@ -108,11 +106,9 @@ export const ProjectCard = ({
             </div>
           </div>
         </div>
-
         <div className="text-sm text-txt-gray">{shortDesc}</div>
       </div>
     </div>
   );
 };
-
 export default ProjectCard;
