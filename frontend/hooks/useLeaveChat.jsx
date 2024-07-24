@@ -1,8 +1,6 @@
 import { useEffect } from "react";
-import {
-  getSessionUserId,
-  removeSessionUserId,
-} from "../services/utilities/utilities";
+import getSessionUserId from "../utils/session/getSessionUserId";
+import removeSessionUserId from "../utils/session/removeSessionUserId";
 import { leaveChat } from "../services/api/leaveChatApi";
 
 const useLeaveChat=(router)=>{
