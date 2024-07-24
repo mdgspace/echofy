@@ -1,10 +1,7 @@
-// ChatContainer.js
-
 import React from "react";
 import Image from "next/image";
 import moment from "moment";
 import { useState } from "react";
-
 import Avatar1 from "../../assets/avatars/avatar_1.svg";
 import Avatar2 from "../../assets/avatars/avatar_2.svg";
 import Avatar3 from "../../assets/avatars/avatar_3.svg";
@@ -20,8 +17,7 @@ import Avatar12 from "../../assets/avatars/avatar_12.svg";
 import Avatar13 from "../../assets/avatars/avatar_13.svg";
 import Avatar14 from "../../assets/avatars/avatar_14.svg";
 import Avatar15 from "../../assets/avatars/avatar_15.svg";
-
-import { getAvatar } from "../../services/utilities/utilities";
+import getAvatar from "../../utils/session/getAvatar";
 
 export default function ChatContainer({ messages, messagesEndRef }) {
   const formatTime = (timestamp) => {
