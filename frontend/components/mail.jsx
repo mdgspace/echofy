@@ -1,7 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import subscribe from "../services/api/subscribeApi";
-import { getSessionUser, getSessionUserId } from "../services/utilities/utilities";
+import getSessionUser from "../utils/session/getSessionUser";
+import getSessionUserId from "../utils/session/getSessionUserId";
 
 export default function Mail({
   isOpen,
@@ -9,6 +10,7 @@ export default function Mail({
   channel,
 }) {
   const [email, setEmail] = useState("");
+  const popupRef = React.useRef();
 
   const handleSubmit = async (e) => {
     let userId = getSessionUserId();
@@ -22,19 +24,15 @@ export default function Mail({
     }
   };
 
-  const popupRef = React.useRef();
-
   React.useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose();
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg-gray bg-opacity-60 ">
       <div
