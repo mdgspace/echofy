@@ -1,11 +1,9 @@
 import { useEffect} from "react";
-import {
-  getSessionUser,
-  getSessionUserId,
-  handleWebSocketClose,
-  handleWebSocketError,
-  processWebSocketMessage,
-} from "../services/utilities/utilities";
+import getSessionUser from "../utils/session/getSessionUser";
+import getSessionUserId from "../utils/session/getSessionUserId";
+import handleWebSocketClose from "../utils/websocket/handleWebSocketClose";
+import { handleWebSocketError } from "../utils/websocket/handleWebSocketError";
+import processWebSocketMessage from "../utils/websocket/processWebSocketMessage";
 import { buildWebSocketURL } from "../services/url-builder/url-builder";
 import { initializeWebSocketConnection } from "../services/api/api";
 import playSound from "../utils/playSound";
