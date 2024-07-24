@@ -3,8 +3,9 @@ import Box from "../components/mdgBox";
 import { useState } from "react";
 import ChatBot from "../assets/chatbot.svg";
 import SlackLogo from "../assets/slack.svg";
-import LoginModal from "../components/loginModal";
+import LoginModal from "../components/chat/loginModal";
 import ChatBotLoginModal from "../components/chatbot/chatbotLoginModal";
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChatBotModalOpen, setISChatBotModalOpen] = useState(false);
@@ -38,7 +39,6 @@ export default function Home() {
   const goToChatbot = () => {
     openChatBotModal();
   };
-
   return (
     <>
       <div className="main bg-white w-full bg-contain">
@@ -54,7 +54,6 @@ export default function Home() {
           {isChatBotModalOpen && (
             <ChatBotLoginModal onClose={closeChatBotLoginModal} />
           )}
-
           <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
             <div className="w-1/2">
               <div className="flex flex-col justify-center items-center ">
@@ -81,7 +80,6 @@ export default function Home() {
                     TALK TO OUR CHATBOT
                   </p>
                 </div>
-
                 <div
                   className="flex items-center justify-center py-4 w-full  px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 hover:cursor-pointer  focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50"
                   onClick={goToPrivateChat}
