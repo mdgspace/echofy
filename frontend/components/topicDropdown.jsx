@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { fetchProjects } from "../services/api/projectsApi";
 import { useEffect, useRef } from "react";
@@ -7,11 +6,23 @@ import { useEffect, useRef } from "react";
 export const TopicDropdown = ({ topic, setTopic,login }) => {
   const popupRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const projectList = projects.filter(
+    (project) => project.Category === "Projects",
+  );
+  const eventList = projects.filter((project) => project.Category === "Events");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  const [projects, setProjects] = useState([]);
+
+  const handleClick = (e) => {
+    const content = e.target.textContent;
+    setTopic(content);
+    if(!login){
+      window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
+    }
+  };
 
   useEffect(() => {
     async function fetchProjectsData() {
@@ -25,30 +36,15 @@ export const TopicDropdown = ({ topic, setTopic,login }) => {
     fetchProjectsData();
   }, []);
 
-  const handleClick = (e) => {
-    const content = e.target.textContent;
-    setTopic(content);
-    if(!login){
-      window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
-    }
-  };
-
-  const projectList = projects.filter(
-    (project) => project.Category === "Projects",
-  );
-  const eventList = projects.filter((project) => project.Category === "Events");
-
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, isOpen]);
-
   return (
     <div 
     ref={popupRef} 
