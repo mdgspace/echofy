@@ -4,7 +4,6 @@ import mail from ".././assets/mail.svg";
 import Image from "next/image";
 import jinoraLogo from "../assets/logo.svg";
 import slack from ".././assets/slack_blue.svg";
-
 import { TopicDropdown } from "./topicDropdown";
 
 export const Navbar = ({ currentPage, currentTopic }) => {

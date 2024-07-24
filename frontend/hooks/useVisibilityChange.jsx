@@ -13,7 +13,6 @@ const useVisibilityChange=(setUnreadCount)=>{
           window.removeEventListener("visibilitychange", handleVisibilityChange);
           window.removeEventListener("focus", handleVisibilityChange);
         };
-      }, []);
-    
+      }, []);   
 }
 export default useVisibilityChange;

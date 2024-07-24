@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 const useSettings=(soundEnabled,notificationsEnabled)=>{
     useEffect(() => {
         localStorage.setItem("soundEnabled", JSON.stringify(soundEnabled));
@@ -11,5 +12,4 @@ const useSettings=(soundEnabled,notificationsEnabled)=>{
         );
       }, [notificationsEnabled]);
 }
-
 export default useSettings;

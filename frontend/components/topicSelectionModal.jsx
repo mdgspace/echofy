@@ -15,5 +15,4 @@ const TopicSelectionModal = ({ onClose }) => {
     </div>
   );
 };
-
 export default TopicSelectionModal;

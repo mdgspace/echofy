@@ -2,7 +2,6 @@
 import ChatInputBox from "../components/chat/chatInputBox";
 import Box from "../components/mdgBox";
 import { useState, useEffect, useRef } from "react";
-// import boxData from "../services/utilities/box-data";
 import ChatbotContainer from "../components/chatbot/chatbotContainer";
 import { useRouter } from "next/router";
 import { Navbar } from "../components/navbar";

@@ -24,5 +24,4 @@ export const ProjectList = ({ projects, category, heightDecrease }) => {
     </div>
   );
 };
-
 export default ProjectList;

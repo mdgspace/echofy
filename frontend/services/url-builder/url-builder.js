@@ -10,7 +10,7 @@ export function buildWebSocketURL(userId, username, channel, topic) {
     channel: channel || "public",
     name: username,
     userID: userId || "0",
-    topic: topic || null, // Use userId if it exists, otherwise set to '0'
+    topic: topic || null,
   });
   return `${baseUrl}?${params.toString()}`;
 }
