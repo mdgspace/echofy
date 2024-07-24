@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { MdSend } from "react-icons/md";
-import { FaPlus } from "react-icons/fa";
+import { useState, useRef } from "react";
 import sendLogo from "../../assets/send.svg";
 import Image from "next/image";
 export default function ChatInputBox({ socketRef }) {
