@@ -1,10 +1,6 @@
-// ChatContainer.js
-
 import React, { useState } from "react";
 import Echofy from "../../assets/logo.svg";
 import Image from "next/image";
-import moment from "moment";
-
 import Avatar1 from "../../assets/avatars/avatar_1.svg";
 import Avatar2 from "../../assets/avatars/avatar_2.svg";
 import Avatar3 from "../../assets/avatars/avatar_3.svg";
@@ -20,8 +16,8 @@ import Avatar12 from "../../assets/avatars/avatar_12.svg";
 import Avatar13 from "../../assets/avatars/avatar_13.svg";
 import Avatar14 from "../../assets/avatars/avatar_14.svg";
 import Avatar15 from "../../assets/avatars/avatar_15.svg";
-
-import { parseMessageText, getAvatar } from "../../services/utilities/utilities";
+import parseMessageText from "../../utils/chatbot_formatting/parseMessageText";
+import getAvatar from "../../utils/session/getAvatar";
 
 export default function ChatContainer({ messages, messagesEndRef }) {
   const [filteredMessage, setFilteredMessage] = useState([]);
