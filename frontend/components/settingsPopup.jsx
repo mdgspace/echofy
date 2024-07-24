@@ -1,10 +1,8 @@
-// SettingsPopup.js
 import React, { useEffect, useRef } from "react";
 import Switch from "react-switch";
 import Image from "next/image";
 import Settings from "../assets/Settings.svg";
 import {
-  MdMusicNote,
   MdNotifications,
   MdClose,
   MdAudiotrack,
@@ -19,18 +17,15 @@ const SettingsPopup = ({
 }) => {
   const popupRef = useRef();
 
-  // Close popup if clicked outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose();
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [popupRef, onClose]);
-
   return (
     <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center backdrop-blur">
       <div className="p-6 rounded-2xl shadow-2xl relative w-96 h-96 bg-[#F95131AB] bg-opacity-40">
@@ -55,7 +50,6 @@ const SettingsPopup = ({
               <MdAudiotrack className="text-3xl" />
               <div className="noir-pro-bold text-2xl">Sound</div>
             </div>
-
             <Switch onChange={setSoundEnabled} checked={soundEnabled} />
           </div>
           <div className="flex items-center justify-between">
@@ -63,7 +57,6 @@ const SettingsPopup = ({
               <MdNotifications className="text-3xl" />
               <div className="noir-pro-bold text-2xl">Notifications</div>
             </div>
-
             <Switch
               onChange={setNotificationsEnabled}
               checked={notificationsEnabled}
@@ -74,5 +67,4 @@ const SettingsPopup = ({
     </div>
   );
 };
-
 export default SettingsPopup;
