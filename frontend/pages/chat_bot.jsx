@@ -16,35 +16,10 @@ export default function Home() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  // const [isMailOpen, setIsMailOpen] = useState(false);
   const [topic, setTopic] = useState("Appetizer");
   const router = useRouter();
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
-  // function openMail() {
-  //   setIsMailOpen(true);
-  // }
-
-  // function closeMail() {
-  //   setIsMailOpen(false);
-  // }
-
-  // const handleQueriesClick = () => {
-  //   // write logic to display faq popup
-  // };
-
-  // const handleChatWithMDGClick = () => {
-  //   router.push("/chat");
-  //   localStorage.setItem("chatType", "public");
-  // };
-
-  // function updateMessages(newMessage) {
-  //   setMessages([
-  //     ...messages,
-  //     JSON.stringify({ text: newMessage, isSent: true }),
-  //   ]);
-  // }
 
   useLoadSetting(setSoundEnabled,setNotificationsEnabled);
   useSettings(soundEnabled,notificationsEnabled);

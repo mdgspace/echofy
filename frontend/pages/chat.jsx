@@ -15,35 +15,10 @@ export default function Home(){
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  // const [isMailOpen, setIsMailOpen] = useState(false);
   const router = useRouter()
   const {channel}=router.query;
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
-  // function openMail() {
-  //   setIsMailOpen(true);
-  // }
-
-  // function closeMail() {
-  //   setIsMailOpen(false);
-  // }
-  
-  // const handleQueriesClick = () => {
-  //   // write logic to display faq popup
-  // };
-
-  // const handleTalkToBotClick = () => {
-  //   router.push("/chat_bot");
-  //   localStorage.setItem("chatType", "chatbot"); 
-  // };
-
-  // function updateMessages(newMessage, username) {
-  //   setMessages([
-  //     ...messages,
-  //     { text: newMessage, isSent: true, username: username },
-  //   ]);
-  // }
 
   useLoadSetting(setSoundEnabled,setNotificationsEnabled);
   useSettings(soundEnabled,notificationsEnabled);
