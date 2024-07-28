@@ -4,7 +4,7 @@ import getSessionUser from "../../utils/session/getSessionUser";
 import getSessionUserId from "../../utils/session/getSessionUserId";
 import setSessionUser from "../../utils/session/setSessionUser";
 import removeSessionUserId from "../../utils/session/removeSessionUserId";
-import checkAndPromptSessionChange from "../../utils/swal/checkAndPromptSessionChange";
+import checkAndPromptSessionChange from "../../utils/alerts/checkAndPromptSessionChange";
 
 const LoginModal = ({ onClose, redirect }) => {
   const popupRef = useRef();

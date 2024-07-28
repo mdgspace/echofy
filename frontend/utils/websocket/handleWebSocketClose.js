@@ -6,11 +6,11 @@ import {
     isServerError,
     isAbnormalClose,
   } from "./websocketHelpers";
-import alertBannedUser from "../swal/alertBannedUser";
-import alertSameUsername from "../swal/alertSameUsername";
-import alertBadRequest from "../swal/alertBadRequest";
-import alertServerError from "../swal/alertServerError";
-import alertAbnormalClose from "../swal/alertAbnormalClose";
+import alertBannedUser from "../alerts/alertBannedUser";
+import alertSameUsername from "../alerts/alertSameUsername";
+import alertBadRequest from "../alerts/alertBadRequest";
+import alertServerError from "../alerts/alertServerError";
+import alertAbnormalClose from "../alerts/alertAbnormalClose";
 
 export default function handleWebSocketClose(event, navigateToLogin) {
     if (isUserBanned(event.code)) {

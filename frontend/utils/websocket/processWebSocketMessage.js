@@ -1,5 +1,5 @@
 "use client";
-import alertBannedUser from "../swal/alertBannedUser";
+import alertBannedUser from "../alerts/alertBannedUser";
 
 export default function processWebSocketMessage(
     event,
