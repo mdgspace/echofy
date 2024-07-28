@@ -75,7 +75,7 @@ export const TopicDropdown = ({ topic, setTopic,login }) => {
         <div className="relative inline-block text-customBlue">
           <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 shadow-lg mt-5 rounded-lg">
             <div className="max-h-48 overflow-y-auto">
-              <ul className={login?"py-2 text-lg":"py-2 text-lgy"}>
+              <ul className="py-2 text-lg">
                 <li className="font-bold text-customBlue ml-2 text-txt-gray">
                   Projects
                 </li>
@@ -93,7 +93,7 @@ export const TopicDropdown = ({ topic, setTopic,login }) => {
               </ul>
             </div>
             <div className="max-h-48 overflow-y-auto">
-              <ul className={login?"py-2 text-lg":"py-2 text-lgy"}>
+              <ul className="py-2 text-lg">
                 <li className="font-bold text-customBlue ml-2 text-txt-gray">
                   Events
                 </li>
