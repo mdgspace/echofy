@@ -27,5 +27,4 @@ const subscribe = async (email, username, userId, channel, timestamp) => {
     throw error.response.data;
   }
 };
-
 export default subscribe;

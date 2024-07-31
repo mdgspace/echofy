@@ -1,6 +1,5 @@
 import axios from "axios";
 import { leaveChatURLbuildr } from "../url-builder/url-builder";
-import { removeSessionUserId } from "../utilities/utilities";
 
 export async function leaveChat(userID) {
   if (userID) {
