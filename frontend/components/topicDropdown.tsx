@@ -37,6 +37,7 @@ export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
   const handleClick = (e:any) => {
     const content = e.target.textContent;
     setTopic(content);
+    setIsOpen(!open);
     if(!login){
       window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
     }
@@ -70,7 +71,7 @@ export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
       <div
         className={login?"text-customBlue hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-full text-base px-5 py-2.5 text-center inline-flex items-center":"text-customBlue  hover:text-white hover:bg-customBlue focus:ring-2 focus:outline-none font-medium rounded-lg text-lg px-5 py-2.5 text-center inline-flex items-center"}
         onClick={toggleDropdown}
-        type="div"
+        
       >
         {`${topic}`}
         <svg
@@ -94,7 +95,7 @@ export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
           <div className="absolute z-10 right-0 w-56 bg-white divide-y divide-gray-100 shadow-lg mt-5 rounded-lg">
             <div className="max-h-48 overflow-y-auto">
               <ul className="py-2 text-lg">
-                <li className="font-bold text-customBlue ml-2 text-txt-gray">
+                <li className="font-bold ml-2 text-txt-gray">
                   Projects
                 </li>
                 {projectList.map((project, index) => (
@@ -112,7 +113,7 @@ export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
             </div>
             <div className="max-h-48 overflow-y-auto">
               <ul className="py-2 text-lg">
-                <li className="font-bold text-customBlue ml-2 text-txt-gray">
+                <li className="font-bold  ml-2 text-txt-gray">
                   Events
                 </li>
                 {eventList.map((event, index) => (

@@ -62,11 +62,12 @@ export default function ChatInputBox({ socketRef }:ChatInputBoxProps) {
             disabled={isTimeout}
             className="w-full p-3 pl-10 border-none rounded-lg placeholder-customBlue font-medium text-customBlue text-Lato"
           />
-          <div
-            onClick={handleSendClick}
-            disabled={isTimeout}
-            className={`absolute  right-2 top-1/2 transform -translate-y-1/2 pr-5${isTimeout ? "" : "bg--500"} text-white rounded-full p-2 `}
-          >
+           <div
+          onClick={handleSendClick}
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 pr-5 ${
+            isTimeout ? "" : "bg-blue-500"
+          } text-white rounded-full p-2 cursor-pointer`}
+        >
             <Image
               src={sendLogo}
               alt="sendButton"
