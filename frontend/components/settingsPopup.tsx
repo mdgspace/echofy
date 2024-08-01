@@ -8,18 +8,27 @@ import {
   MdAudiotrack,
 } from "react-icons/md";
 
+interface SettingsPopupProps {
+  onClose: () => void;
+  soundEnabled: boolean;
+  setSoundEnabled: (enabled: boolean) => void;
+  notificationsEnabled: boolean;
+  setNotificationsEnabled: (enabled: boolean) => void;
+}
+
+
 const SettingsPopup = ({
   onClose,
   soundEnabled,
   setSoundEnabled,
   notificationsEnabled,
   setNotificationsEnabled,
-}) => {
-  const popupRef = useRef();
+}: SettingsPopupProps) => {
+  const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         onClose();
       }
     }

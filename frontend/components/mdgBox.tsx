@@ -5,7 +5,11 @@ import { useRouter } from "next/router";
 import { fetchProjects } from "../services/api/projectsApi";
 import { ProjectList } from "./projects/projectList";
 
-export default function Box({ channel }) {
+interface BoxProps {
+  channel: string;
+}
+
+export default function Box({ channel }: BoxProps) {
   const router = useRouter();
   const arr = ["public", "private", "chatbot"];
   const newArr = arr.filter((item) => item !== channel);
@@ -51,7 +55,7 @@ export default function Box({ channel }) {
     }
   };
   const [topic, setTopic] = useState(" ");
-  const handleDivClick = (e) => {
+  const handleDivClick = (e: any) => {
     const content = e.target.textContent;
     setTopic(content);
     router.push({

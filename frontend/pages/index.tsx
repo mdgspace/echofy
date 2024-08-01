@@ -76,7 +76,7 @@ export default function Home() {
                   onClick={goToChatbot}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                    <Image src={ChatBot} />
+                    <Image alt={"chat bot"} src={ChatBot} />
                     TALK TO OUR CHATBOT
                   </p>
                 </div>
@@ -85,7 +85,7 @@ export default function Home() {
                   onClick={goToPrivateChat}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                    <Image src={SlackLogo} className="text-sky-400" />
+                    <Image alt={"slack logo"} src={SlackLogo} className="text-sky-400" />
                     PRIVATE CHAT ON SLACK
                   </p>
                 </div>
@@ -94,7 +94,7 @@ export default function Home() {
                   onClick={goToPublicChat}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
-                    <Image src={SlackLogo} />
+                    <Image alt={"slack logo"} src={SlackLogo} />
                     PUBLIC MDG CHAT FORUM
                   </p>
                 </div>

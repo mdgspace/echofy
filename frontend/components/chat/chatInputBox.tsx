@@ -1,13 +1,18 @@
 import { useState, useRef } from "react";
 import sendLogo from "../../assets/send.svg";
 import Image from "next/image";
-export default function ChatInputBox({ socketRef }) {
-  const [newMessage, setNewMessage] = useState("");
-  const [isTimeout, setIsTimeout] = useState(false);
-  const messageTimesRef = useRef([]);
 
-  function handleInputChange(event) {
-    setNewMessage(event.target.value);
+interface ChatInputBoxProps {
+  socketRef: React.MutableRefObject<WebSocket | null>;
+}
+
+export default function ChatInputBox({ socketRef }:ChatInputBoxProps) {
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [isTimeout, setIsTimeout] = useState<boolean>(false);
+  const messageTimesRef = useRef<number[]>([]);
+
+  function handleInputChange(event:any) {
+    setNewMessage(event.target.value);  
   }
 
   function handleSendClick() {
@@ -23,7 +28,7 @@ export default function ChatInputBox({ socketRef }) {
     }
   }
 
-  function handleKeyPress(event) {
+  function handleKeyPress(event: any) {
     if (event.key === "Enter") {
       handleSendClick();
     }

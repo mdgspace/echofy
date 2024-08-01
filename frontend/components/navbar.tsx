@@ -6,12 +6,17 @@ import jinoraLogo from "../assets/logo.svg";
 import slack from ".././assets/slack_blue.svg";
 import { TopicDropdown } from "./topicDropdown";
 
-export const Navbar = ({ currentPage, currentTopic }) => {
-  const [isMailOpen, setIsMailOpen] = useState(false);
-  const [logo, setLogo] = useState(jinoraLogo);
-  const [leftText, setLeftText] = useState("");
-  const [toShow, setToShow] = useState(false);
-  const [topic,setTopic]=useState(currentTopic);
+interface NavbarProps{
+  currentPage: string;
+  currentTopic:string;
+}
+
+export const Navbar = ({ currentPage, currentTopic }: NavbarProps) => {
+  const [isMailOpen, setIsMailOpen] = useState<boolean>(false);
+  const [logo, setLogo] = useState<string>(jinoraLogo);
+  const [leftText, setLeftText] = useState<string>("");
+  const [toShow, setToShow] = useState<boolean>(false);
+  const [topic,setTopic]=useState<string>(currentTopic);
 
   function openMail() {
     setIsMailOpen(true);

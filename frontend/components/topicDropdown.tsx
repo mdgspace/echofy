@@ -3,10 +3,28 @@ import React, { useState } from "react";
 import { fetchProjects } from "../services/api/projectsApi";
 import { useEffect, useRef } from "react";
 
-export const TopicDropdown = ({ topic, setTopic,login }) => {
-  const popupRef = useRef();
-  const [isOpen, setIsOpen] = useState(false);
-  const [projects, setProjects] = useState([]);
+interface TopicDropdownProps {
+  topic: string;
+  setTopic: (topic: string) => void;
+  login: boolean;
+}
+
+interface Project{
+  Category: string;
+  Name: string;
+  ShortDesc :string;
+	LongDesc:string;
+	ImageLink: string;
+	AppStoreLink: string;
+	GithubLink: string;
+	PlayStoreLink: string;
+}
+
+export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
+  const popupRef = useRef<HTMLDivElement | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+
   const projectList = projects.filter(
     (project) => project.Category === "Projects",
   );
@@ -16,7 +34,7 @@ export const TopicDropdown = ({ topic, setTopic,login }) => {
     setIsOpen(!isOpen);
   };
 
-  const handleClick = (e) => {
+  const handleClick = (e:any) => {
     const content = e.target.textContent;
     setTopic(content);
     if(!login){
@@ -37,8 +55,8 @@ export const TopicDropdown = ({ topic, setTopic,login }) => {
   }, []);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }

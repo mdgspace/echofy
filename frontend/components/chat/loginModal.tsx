@@ -6,24 +6,29 @@ import setSessionUser from "../../utils/session/setSessionUser";
 import removeSessionUserId from "../../utils/session/removeSessionUserId";
 import checkAndPromptSessionChange from "../../utils/alerts/checkAndPromptSessionChange";
 
-const LoginModal = ({ onClose, redirect }) => {
-  const popupRef = useRef();
-  const [username, setUsername] = useState("");
+interface LoginModalProps{
+  onClose: ()=>void;
+  redirect:string;
+}
+
+const LoginModal = ({ onClose, redirect }: LoginModalProps) => {
+  const popupRef = useRef<HTMLDivElement | null>(null);
+  const [username, setUsername] = useState<string>("");
   const router = useRouter();
 
-  function handleUsernameChange(event) {
+  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
     setUsername(event.target.value);
   }
 
-  function handleEnterClick(event) {
+  function handleEnterClick(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
       handleChatWithUsClick();
     }
   }
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+    function handleClickOutside(event : MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         onClose();
       }
     }
@@ -37,6 +42,9 @@ const LoginModal = ({ onClose, redirect }) => {
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
     const query={channel:chatType};
+
+    
+    
       if (currentUser && currentUserId) {
         if (currentUser === username) {
           router.push({pathname:'/chat',query});
@@ -79,7 +87,7 @@ const LoginModal = ({ onClose, redirect }) => {
             />
           </div>
           <div
-            className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 rounded-[12.5rem] text-md"
+            className="rounded-full bg-customBlue text-white text-Lato p-2 max-sm:text-xs text-center w-60 text-md"
             onClick={handleChatWithUsClick}
           >
             CHAT WITH US
