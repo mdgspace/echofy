@@ -21,7 +21,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "context/userContext.js"  ],
+, "context/userContext.ts"  ],
   "exclude": [
     "node_modules"
   ]
