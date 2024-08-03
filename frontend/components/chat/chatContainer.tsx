@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-import React, { useEffect } from "react";
-=======
+
 import React, { MutableRefObject } from "react";
->>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
 import Image from "next/image";
 import moment from "moment";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Avatar1 from "../../assets/avatars/avatar_1.svg";
 import Avatar2 from "../../assets/avatars/avatar_2.svg";
 import Avatar3 from "../../assets/avatars/avatar_3.svg";
@@ -24,52 +21,28 @@ import Avatar15 from "../../assets/avatars/avatar_15.svg";
 import getAvatar from "../../utils/session/getAvatar";
 
 interface Message {
-<<<<<<< HEAD
-  text: string;
   isSent: boolean;
-  timestamp: number;
+  avatar?: string; 
   username: string;
-  avatar?: string; // Optional avatar URL
+  text: string;
+  timestamp: number;
 }
 
 interface ChatContainerProps {
   messages: Message[];
-  messagesEndRef: React.RefObject<HTMLDivElement>; // Reference to the end of the messages container
+  messagesEndRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps) {
+const ChatContainer: React.FC<ChatContainerProps> = ({ messages, messagesEndRef }) => {
   const formatTime = (timestamp: number) => {
-=======
-  avatar?: string;
-  username: string;
-  text: string;
-  timestamp: number;
-  isSent: boolean;
-}
-interface ChatContainerProps {
-  messages: Message[];
-  messagesEndRef: MutableRefObject<HTMLDivElement | null>;
-}
-
-export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps) {
-  const formatTime = (timestamp) => {
->>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
     const date = new Date(timestamp * 1000);
     return moment(date).format("hh:mm A");
   };
 
-  const AvatarList = [
-    Avatar1, Avatar2, Avatar3, Avatar4, Avatar5, Avatar6, Avatar7, Avatar8,
-    Avatar9, Avatar10, Avatar11, Avatar12, Avatar13, Avatar14,   
- Avatar15,
-  ];
-<<<<<<< HEAD
-=======
-  const [Avatar, setAvatar] = useState<string>(Avatar1);
->>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
-
+  const AvatarList = [Avatar1, Avatar2, Avatar3, Avatar4, Avatar5, Avatar6, Avatar7, Avatar8, Avatar9, Avatar10, Avatar11, Avatar12, Avatar13, Avatar14,   
+ Avatar15];
   const   
- [Avatar, setAvatar] = useState<string>(Avatar1);
+ [Avatar, setAvatar] = useState<React.ComponentType>(Avatar1);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -81,6 +54,7 @@ export default function ChatContainer({ messages, messagesEndRef }: ChatContaine
       const Avatar = AvatarList[AvatarId];
       setAvatar(Avatar);
     };
+
     loadAvatar();
   }, [messages]); 
 
@@ -102,3 +76,5 @@ export default function ChatContainer({ messages, messagesEndRef }: ChatContaine
     </div>
   );
 }
+
+export default ChatContainer;

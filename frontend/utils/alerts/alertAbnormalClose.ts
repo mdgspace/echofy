@@ -2,17 +2,13 @@
 import Swal from 'sweetalert2';
 import { Dispatch, SetStateAction } from 'react'; // Import types for state setters
 
-<<<<<<< HEAD
 // Interface for function props (if you need it)
 interface AlertAbnormalCloseProps {
   reason: string;
   navigateToLogin: () => void; // Function to navigate (e.g., from useRouter)
 }
 
-const AlertAbnormalClose: React.FC<AlertAbnormalCloseProps> = async ({ reason, navigateToLogin }) => {
-=======
-export default function alertAbnormalClose(reason: string, navigateToLogin: () => void){
->>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
+export default async function alertAbnormalClose(reason: string, navigateToLogin: () => void){
     try {
       const result = await Swal.fire({
         title: "Connection lost",
@@ -36,5 +32,3 @@ export default function alertAbnormalClose(reason: string, navigateToLogin: () =
 
   return null; // This component doesn't render anything directly, it's just a function
 };
-
-export default AlertAbnormalClose;
