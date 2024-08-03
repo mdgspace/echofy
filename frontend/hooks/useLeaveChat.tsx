@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import getSessionUserId from "../utils/session/getSessionUserId";
 import removeSessionUserId from "../utils/session/removeSessionUserId";
 import { leaveChat } from "../services/api/leaveChatApi";
+import { NextRouter } from "next/router";
 
-const useLeaveChat=(router)=>{
+const useLeaveChat=(router:NextRouter)=>{
     useEffect(() => {
         const leaveChatOnNavigation = () => {
           leaveChat(getSessionUserId());
           removeSessionUserId();
         };
-        const handleBeforeUnload = (e) => {
+        const handleBeforeUnload = (e:BeforeUnloadEvent) => {
           leaveChat(getSessionUserId());
         };
     

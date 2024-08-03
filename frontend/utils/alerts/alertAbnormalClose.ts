@@ -1,7 +1,7 @@
 "use client";
 import Swal from "sweetalert2";
 
-export default function alertAbnormalClose(reason, navigateToLogin) {
+export default function alertAbnormalClose(reason: string, navigateToLogin: () => void){
     try {
       Swal.fire({
         title: "Connection lost",
@@ -11,7 +11,7 @@ export default function alertAbnormalClose(reason, navigateToLogin) {
         iconColor: "#3670F5",
         confirmButtonColor: "#3670F5",
         confirmButtonText: "OK",
-        didOpen: (popup) => {
+        didOpen: (popup: HTMLElement) => {
           popup.style.borderRadius = "1rem";
         },
       }).then((result) => {

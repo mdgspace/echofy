@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MutableRefObject } from "react";
 import Image from "next/image";
 import moment from "moment";
 import { useState } from "react";
@@ -19,7 +19,19 @@ import Avatar14 from "../../assets/avatars/avatar_14.svg";
 import Avatar15 from "../../assets/avatars/avatar_15.svg";
 import getAvatar from "../../utils/session/getAvatar";
 
-export default function ChatContainer({ messages, messagesEndRef }) {
+interface Message {
+  avatar?: string;
+  username: string;
+  text: string;
+  timestamp: number;
+  isSent: boolean;
+}
+interface ChatContainerProps {
+  messages: Message[];
+  messagesEndRef: MutableRefObject<HTMLDivElement | null>;
+}
+
+export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps) {
   const formatTime = (timestamp) => {
     const date = new Date(timestamp * 1000);
     return moment(date).format("hh:mm A");
@@ -42,7 +54,7 @@ export default function ChatContainer({ messages, messagesEndRef }) {
     Avatar14,
     Avatar15,
   ];
-  const [Avatar, setAvatar] = useState(Avatar1);
+  const [Avatar, setAvatar] = useState<string>(Avatar1);
 
   React.useEffect(() => {
     if (messagesEndRef.current) {

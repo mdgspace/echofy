@@ -10,15 +10,24 @@ import useSettings from "../hooks/useSettings";
 import useWebsocket from "../hooks/useWebsocket";
 import useLeaveChat from "../hooks/useLeaveChat";
 import useVisibilityChange from "../hooks/useVisibilityChange";
+
+interface Message {
+  avatar?: string;
+  username: string;
+  text: string;
+  timestamp: number;
+  isSent: boolean;
+}
+
 export default function Home(){
-  const [messages, setMessages] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const router = useRouter()
-  const {channel}=router.query;
-  const socketRef = useRef(null);
-  const messagesEndRef = useRef(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
+  const router = useRouter();
+  const {channel}=router.query as { channel?: string };;
+  const socketRef = useRef<WebSocket | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useLoadSetting(setSoundEnabled,setNotificationsEnabled);
   useSettings(soundEnabled,notificationsEnabled);

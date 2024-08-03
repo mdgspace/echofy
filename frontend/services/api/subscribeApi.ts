@@ -1,10 +1,20 @@
 import axios from "axios";
 import { subscribeURLbuildr } from "../url-builder/url-builder";
 
-const subscribe = async (email, username, userId, channel, timestamp) => {
+interface SubscribeResponse {
+  code:number;
+  message: string;
+}
+
+const subscribe = async (
+  email: string,
+  username: string,
+  userId: string,
+  channel: string,
+  timestamp: number) : Promise<SubscribeResponse>=> {
   const url = subscribeURLbuildr();
   try {
-    const response = await axios.post(
+    const response = await axios.post<SubscribeResponse>(
       url,
       {
         email: email,
@@ -24,7 +34,7 @@ const subscribe = async (email, username, userId, channel, timestamp) => {
       return response.data;
     }
   } catch (error) {
-    throw error.response.data;
+    throw error.response?.data;
   }
 };
 export default subscribe;

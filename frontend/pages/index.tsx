@@ -7,11 +7,11 @@ import LoginModal from "../components/chat/loginModal";
 import ChatBotLoginModal from "../components/chatbot/chatbotLoginModal";
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isChatBotModalOpen, setISChatBotModalOpen] = useState(false);
-  const [redirect, setRedirect] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isChatBotModalOpen, setISChatBotModalOpen] = useState<boolean>(false);
+  const [redirect, setRedirect] = useState<string>("");
 
-  const openModal = (redirect) => {
+  const openModal = (redirect:string) => {
     setIsModalOpen(true);
     setRedirect(redirect);
   };

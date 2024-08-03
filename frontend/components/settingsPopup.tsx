@@ -27,7 +27,7 @@ const SettingsPopup = ({
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event:MouseEvent) {
       if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         onClose();
       }
