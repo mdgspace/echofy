@@ -45,7 +45,7 @@ export default function Home() {
         <div className="grid grid-cols-24 w-full mt-2 h-[95vh]">
           <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
-              <Box />
+              <Box channel=""/>
             </div>
           </div>
           {isModalOpen && (

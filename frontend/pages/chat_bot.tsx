@@ -10,6 +10,42 @@ import useSettings from "../hooks/useSettings";
 import useWebsocketForChatbot from "../hooks/useWebSocketForChatBot";
 import useVisibilityChange from "../hooks/useVisibilityChange";
 import useLeaveChat from "../hooks/useLeaveChat";
+interface Message {
+  text: string; // The content of the message
+  sender: 'user' | 'chatbot'; // Who sent the message
+  timestamp?: Date; // Optional timestamp (if you want to display it)
+  // ... other properties as needed (e.g., message ID, attachments, etc.)
+}
+interface UseLoadSettingHook {
+  (setSoundEnabled: (enabled: boolean) => void, setNotificationsEnabled: (enabled: boolean) => void): void;
+}
+
+interface UseSettingsHook {
+  (soundEnabled: boolean, notificationsEnabled: boolean): void;
+}
+
+interface UseWebsocketForChatbotHook {
+  (
+    socketRef: React.MutableRefObject<WebSocket | null>, 
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    router: typeof useRouter,
+    messagesEndRef: React.MutableRefObject<HTMLDivElement | null>
+  ): void;
+}
+
+interface UseVisibilityChangeHook {
+  (setUnreadCount: React.Dispatch<React.SetStateAction<number>>): void;
+}
+
+interface UseLeaveChatHook {
+  (router: typeof useRouter, socketRef: React.MutableRefObject<WebSocket | null>): void;
+}
+
+interface ChatbotContainerProps {
+  messages: Message[];
+  messagesEndRef: React.MutableRefObject<HTMLDivElement | null>;
+}
+
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -27,9 +63,7 @@ export default function Home() {
   useVisibilityChange(setUnreadCount);
   useLeaveChat(router);
 
-  useEffect(() => {
-    setTopic(router.query.topic ?? "Appetizer");
-  }, [router.query]);
+  useEffect(() => setTopic(router.query.topic as string ?? "Appetizer"), [router.query]); 
 
   useEffect(() => {}, [messages]);
 

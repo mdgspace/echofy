@@ -19,6 +19,18 @@ import Avatar15 from "../../assets/avatars/avatar_15.svg";
 import parseMessageText from "../../utils/chatbot_formatting/parseMessageText";
 import getAvatar from "../../utils/session/getAvatar";
 
+// Define Interfaces
+interface Message {
+  isSent: boolean;
+  username: string;
+  text: string;
+  // Add more properties as needed (e.g., timestamp, id, etc.)
+}
+
+interface MessageData {
+  userID?: string; // Optional property for chatbot messages
+}
+
 export default function ChatContainer({ messages, messagesEndRef }) {
   const [filteredMessage, setFilteredMessage] = useState([]);
 

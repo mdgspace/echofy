@@ -5,67 +5,80 @@ import getSessionUserId from "../../utils/session/getSessionUserId";
 import setSessionUser from "../../utils/session/setSessionUser";
 import removeSessionUserId from "../../utils/session/removeSessionUserId";
 import checkAndPromptSessionChange from "../../utils/alerts/checkAndPromptSessionChange";
-
-interface LoginModalProps{
-  onClose: ()=>void;
-  redirect:string;
+import { toast } from "react-toastify"; // Assuming you're using react-toastify
+interface LoginModalProps {
+  onClose: () => void;
+  redirect: string;
 }
 
-const LoginModal = ({ onClose, redirect }: LoginModalProps) => {
-  const popupRef = useRef<HTMLDivElement | null>(null);
-  const [username, setUsername] = useState<string>("");
+const LoginModal: React.FC<LoginModalProps> = ({ onClose, redirect }) => {
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [username, setUsername] = useState("");
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node))   
+ {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);   
+
+  }, [onClose]);
+
+  useEffect(()   => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-  }
+  };
 
-  function handleEnterClick(event: React.KeyboardEvent<HTMLInputElement>) {
+  const handleEnterClick = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleChatWithUsClick();
     }
-  }
+  };
 
-  useEffect(() => {
-    function handleClickOutside(event : MouseEvent) {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        onClose();
-      }
+  const handleChatWithUsClick = async () => {
+    if (!username.trim()) {
+      toast.error("Please enter a username.");
+      return;
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [popupRef, onClose]);
-
-  async function handleChatWithUsClick() {
     const chatType = redirect;
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
-    const query={channel:chatType};
+    const queryParams = new URLSearchParams({ channel: chatType });
 
-    
-    
-      if (currentUser && currentUserId) {
-        if (currentUser === username) {
-          router.push({pathname:'/chat',query});
-        } else {
-          const hasChanged = await checkAndPromptSessionChange(
-            currentUser,
-            username,
-            () => {
-              removeSessionUserId();
-              setSessionUser(username);
-            },
-          );
-          if (hasChanged) {
-            router.push({pathname:'/chat',query});
-          }
-        }
+    if (currentUser && currentUserId) {
+      if (currentUser === username) {
+        router.push(`/chat?${queryParams.toString()}`);
       } else {
-        setSessionUser(username);
-        router.push({pathname:'/chat',query});
+        const hasChanged = await checkAndPromptSessionChange(
+          currentUser,
+          username,
+          () => {
+            removeSessionUserId();
+            setSessionUser(username);
+          }
+        );
+        if (hasChanged) {
+          router.push(`/chat?${queryParams.toString()}`);
+        }
       }
-  }
+    } else {
+      setSessionUser(username);
+      router.push(`/chat?${queryParams.toString()}`);
+    }
+  };
+   const closeModal = ()=>{onClose()}
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
       <div

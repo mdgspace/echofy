@@ -10,6 +10,63 @@ import useSettings from "../hooks/useSettings";
 import useWebsocket from "../hooks/useWebsocket";
 import useLeaveChat from "../hooks/useLeaveChat";
 import useVisibilityChange from "../hooks/useVisibilityChange";
+interface Message {
+  text: string;
+  sender: 'user' | 'chatbot';
+  timestamp?: Date;
+  isSent?: boolean;  // Optional for messages not yet sent
+  username?: string; // Optional if not all messages have usernames
+  // ... other properties as needed (e.g., message ID, attachments)
+}
+interface UseLoadSettingHook {
+  (setSoundEnabled: (enabled: boolean) => void, setNotificationsEnabled: (enabled: boolean) => void): void;
+}
+
+interface UseSettingsHook {
+  (soundEnabled: boolean, notificationsEnabled: boolean): void;
+}
+
+interface UseWebsocketHook {
+  (
+    soundEnabled: boolean,
+    channel: string,
+    socketRef: React.MutableRefObject<WebSocket | null>, 
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    router: typeof useRouter,
+    setUnreadCount: React.Dispatch<React.SetStateAction<number>>
+  ): void;
+}
+
+interface UseVisibilityChangeHook {
+  (setUnreadCount: React.Dispatch<React.SetStateAction<number>>): void;
+}
+
+interface UseLeaveChatHook {
+  (router: typeof useRouter, socketRef: React.MutableRefObject<WebSocket | null>): void;
+}
+
+// For ChatbotContainer (from a previous response)
+interface ChatbotContainerProps {
+  messages: Message[];
+  messagesEndRef: React.MutableRefObject<HTMLDivElement | null>;
+}
+
+// For ChatInputBox (implied)
+interface ChatInputBoxProps {
+  socketRef: React.MutableRefObject<WebSocket | null>;
+}
+
+// For Box (implied)
+interface BoxProps {
+  channel: string;
+}
+
+// For Navbar (implied)
+interface NavbarProps {
+  currentPage: string;
+  currentTopic?: string; 
+}
+
 export default function Home(){
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);

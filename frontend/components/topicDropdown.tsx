@@ -1,69 +1,69 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchProjects } from "../services/api/projectsApi";
-import { useEffect, useRef } from "react";
 
+// Define Interfaces
 interface TopicDropdownProps {
   topic: string;
   setTopic: (topic: string) => void;
   login: boolean;
 }
 
-interface Project{
+interface Project {
   Category: string;
   Name: string;
-  ShortDesc :string;
-	LongDesc:string;
-	ImageLink: string;
-	AppStoreLink: string;
-	GithubLink: string;
-	PlayStoreLink: string;
+  ShortDesc: string;
+  LongDesc: string;
+  ImageLink: string;
+  AppStoreLink: string;
+  GithubLink: string;
+  PlayStoreLink: string;
 }
 
-export const TopicDropdown = ({ topic, setTopic,login }:TopicDropdownProps) => {
+export const TopicDropdown: React.FC<TopicDropdownProps> = ({ topic, setTopic, login }) => {
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  const projectList = projects.filter(
-    (project) => project.Category === "Projects",
-  );
+  const projectList = projects.filter((project) => project.Category === "Projects");
   const eventList = projects.filter((project) => project.Category === "Events");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleClick = (e:any) => {
-    const content = e.target.textContent;
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault(); // Prevent default link behavior
+    const content = event.currentTarget.textContent || ""; // Get text content safely
     setTopic(content);
-    setIsOpen(!open);
-    if(!login){
+    setIsOpen(false);
+    if (!login) {
       window.location.href = `/chat_bot?topic=${encodeURIComponent(content)}`;
     }
   };
 
   useEffect(() => {
-    async function fetchProjectsData() {
+    const fetchProjectsData = async () => {
       const data = await fetchProjects();
-      if (data!=null){
-        setProjects(data);
-      }else{
-      setProjects([]);
-      }
-    }
+      setProjects(data || []); // Handle null response
+    };
+
     fetchProjectsData();
-  }, []);
+  }, []); 
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setIsOpen(false);   
+
       }
-    }
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [popupRef, isOpen]);
+    return () => document.removeEventListener("mousedown",   
+ handleClickOutside);
+  }, [popupRef]);   
+ // No need for isOpen in dependency array
+
   return (
     <div 
     ref={popupRef} 

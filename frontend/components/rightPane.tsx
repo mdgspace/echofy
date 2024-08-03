@@ -8,6 +8,25 @@ import SettingsPopup from "./settingsPopup";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
+// SettingsPopupProps (Likely defined in settingsPopup.tsx)
+interface SettingsPopupProps {
+  onClose: () => void;              // Function to close the popup
+  soundEnabled: boolean;           // Current state of sound
+  setSoundEnabled: (enabled: boolean) => void; // Function to update sound state
+  notificationsEnabled: boolean;    // Current state of notifications
+  setNotificationsEnabled: (enabled: boolean) => void; // Function to update notifications state
+}
+
+// RightPaneProps (Specific to RightPane.tsx)
+interface RightPaneProps extends SettingsPopupProps {} // Inherits all props from SettingsPopupProps
+
+// Optional: If you have more icons or items in the future
+interface IconProps {
+  src: string;
+  alt: string;
+  onClick?: () => void; 
+}
+
 export default function RightPane({
   soundEnabled,
   setSoundEnabled,

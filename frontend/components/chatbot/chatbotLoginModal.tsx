@@ -7,35 +7,43 @@ import removeSessionUserId from "../../utils/session/removeSessionUserId";
 import checkAndPromptSessionChange from "../../utils/alerts/checkAndPromptSessionChange";
 import { TopicDropdown } from "../topicDropdown";
 
-const ChatBotLoginModal = ({ onClose }) => {
-  const popupRef = useRef();
+// Define Interfaces
+interface ChatBotLoginModalProps {
+  onClose: () => void; // Function to close the modal
+}
+type Topic = "SELECT A TOPIC" | "Option 1" | "Option 2" | string ;
+const ChatBotLoginModal: React.FC<ChatBotLoginModalProps> = ({ onClose }) => {
+  const popupRef = useRef<HTMLDivElement | null>(null);
   const [username, setUsername] = useState("");
-  const [topic, setTopic] = useState("SELECT A TOPIC");
+  const [topic, setTopic] = useState<Topic>("SELECT A TOPIC"); 
   const router = useRouter();
 
-  function handleUsernameChange(event) {
-    setUsername(event.target.value);
-  }
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown",   
+ handleClickOutside);
+  }, [popupRef,   
+ onClose]);
 
-  function handleEnterClick(event) {
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
+  };
+
+  const handleEnterClick = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleChatWithUsClick();
     }
-  }
+  };
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [popupRef, onClose]);
-
-  async function handleChatWithUsClick() {
+  const handleChatWithUsClick = async () => {
     const currentUser = getSessionUser();
     const currentUserId = getSessionUserId();
+
     if (currentUser && currentUserId) {
       if (currentUser === username) {
         router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
@@ -46,8 +54,9 @@ const ChatBotLoginModal = ({ onClose }) => {
           () => {
             removeSessionUserId();
             setSessionUser(username);
-          },
+          }
         );
+
         if (hasChanged) {
           router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
         }
@@ -56,7 +65,7 @@ const ChatBotLoginModal = ({ onClose }) => {
       setSessionUser(username);
       router.push(`/chat_bot?topic=${encodeURIComponent(topic)}`);
     }
-  }
+  };
   return (
     <div className="fixed inset-0 bg-opacity-50 bg-bg-gray flex justify-center items-center backdrop-blur">
       <div
