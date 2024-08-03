@@ -1,7 +1,7 @@
 "use client";
 import Swal from "sweetalert2";
 
-export default function alertBadRequest(reason, navigateToLogin) {
+export default function alertBadRequest(reason: string, navigateToLogin: () => void) {
     try {
       Swal.fire({
         title: "Bad request",
@@ -11,7 +11,7 @@ export default function alertBadRequest(reason, navigateToLogin) {
         iconColor: "#3670F5",
         confirmButtonColor: "#3670F5",
         confirmButtonText: "OK",
-        didOpen: (popup) => {
+        didOpen: (popup: HTMLElement) => {
           popup.style.borderRadius = "1rem";
         },
       }).then((result) => {

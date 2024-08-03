@@ -52,7 +52,7 @@ export default function Home() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [topic, setTopic] = useState("Appetizer");
+  const [topic, setTopic] = useState<string>("Appetizer");
   const router = useRouter();
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -61,9 +61,10 @@ export default function Home() {
   useSettings(soundEnabled,notificationsEnabled);
   useWebsocketForChatbot(socketRef,setMessages,router);
   useVisibilityChange(setUnreadCount);
-  useLeaveChat(router);
+  // useLeaveChat(router);
 
   useEffect(() => setTopic(router.query.topic as string ?? "Appetizer"), [router.query]); 
+
 
   useEffect(() => {}, [messages]);
 

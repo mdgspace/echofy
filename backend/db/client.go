@@ -24,7 +24,7 @@ func Init() {
 func redisInit(portNumber, dbNumber int, password string) {
 	ctx = context.Background()
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("localhost:%v", portNumber), //port number can be changed as per our wish
+		Addr:     fmt.Sprintf("redis:%v", portNumber), //port number can be changed as per our wish
 		Password: password,
 		DB:       dbNumber,
 	})
@@ -357,23 +357,23 @@ func AddUserInfoToDb(username string, userId string, userAgent string, ip string
 }
 
 func GetUserInfo(userId string) string {
-	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()	
-    var _info models.UserInfo
-    err := json.Unmarshal([]byte(info), &_info)
-	if(err != nil){
+	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()
+	var _info models.UserInfo
+	err := json.Unmarshal([]byte(info), &_info)
+	if err != nil {
 		logging.LogException(err)
 		panic(err)
 	}
 	formattedInfo := fmt.Sprintf(
-        "UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
-        _info.UserID,
-        _info.Username,
-        _info.IP,
-        _info.Location,
-        _info.OS,
-        _info.Agent,
-        _info.Channel,
-    )
+		"UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
+		_info.UserID,
+		_info.Username,
+		_info.IP,
+		_info.Location,
+		_info.OS,
+		_info.Agent,
+		_info.Channel,
+	)
 	return formattedInfo
 }
 
@@ -423,7 +423,6 @@ func UpsertProject(project models.Project) {
 		"projectAppStoreLink":     string(project.AppStoreLink),
 		"projectGithubLink":       string(project.GithubLink),
 		"projectPlayStoreLink":    string(project.PlayStoreLink),
-
 	}).Result()
 	if err != nil {
 		logging.LogException(err)
@@ -448,32 +447,32 @@ func UpsertProject(project models.Project) {
 // 	return project
 // }
 
-func GetAllProjects() ([]models.Project , error) {
+func GetAllProjects() ([]models.Project, error) {
 	keys, err := redisClient.Keys(redisClient.Context(), "project:*").Result()
 	if err != nil {
 		logging.LogException(err)
-		return nil , err
+		return nil, err
 	}
 	var projects []models.Project
 	for _, key := range keys {
 		result, err := redisClient.HGetAll(redisClient.Context(), key).Result()
 		if err != nil {
 			logging.LogException(err)
-			return nil , err
+			return nil, err
 		}
 		project := models.Project{
-			Name:      key[len("project:"):],
-			Category:  models.ProjectCategory(result["projectCategory"]),
-			ShortDesc: result["projectShortDescription"],
-			LongDesc:  result["projectLongDescription"],
-			ImageLink: result["projectImageLink"],
-			AppStoreLink: result["projectAppStoreLink"],
-			GithubLink: result["projectGithubLink"],
+			Name:          key[len("project:"):],
+			Category:      models.ProjectCategory(result["projectCategory"]),
+			ShortDesc:     result["projectShortDescription"],
+			LongDesc:      result["projectLongDescription"],
+			ImageLink:     result["projectImageLink"],
+			AppStoreLink:  result["projectAppStoreLink"],
+			GithubLink:    result["projectGithubLink"],
 			PlayStoreLink: result["projectPlayStoreLink"],
 		}
 		projects = append(projects, project)
 	}
-	return projects , nil
+	return projects, nil
 }
 
 func isValidProjectCategory(category models.ProjectCategory) bool {
@@ -486,14 +485,13 @@ func isValidProjectCategory(category models.ProjectCategory) bool {
 }
 
 func DeleteProject(projectName string) string {
-	
+
 	if !projectExists(projectName) {
 		err := fmt.Errorf("project %s does not exist", projectName)
 		logging.LogException(err)
 		return err.Error()
 	}
 
-	
 	key := "project:" + projectName
 	_, err := redisClient.Del(redisClient.Context(), key).Result()
 	if err != nil {
@@ -501,10 +499,10 @@ func DeleteProject(projectName string) string {
 		return err.Error()
 	}
 
-	return fmt.Sprintf("project %v deleted succesfully" , projectName)
+	return fmt.Sprintf("project %v deleted succesfully", projectName)
 }
 
-func projectExists( projectName string) bool {
+func projectExists(projectName string) bool {
 	key := "project:" + projectName
 	exists, err := redisClient.Exists(redisClient.Context(), key).Result()
 	if err != nil {

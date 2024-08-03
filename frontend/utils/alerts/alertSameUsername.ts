@@ -1,7 +1,7 @@
 "use client";
 import Swal from "sweetalert2";
 
-export default function alertSameUsername(reason, navigateToLogin) {
+export default function alertSameUsername(reason: string, navigateToLogin: () => void) {
     try {
       Swal.fire({
         title: "Username already exists",
@@ -12,7 +12,7 @@ export default function alertSameUsername(reason, navigateToLogin) {
         imageAlt: "Username Taken",
         confirmButtonColor: "#3670F5",
         confirmButtonText: "OK",
-        didOpen: (popup) => {
+        didOpen: (popup:HTMLElement) => {
           popup.style.borderRadius = "1rem";
         },
       }).then((result) => {

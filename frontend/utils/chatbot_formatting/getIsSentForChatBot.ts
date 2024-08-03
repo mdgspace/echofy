@@ -1,4 +1,4 @@
-export default function getIsSentForChatBot(message) {
+export default function getIsSentForChatBot(message: string): boolean {
     if (message.split(":")[0] === "You") {
       return true;
     } else {

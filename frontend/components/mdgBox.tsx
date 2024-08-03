@@ -6,7 +6,7 @@ import { fetchProjects } from "../services/api/projectsApi";
 import { ProjectList } from "./projects/projectList";
 
 interface BoxProps {
-  channel: string;
+  channel?: string;
 }
 
 export default function Box({ channel }: BoxProps) {

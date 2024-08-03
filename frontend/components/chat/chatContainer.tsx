@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
+=======
+import React, { MutableRefObject } from "react";
+>>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
 import Image from "next/image";
 import moment from "moment";
 import { useState } from "react";
@@ -20,6 +24,7 @@ import Avatar15 from "../../assets/avatars/avatar_15.svg";
 import getAvatar from "../../utils/session/getAvatar";
 
 interface Message {
+<<<<<<< HEAD
   text: string;
   isSent: boolean;
   timestamp: number;
@@ -34,6 +39,21 @@ interface ChatContainerProps {
 
 export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps) {
   const formatTime = (timestamp: number) => {
+=======
+  avatar?: string;
+  username: string;
+  text: string;
+  timestamp: number;
+  isSent: boolean;
+}
+interface ChatContainerProps {
+  messages: Message[];
+  messagesEndRef: MutableRefObject<HTMLDivElement | null>;
+}
+
+export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps) {
+  const formatTime = (timestamp) => {
+>>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
     const date = new Date(timestamp * 1000);
     return moment(date).format("hh:mm A");
   };
@@ -43,6 +63,10 @@ export default function ChatContainer({ messages, messagesEndRef }: ChatContaine
     Avatar9, Avatar10, Avatar11, Avatar12, Avatar13, Avatar14,   
  Avatar15,
   ];
+<<<<<<< HEAD
+=======
+  const [Avatar, setAvatar] = useState<string>(Avatar1);
+>>>>>>> 5c322dd5afd2aba0870008ca9bcd0d582dc9eeab
 
   const   
  [Avatar, setAvatar] = useState<string>(Avatar1);

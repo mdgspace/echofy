@@ -1,14 +1,14 @@
 "use client";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertResult } from "sweetalert2";
 
 export default async function checkAndPromptSessionChange(
-    currentUsername,
-    inputUsername,
-    onConfirm,
+  currentUsername: string | null,
+  inputUsername: string,
+  onConfirm: () => void,
   ) {
     if (currentUsername && currentUsername !== inputUsername) {
       try {
-        const result = await Swal.fire({
+        const result:SweetAlertResult = await Swal.fire({
           title: "Change Username?",
           text: `You already have a running session with the username "${currentUsername}". Do you want to change your username?`,
           icon: "question",
@@ -33,7 +33,7 @@ export default async function checkAndPromptSessionChange(
               iconColor: "#3670F5",
               confirmButtonColor: "3670F5",
               confirmButtonText: "OK",
-              didOpen: (popup) => {
+              didOpen: (popup:HTMLElement) => {
                 popup.style.borderRadius = "1rem";
               },
             });

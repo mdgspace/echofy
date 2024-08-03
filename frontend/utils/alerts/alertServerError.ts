@@ -1,7 +1,7 @@
 "use client";
 import Swal from "sweetalert2";
 
-export default function alertServerError(reason, navigateToLogin) {
+export default function alertServerError(reason: string, navigateToLogin: () => void) {
     try {
       Swal.fire({
         title: "Server error",
@@ -11,7 +11,7 @@ export default function alertServerError(reason, navigateToLogin) {
         iconColor: "#3670F5",
         confirmButtonColor: "#3670F5",
         confirmButtonText: "OK",
-        didOpen: (popup) => {
+        didOpen: (popup:HTMLElement) => {
           popup.style.borderRadius = "1rem";
         },
       }).then((result) => {

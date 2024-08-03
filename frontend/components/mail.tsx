@@ -18,12 +18,13 @@ export default function Mail({
   const [email, setEmail] = useState<string>("");
   const popupRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     let userId = getSessionUserId();
     let username = getSessionUser();
+    let timestamp =  Date.now();
     e.preventDefault();
     try {
-      await subscribe(email, username, userId, channel, userId);
+      await subscribe(email, username, userId, channel, timestamp);
       onClose();
     } catch (error) {
        //todo -> enable sentry logger here
@@ -31,8 +32,8 @@ export default function Mail({
   };
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+    function handleClickOutside(event:MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         onClose();
       }
     }
