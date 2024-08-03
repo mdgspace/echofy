@@ -8,8 +8,7 @@ interface AlertAbnormalCloseProps {
   navigateToLogin: () => void; // Function to navigate (e.g., from useRouter)
 }
 
-const AlertAbnormalClose: React.FC<AlertAbnormalCloseProps> = ({ reason, navigateToLogin }) => {
-  const handleAlertClose = async () => {
+const AlertAbnormalClose: React.FC<AlertAbnormalCloseProps> = async ({ reason, navigateToLogin }) => {
     try {
       const result = await Swal.fire({
         title: "Connection lost",
@@ -30,7 +29,6 @@ const AlertAbnormalClose: React.FC<AlertAbnormalCloseProps> = ({ reason, navigat
       // More specific error handling here, e.g., log the error
       console.error("Error in SweetAlert:", error);
     }
-  };
 
   return null; // This component doesn't render anything directly, it's just a function
 };
