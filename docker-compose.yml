@@ -16,7 +16,7 @@ services:
     env_file: 
       - .env # Reads environment variables from a file
     ports:
-      - "3000:3000" # Exposes the frontend's port 3000 to the host
+      - "3001:3001" # Exposes the frontend's port 3000 to the host
     depends_on:
       - backend # Optional: Ensures backend service is started before the frontend
     restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user

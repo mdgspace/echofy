@@ -12,7 +12,7 @@ func Init() {
 	e := echo.New()
 	e.Use(sentryecho.New(sentryecho.Options{}))
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000" , "https://mdgspace.org"},
+		AllowOrigins: []string{"http://localhost:3000" , "https://mdgspace.org" , "http://localhost:3001"},
 		AllowMethods: []string{"GET", "POST"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
