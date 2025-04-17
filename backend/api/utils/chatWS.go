@@ -51,8 +51,7 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 		fmt.Println("Error while upgrading the websocket connection: ", err)
 		logging.LogException(err)
 		debug.PrintStack()
-		return c.String(500, "Internal Server Error while upgrading the websocket connection")
-		// return err
+		return err
 	}
 	userAgent := c.Request().UserAgent()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
