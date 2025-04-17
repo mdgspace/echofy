@@ -36,16 +36,19 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 	if userIDWebSockets[userID] != nil {
 		err := userIDWebSockets[userID].WriteMessage(websocket.TextMessage, []byte("ping"))
 		if err == websocket.ErrCloseSent { // if the websocket is already closed
+			fmt.Println("Websocket already closed")
 			CloseWebsocketAndClean(userIDWebSockets[userID], "public", userID)
 		} else if err != nil { // if there is some other error
 			fmt.Println("Error while pinging the websocket: ", err)
 			return c.String(500, "Internal Server Error, please contact the administrator")
 		} else {
+			fmt.Println("Username already taken")
 			return c.String(409, "Username already taken")
 		}
 	}
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header())
 	if err != nil {
+		fmt.Println("Error while upgrading the websocket connection: ", err)
 		logging.LogException(err)
 		debug.PrintStack()
 		return c.String(500, "Internal Server Error while upgrading the websocket connection")
