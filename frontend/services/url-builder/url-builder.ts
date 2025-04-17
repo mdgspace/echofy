@@ -14,7 +14,7 @@ export function buildWebSocketURL(
   };
 
   const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "development" ? "ws" : "wss";
-  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}:${env.NEXT_PUBLIC_BACKEND_PORT}/chat`;
+  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}/chat`;
 
   const params = new URLSearchParams({
     channel: channel || "public",
@@ -36,7 +36,7 @@ export function projectURLbuildr(): string {
   };
 
   const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "development" ? "http" : "https";
-  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}:${env.NEXT_PUBLIC_BACKEND_PORT}/projects`;
+  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}/projects`;
   
   return baseUrl;
 }
@@ -50,7 +50,7 @@ export function leaveChatURLbuildr(userID: string): string {
   };
 
   const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "development" ? "http" : "https";
-  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}:${env.NEXT_PUBLIC_BACKEND_PORT}/chat/leave`;
+  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}/chat/leave`;
   
   const params = new URLSearchParams({
     userID: userID,
@@ -69,6 +69,6 @@ export function subscribeURLbuildr(): string {
   };
 
   const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "development" ? "http" : "https";
-  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}:${env.NEXT_PUBLIC_BACKEND_PORT}/subscribe`;
+  const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}/subscribe`;
   return baseUrl;
 }
