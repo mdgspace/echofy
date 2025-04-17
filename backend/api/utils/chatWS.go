@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -46,8 +47,9 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 	ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), c.Response().Header())
 	if err != nil {
 		logging.LogException(err)
-		SendInternalServerErrorCloseMessage(c, "Internal Server Error while upgrading the websocket connection")
-		return err
+		debug.PrintStack()
+		return c.String(500, "Internal Server Error while upgrading the websocket connection")
+		// return err
 	}
 	userAgent := c.Request().UserAgent()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
