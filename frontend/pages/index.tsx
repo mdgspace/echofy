@@ -11,7 +11,7 @@ export default function Home() {
   const [isChatBotModalOpen, setISChatBotModalOpen] = useState<boolean>(false);
   const [redirect, setRedirect] = useState<string>("");
 
-  const openModal = (redirect:string) => {
+  const openModal = (redirect: string) => {
     setIsModalOpen(true);
     setRedirect(redirect);
   };
@@ -45,7 +45,7 @@ export default function Home() {
         <div className="grid grid-cols-24 w-full mt-2 h-[95vh]">
           <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
             <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
-              <Box channel="public"/>
+              <Box channel="public" />
             </div>
           </div>
           {isModalOpen && (
@@ -71,9 +71,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col justify-center items-center gap-4 mt-8">
-              <div
-                  className="flex items-center justify-center py-4 w-full px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50 hover:cursor-not-allowed relative group"
-                  // onClick={goToChatbot}
+                <div
+                  className="flex items-center justify-center py-4 w-full px-8 rounded-full bg-customBlue text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-customBlue focus:ring-opacity-50 hover:cursor-not-allowed group"
+                // onClick={goToChatbot}
                 >
                   <p className="font-Roboto font-medium text-xl tracking-tighter flex gap-2">
                     <Image alt={"chat bot"} src={ChatBot} />
