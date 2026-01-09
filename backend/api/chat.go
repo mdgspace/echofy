@@ -52,13 +52,9 @@ func JoinChat() echo.HandlerFunc {
 				if(strings.Contains(userIDTemp, "public")){
 					return utils.SendBadRequestMessage(c, "Username taken")
 				}
-			} else if channel == "chatbot"{
-				if(strings.Contains(userIDTemp, "chatbot")){
-					return utils.SendBadRequestMessage(c, "Username taken")
-				}
 			} else {
 				pattern := regexp.MustCompile(`^[0-9]*\.?[0-9]+$`)
-				if(pattern.MatchString(userIDTemp)){
+				if pattern.MatchString(userIDTemp) {
 					return utils.SendBadRequestMessage(c, "Username taken")
 				}
 			}
