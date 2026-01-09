@@ -16,6 +16,8 @@ func Init() {
 		AllowMethods: []string{"GET", "POST"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 	e.GET("/chat", api.JoinChat())
 	e.GET("/projects", api.GetProjects())
 	e.POST("/userInfo", api.ReceivedFrontendUserInfo())
