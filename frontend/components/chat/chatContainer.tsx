@@ -21,7 +21,6 @@ import getAvatar from "../../utils/session/getAvatar";
 import { ChatContainerProps, Message } from "../../interface/interface";
 
 export default function ChatContainer({ messages, messagesEndRef }: ChatContainerProps): React.JSX.Element {
-  const [filteredMessage, setFilteredMessage] = useState<Message[]>([]);
 
   const AvatarList = [
     Avatar1,
@@ -55,23 +54,12 @@ export default function ChatContainer({ messages, messagesEndRef }: ChatContaine
     loadAvatar();
   }, [messages]);
 
-  useEffect(() => {
-    const filterMessages = () => {
-      const newMessages = messages.filter((message) => {
-        // message is already an object, no need to parse it
-        return !(message.userID && message.userID.startsWith("chatbot"));
-      });
-      return newMessages;
-    };
-    const newFilteredMessages = filterMessages();
-    setFilteredMessage(newFilteredMessages as Message[]);
-  }, [messages]);
 
   return (
     <div className="h-[85vh]">
       <ul>
 
-        {filteredMessage?.map((message, index) => {
+        {messages?.map((message, index) => {
           return (
             <li
               key={index}

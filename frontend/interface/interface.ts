@@ -1,6 +1,5 @@
-import React, { Dispatch, MutableRefObject, ReactNode, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, MutableRefObject, SetStateAction } from "react";
 import { useRouter } from 'next/navigation';
-import alertServerError from "../utils/alerts/alertServerError";
 
 export interface SettingsPopupProps {
     onClose: () => void;           
@@ -22,12 +21,6 @@ export interface LayoutProps {
     children: React.ReactNode;
     home: boolean;
 }
-
-export interface TopicDropdownProps {
-    topic: string;
-    setTopic: (topic: string) => void;
-    login: boolean;
-  }
   
 export interface Project {
     Category: string;
@@ -236,6 +229,7 @@ export interface AvatarListProps {
 
 export interface ChatInputBoxProps {
   socketRef: React.MutableRefObject<WebSocket | null>;
+  onSend?: (text: string) => void;
 }
 
 
