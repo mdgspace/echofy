@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Message } from "../interface/interface";
 import { NextRouter } from "next/router";
 
@@ -15,8 +15,18 @@ export default function useRAGWebsocket({
   setMessages,
   router,
 }: Props) {
+  const hasErroredRef = useRef(false);
+
   useEffect(() => {
-    const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000/query");
+    const WS_URL = process.env.NEXT_PUBLIC_WS_URL;
+    console.log(WS_URL)
+
+    if (!WS_URL) {
+      notifyAndRedirect("WebSocket URL is not configured.", router);
+      return;
+    }
+
+    const ws = new WebSocket(WS_URL);
     socketRef.current = ws;
 
     ws.onopen = () => {
@@ -24,25 +34,18 @@ export default function useRAGWebsocket({
     };
 
     ws.onmessage = (event) => {
-      let data: any;
+      if (hasErroredRef.current) return;
 
+      let data: any;
       try {
         data = JSON.parse(event.data);
       } catch {
-        notifyAndRedirect(
-          "Received invalid response from server.",
-          router
-        );
-        ws.close();
+        handleFatalError("Invalid response from server.");
         return;
       }
 
       if (data.status !== 200) {
-        notifyAndRedirect(
-          data.detail || "Server error occurred.",
-          router
-        );
-        ws.close();
+        handleFatalError(data.detail || "Server error occurred.");
         return;
       }
 
@@ -59,21 +62,21 @@ export default function useRAGWebsocket({
     };
 
     ws.onerror = () => {
-      notifyAndRedirect(
-        "Lost connection to server.",
-        router
-      );
-      ws.close();alert
+      handleFatalError("Lost connection to server.");
     };
 
     ws.onclose = (event) => {
       if (!event.wasClean) {
-        notifyAndRedirect(
-          "Connection closed unexpectedly.",
-          router
-        );
+        handleFatalError("Connection closed unexpectedly.");
       }
     };
+
+    function handleFatalError(message: string) {
+      if (hasErroredRef.current) return;
+      hasErroredRef.current = true;
+      ws.close();
+      notifyAndRedirect(message, router);
+    }
 
     return () => {
       ws.close();
@@ -98,5 +101,5 @@ export default function useRAGWebsocket({
 
 function notifyAndRedirect(message: string, router: NextRouter) {
   alert(message);
-  router.push("/");
+  router.replace("/");
 }

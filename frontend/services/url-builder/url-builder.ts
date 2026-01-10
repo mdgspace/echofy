@@ -5,7 +5,6 @@ export function buildWebSocketURL(
   userId: string,
   username: string,
   channel: string,
-  topic?: Topic
 ): string {
   const env: BackendEnvironment = {
     NEXT_PUBLIC_BACKEND_HOST: process.env.NEXT_PUBLIC_BACKEND_HOST || 'localhost',
@@ -13,14 +12,13 @@ export function buildWebSocketURL(
     NEXT_PUBLIC_BACKEND_ENVIRONMENT: process.env.NEXT_PUBLIC_BACKEND_ENVIRONMENT as 'development' | 'production',
   };
 
-  const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "development" ? "ws" : "wss";
+  const protocol = env.NEXT_PUBLIC_BACKEND_ENVIRONMENT === "production" ? "wss" : "ws";
   const baseUrl = `${protocol}://${env.NEXT_PUBLIC_BACKEND_HOST}:${env.NEXT_PUBLIC_BACKEND_PORT}/chat`;
 
   const params = new URLSearchParams({
     channel: channel || "public",
     name: username,
     userID: userId || "0",
-    topic: topic || '',
   });
 
   return `${baseUrl}?${params.toString()}`;

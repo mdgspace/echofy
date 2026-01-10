@@ -1,12 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { fetchProjects } from "../services/api/projectsApi";
-import { ProjectList } from "./projects/projectList";
 import { BoxProps } from "../interface/interface";
-
-
 
 export default function Box({ channel }: BoxProps) {
   const router = useRouter();
@@ -14,21 +8,6 @@ export default function Box({ channel }: BoxProps) {
   const newArr = arr.filter((item) => item !== channel);
   const finalArr = newArr.map((item) => item.toUpperCase());
   const isShown = router.pathname === "/";
-  const [projects, setProjects] = useState([]);
-
-  useEffect(() => {
-    async function fetchProjectsData() {
-      const data = await fetchProjects();
-      if(data!=null){
-        setProjects(data);
-      }else{
-        setProjects([]);
-      }
-      
-    }
-
-    fetchProjectsData();
-  }, []);
 
   const handleRoute1 = () => {
     if (channel === "public") {
@@ -53,38 +32,11 @@ export default function Box({ channel }: BoxProps) {
       router.push({pathname:"/chat",query});
     }
   };
-  const [topic, setTopic] = useState(" ");
-  const handleDivClick = (e: any) => {
-    const content = e.target.textContent;
-    setTopic(content);
-    router.push({
-      pathname: "/chat_bot",
-      query: { topic: content },
-    });
-  };
 
-  const projectList = projects.filter(
-    (project) => project.Category === "Projects",
-  );
-  const eventList = projects.filter((project) => project.Category === "Events");
 
   return (
     <>
       <div className="flex flex-col gap-5 justify-between items-center">
-        <div className="Projects">
-          <ProjectList
-            projects={projectList}
-            category="Projects"
-            heightDecrease={isShown}
-          />
-        </div>
-        <div className="Events">
-          <ProjectList
-            projects={eventList}
-            category="Events"
-            heightDecrease={isShown}
-          />
-        </div>
         {!isShown && (
           <div className="w-full h-[3vh] gap-2 flex items-center">
             <div className="w-1/2 flex-grow bg-blue rounded-full bg-customBlue border-customBlue hover:cursor-pointer flex-2 hover:to-blue-900 dark:hover:bg-blue-600">

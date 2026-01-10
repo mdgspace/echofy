@@ -25,7 +25,6 @@ const useWebsocketForChatbot=({socketRef,setMessages,router}:useWebsocketForChat
           userId,
           username,
           channel,
-          topic.topic ?? "Appetizer",
         );
     
         const handleOpen = () => {
