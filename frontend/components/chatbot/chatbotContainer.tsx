@@ -20,7 +20,7 @@ import parseMessageText from "../../utils/chatbot_formatting/parseMessageText";
 import getAvatar from "../../utils/session/getAvatar";
 import { ChatContainerProps } from "../../interface/interface";
 
-export default function ChatContainer({ messages, messagesEndRef }:ChatContainerProps): React.JSX.Element {
+export default function ChatContainer({ messages, messagesEndRef, onRetry }:ChatContainerProps): React.JSX.Element {
   const [filteredMessage, setFilteredMessage] = useState([]);
 
   const AvatarList = [
@@ -116,7 +116,7 @@ export default function ChatContainer({ messages, messagesEndRef }:ChatContainer
                       <div className="py-2 whitespace-pre-wrap text-Lato">
                         {message.isSent
                           ? message.text
-                          : parseMessageText(message.text)}
+                          : parseMessageText(message.text, () => onRetry && onRetry(index))}
                       </div>
                     </div>
                   </div>

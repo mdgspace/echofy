@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -22,7 +23,7 @@ var channelTokens = make(map[string]string)
 var channelNames = make(map[string]string)
 var token, appToken string
 
-func initializeSlackEnv() {
+func initializeSlackEnv() (string, string) {
 	envVar := os.Environ()
 	for _, element := range(envVar) {
 		pair := strings.Split(element,"=")
@@ -38,26 +39,33 @@ func initializeSlackEnv() {
 		}
 	}
 	globals.InitVariables(channelNames, channelTokens)
+	return token, appToken
 }
 
 func main() {
-	godotenv.Load("../.env")
+	godotenv.Load(".env")
 	utils.InitDialogflowConfig(os.Getenv("GCP_PROJECT_ID"))
 	sentryDSN := os.Getenv("SENTRY_DSN")
 	if sentryDSN != "" {
 		logging.Init(sentryDSN)
 		defer sentry.Flush(2 * time.Second)
 	}
-	globals.InitLocationToken(os.Getenv("LOCATION_TOKEN"))
-	initializeSlackEnv()
-	utils.InitClient(token, appToken)
-	listeners.InitAndRunSocketClient(utils.Client, channelTokens)
+	globals.InitLocationToken(os.Getenv("IPINFO_TOKEN"))
+	token, appToken := initializeSlackEnv()
+	if token == "" || appToken == "" {
+		log.Println("[WARN] Slack tokens not configured — Slack integration disabled. HTTP/WS server will still run.")
+	} else {
+		utils.InitClient(token, appToken)
+		listeners.InitAndRunSocketClient(utils.Client, channelTokens)
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		go listeners.MsgListener(ctx)
+	}
 	db.Init()
+	if !db.Ping() {
+		log.Println("[WARN] Redis not reachable — chat persistence disabled. Server will still start.")
+	}
 	profanityutils.InitProfanityDetector()
 
-	// context used for the goroutine that listens to events on Slack and broadcasts to frontend clients
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	go listeners.MsgListener(ctx)
 	route.Init()
 }

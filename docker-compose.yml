@@ -1,32 +1,44 @@
-version: '3.7'
 services:
   backend:
     build: ./backend
     ports:
-      - "1323:${NEXT_PUBLIC_BACKEND_PORT}" # Exposes the backend's port 1323 to the host
+      - "1323:1323"
     env_file: 
-      - .env # Reads environment variables from a file
+      - backend/.env
+    environment:
+      - REDIS_HOST=redis
     depends_on:
-      - redis # Ensures Redis service is started before the backend
-    restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user
+      - redis
+    restart: unless-stopped
+    networks:
+      - echofy-net
 
   frontend:
     build: 
       context: ./frontend
     env_file: 
-      - .env # Reads environment variables from a file
+      - frontend/.env
     ports:
-      - "3000:3000" # Exposes the frontend's port 3000 to the host
+      - "3000:3000"
     depends_on:
-      - backend # Optional: Ensures backend service is started before the frontend
-    restart: unless-stopped # Optional: Restarts the service unless it was stopped by the user
+      - backend
+    restart: unless-stopped
+    networks:
+      - echofy-net
 
   redis:
-    image: "redis:alpine" # Uses the official Redis image
+    image: "redis:alpine"
     ports:
-      - "6379:6379" # Exposes the Redis port 6379 to the host
+      - "6379:6379"
     volumes:
-      - redis_data:/data # Mounts a volume to persist Redis data
+      - redis_data:/data
+    networks:
+      - echofy-net
 
 volumes:
   redis_data:
+
+networks:
+  echofy-net:
+    name: echofy-shared-network
+    driver: bridge

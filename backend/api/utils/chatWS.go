@@ -34,9 +34,10 @@ var wg sync.WaitGroup
 func ChatUserHandler(c echo.Context, name string, channel string, userID string) error {
 	if userIDWebSockets[userID] != nil {
 		err := userIDWebSockets[userID].WriteMessage(websocket.TextMessage, []byte("ping"))
-		if err == websocket.ErrCloseSent { // if the websocket is already closed
+		if err == websocket.ErrCloseSent {
+			fmt.Println("Websocket already closed")
 			CloseWebsocketAndClean(userIDWebSockets[userID], "public", userID)
-		} else if err != nil { // if there is some other error
+		} else if err != nil {
 			fmt.Println("Error while pinging the websocket: ", err)
 			return c.String(500, "Internal Server Error, please contact the administrator")
 		} else {
@@ -58,8 +59,8 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 			userID = SendMsgAsBot(globals.GetChannelID("private"), name+" has joined private chat", "")
 		}
 		ws.WriteJSON(map[string]string{"userID": userID})
-		db.AddUserEntry(name, userID)
-		db.AddUserInfoToDb(name, userID, userAgent, c.RealIP(), channel)
+		_ = db.AddUserEntry(name, userID)
+		_ = db.AddUserInfoToDb(name, userID, userAgent, c.RealIP(), channel)
 	}
 	addUserAndWebsocketToLocalData(ws, userID, channel)
 	if channel == "public" {
@@ -81,41 +82,52 @@ func PrivateChatsHandler(c echo.Context, name, userID string, ws *websocket.Conn
 	prevMsgs := getMarshalledSegregatedMsgHistoryPrivateUser(userID)
 	ws.WriteMessage(websocket.TextMessage, prevMsgs)
 	rootTS := userID
+	fmt.Println("[PRIVATE] Entering read loop for user:", name, "userID:", userID)
 	for {
+		fmt.Println("[PRIVATE] Waiting for message...")
 		_, msg, err := ws.ReadMessage()
+		fmt.Println("[PRIVATE] ReadMessage returned. err:", err, "msg:", string(msg))
 		if err != nil {
 			if err.Error() == "websocket: close 1000 (normal)" || err.Error() == "websocket: close 1001 (going away)" || err.Error() == "websocket: close 1005 (no status)" || err.Error() == "websocket: close 1006 (abnormal closure)"{
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", rootTS)
 				delete(privateChatWS, userID)
 				return nil
 			}
-			CloseWebsocketAndClean(ws, "private", rootTS)
 			logging.LogException(err)
-			panic(err)
+			break
 		}
-		if profanityutils.IsMsgProfane(string(msg)) {
-			handleProfaneUser(ws, name, string(msg), rootTS, "private")
+		parsedMsg := parseIncomingWSMessage(msg)
+		if profanityutils.IsMsgProfane(parsedMsg) {
+			handleProfaneUser(ws, name, parsedMsg, rootTS, "private")
 		}
-		msgTS := SendMsg(globals.GetChannelID("private"), string(msg), name, rootTS)
+		msgTS := SendMsg(globals.GetChannelID("private"), parsedMsg, name, rootTS)
+		if msgTS == "" {
+			ws.WriteMessage(websocket.TextMessage, []byte("Failed to send message. Please try again."))
+			continue
+		}
 		newMsg := models.Message{
-			Text:      string(msg),
+			Text:      parsedMsg,
 			Sender:    name,
 			Timestamp: msgTS,
 		}
 		sendSlackToPrivateUser(newMsg, userID)
-		db.AddMsgToDB(newMsg, globals.GetChannelID("private"), rootTS, userID)
-		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send successful")) //This is just so that we can check at frontend regularly that connection is alive
+		err = db.AddMsgToDB(newMsg, globals.GetChannelID("private"), rootTS, userID)
+		if err != nil {
+			fmt.Println("Failed to save message to DB:", err)
+		}
+		err = ws.WriteMessage(websocket.TextMessage, []byte("Message send successful"))
 		if err != nil {
 			if err == websocket.ErrCloseSent {
 				SendMsgAsBot(globals.GetChannelID("private"), "This user has left the chat", rootTS)
 			} else {
 				SendMsgAsBot(globals.GetChannelID("private"), "There was some error in the websocket corresponding to the user and hence it has been closed", rootTS)
+				logging.LogException(err)
 			}
-			CloseWebsocketAndClean(ws, "private", rootTS)
-			logging.LogException(err)
-			panic(err)
+			break
 		}
 	}
+	CloseWebsocketAndClean(ws, "private", rootTS)
+	return nil
 }
 
 // handler for public chats
@@ -127,33 +139,39 @@ func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocke
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			logging.LogException(err)
-			SendInternalServerErrorCloseMessage(c, "Internal Server Error while reading the message from websocket connection")
-			CloseWebsocketAndClean(ws, "public", userID)
-			return nil
+			break
 		}
-		if string(msg) != "" {
-			ts := SendMsg(globals.GetChannelID("public"), string(msg), name, "")
-			fmt.Println("msg: ", string(msg), "is profane :", profanityutils.IsMsgProfane(string(msg)))
-			if profanityutils.IsMsgProfane(string(msg)) {
-				handleProfaneUser(ws, name, string(msg), ts, "public")
+		parsedMsg := parseIncomingWSMessage(msg)
+		if parsedMsg != "" {
+			ts := SendMsg(globals.GetChannelID("public"), parsedMsg, name, "")
+			if ts == "" {
+				ws.WriteMessage(websocket.TextMessage, []byte("Failed to send message. Please try again."))
+				continue
+			}
+			fmt.Println("msg: ", parsedMsg, "is profane :", profanityutils.IsMsgProfane(parsedMsg))
+			if profanityutils.IsMsgProfane(parsedMsg) {
+				handleProfaneUser(ws, name, parsedMsg, ts, "public")
 				return nil
 			}
 			newMsg := models.Message{
-				Text:      string(msg),
+				Text:      parsedMsg,
 				Sender:    name,
 				Timestamp: ts,
 			}
 			sendMsgToPublicUsers(newMsg)
-			db.AddMsgToDB(newMsg, globals.GetChannelID("public"), ts, userID)
-			err = ws.WriteMessage(websocket.TextMessage, []byte("Message send successful")) //This is just so that we can check at frontend regularly that connection is alive
+			err = db.AddMsgToDB(newMsg, globals.GetChannelID("public"), ts, userID)
+			if err != nil {
+				fmt.Println("Failed to save message to DB:", err)
+			}
+			err = ws.WriteMessage(websocket.TextMessage, []byte("Message send successful"))
 			if err != nil {
 				logging.LogException(err)
-				SendInternalServerErrorCloseMessage(c, "Internal Server Error while writing the message to websocket connection")
-				CloseWebsocketAndClean(ws, "public", userID)
-				return nil
+				break
 			}
 		}
 	}
+	CloseWebsocketAndClean(ws, "public", userID)
+	return nil
 }
 
 // handler for chats with chatbot
@@ -178,9 +196,10 @@ func ChatBotChatHandler(c echo.Context, chatTopic, name, userID string, ws *webs
 			CloseWebsocketAndClean(ws, "chatbot", userID)
 			return
 		}
-		if string(msg) != "" {
-			ws.WriteMessage(websocket.TextMessage, []byte("You: "+string(msg)))
-			answer, err := retrieveTextQueryResponse(sesID, string(msg), chatTopic)
+		parsedMsg := parseIncomingWSMessage(msg)
+		if parsedMsg != "" {
+			ws.WriteMessage(websocket.TextMessage, []byte("You: "+parsedMsg))
+			answer, err := retrieveTextQueryResponse(sesID, parsedMsg, chatTopic)
 			if err != nil {
 				if err.Error() == globals.ChatbotNoAnswerFound {
 					err = ws.WriteMessage(websocket.TextMessage, []byte("No answers found for that query, please try again or proceed to public/private slack chat"))
@@ -220,7 +239,7 @@ func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {
 		delete(privateChatWS, userID)
 	}
 	wg.Done()
-	db.ChangeActiveUserToInactive(userID)
+	_ = db.ChangeActiveUserToInactive(userID)
 }
 
 func addUserAndWebsocketToLocalData(ws *websocket.Conn, userID, channelName string) {
@@ -271,7 +290,6 @@ func sendSlackToPrivateUser(msgObj models.Message, threadTS string) {
 		} else {
 			fmt.Println("Error while sending message received on slack to a private chat user: ", err)
 			logging.LogException(err)
-			panic(err)
 		}
 	}
 }
@@ -373,14 +391,20 @@ func RequestUserInfo(username string) string {
 	userID := db.GetUserID(username)
 	if userID == "" {
 		return "No user Exists with this username"
-	} else {
-		info := db.GetUserInfo(userID)
-		return info
 	}
+	info, err := db.GetUserInfo(userID)
+	if err != nil {
+		return "Error retrieving user info"
+	}
+	return info
 }
 
 func getMarshalledSegregatedMsgHistoryPublicUser(userID string) []byte {
-	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPublicChannel(userID)
+	currUserSentMsg, otherUserSentMsg, err := db.RetrieveAllMessagesPublicChannel(userID)
+	if err != nil {
+		fmt.Println("Failed to retrieve message history:", err)
+		return []byte{}
+	}
 	allPrevMsgs := make(map[string]map[string]string)
 	allPrevMsgs["Sent by you"] = currUserSentMsg
 	allPrevMsgs["Sent by others"] = otherUserSentMsg
@@ -393,7 +417,11 @@ func getMarshalledSegregatedMsgHistoryPublicUser(userID string) []byte {
 }
 
 func getMarshalledSegregatedMsgHistoryPrivateUser(userID string) []byte {
-	currUserSentMsg, otherUserSentMsg := db.RetrieveAllMessagesPrivateUser(userID)
+	currUserSentMsg, otherUserSentMsg, err := db.RetrieveAllMessagesPrivateUser(userID)
+	if err != nil {
+		fmt.Println("Failed to retrieve message history:", err)
+		return []byte{}
+	}
 	allPrevMsgs := make(map[string]map[string]string)
 	allPrevMsgs["Sent by you"] = currUserSentMsg
 	allPrevMsgs["Sent by others"] = otherUserSentMsg
@@ -495,4 +523,15 @@ func SendInternalServerErrorCloseMessage(c echo.Context, reason string) error {
 		return err
 	}
 	return nil
+}
+
+// helper to extract prompt from JSON or use string directly
+func parseIncomingWSMessage(msg []byte) string {
+	var incoming struct {
+		Prompt string `json:"prompt"`
+	}
+	if err := json.Unmarshal(msg, &incoming); err == nil && incoming.Prompt != "" {
+		return incoming.Prompt
+	}
+	return string(msg)
 }

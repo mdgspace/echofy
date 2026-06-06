@@ -2,7 +2,6 @@ package api
 
 import (
 	"strings"
-	"time"
 	"regexp"
 
 	"bot/api/utils"
@@ -41,7 +40,7 @@ func JoinChat() echo.HandlerFunc {
 			if db.GetUserID(name) != userID {
 				return utils.SendConflictMessage(c, "Username taken")
 			}
-			db.ChangeInactiveUserToActive(userID)
+			_ = db.ChangeInactiveUserToActive(userID)
 		} else if db.CheckUserIDBanned(userID) {
 			return utils.SendBanMessage(c, "You are banned as of now , Incase you are using a public network, consider switching to mobile data")
 		} else if db.CheckIfUserIDExists(name, userID) {
@@ -60,7 +59,6 @@ func JoinChat() echo.HandlerFunc {
 			}
 		}
 		utils.ChatUserHandler(c, name, channel, userID)
-		time.Sleep(time.Second)
 		return nil
 	}
 }
@@ -92,14 +90,14 @@ func LeaveChat() echo.HandlerFunc {
 			// close web socket in sync with the chatWS functions
 			status := utils.CloseWebsocketAndCleanByUserID(userID)
 			if !status {
-				return utils.SendInternalServerErrorCloseMessage(c, "An internal server error has occurred")
+				return c.String(500, "An internal server error has occurred") // TODO: Restore to SendBadRequestMessage after figuring out the websocket issue
 			}
-			db.ChangeActiveUserToInactive(userID)
+			_ = db.ChangeActiveUserToInactive(userID)
 			_, err := c.Response().Write([]byte("Thank you for visiting MDG Chat. We wish to have you again soon"))
 			return err
 			// return utils.SendNormalCloseMessage(c, "Thank you for visiting MDG Chat. We wish to have you again soon")
 		} else {
-			return utils.SendBadRequestMessage(c, "Wrong user ID")
+			return c.String(400, "Wrong user ID") // TODO: Restore to SendBadRequestMessage after figuring out the websocket issue
 		}
 	}
 }
@@ -138,7 +136,7 @@ func Subscribe() echo.HandlerFunc {
 		if db.CheckEmailExists(email) {
 			return c.String(409, "email already exists")
 		}
-		db.AddUserEmailToDb(username, email)
+		_ = db.AddUserEmailToDb(username, email)
 		utils.SendMsgAsBot(globals.GetChannelID(channel), "User "+username+" has asked for a response on his email "+email+"", ts)
 		return c.String(200, "Subscribed")
 	}
