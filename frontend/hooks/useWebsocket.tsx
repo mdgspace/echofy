@@ -81,7 +81,9 @@ const useWebsocket=({
               setMessages(allMessages);
             } else {
               const msg = data as { text?: string; sender?: string; timestamp?: string; url?: string; userID?: string };
-              if (msg.text && msg.sender && msg.timestamp) {
+              if (msg.userID && !msg.text) {
+                sessionStorage.setItem("userID", msg.userID);
+              } else if (msg.text && msg.sender && msg.timestamp) {
                 const isSent = msg.sender === username;
                 setMessages((prevMessages) => [
                   ...prevMessages,

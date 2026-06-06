@@ -5,6 +5,8 @@ import ChatContainer from "../components/chat/chatContainer";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Navbar } from "../components/navbar";
+import Mail from "../components/mail";
+import jinoraLogo from "../assets/logo.svg";
 import useLoadSetting from "../hooks/useLoadSettings";
 import useSettings from "../hooks/useSettings";
 import useLeaveChat from "../hooks/useLeaveChat";
@@ -18,6 +20,7 @@ export default function Home() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [notificationsEnabled, setNotificationsEnabled] =
     useState<boolean>(true);
+  const [isMailOpen, setIsMailOpen] = useState<boolean>(false);
 
   const router = useRouter();
   const socketRef = useRef<WebSocket | null>(null);
@@ -70,7 +73,12 @@ export default function Home() {
         <div className="col-span-24 flex flex-col justify-center bg-light-grey rounded-xl">
           <div className="flex flex-col h-[98vh] w-full gap-4 justify-between items-center">
             <div className="w-full flex flex-row items-center justify-around">
-              <Navbar currentPage="chatbot" currentTopic="" />
+              <Navbar 
+                label="ECHOFY CHAT BOT" 
+                logo={jinoraLogo} 
+                showMailButton={true} 
+                onMailClick={() => setIsMailOpen(true)} 
+              />
             </div>
 
             <div className="pb-[1vh] max-sm:pb-[3vh] overflow-y-auto noir-pro w-[100%] max-sm:w-[105%] max-md:w-[106%]">
@@ -87,6 +95,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {isMailOpen && <Mail onClose={() => setIsMailOpen(false)} channel={"chatbot"} />}
     </div>
   );
 }

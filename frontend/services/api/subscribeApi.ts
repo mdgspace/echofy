@@ -11,6 +11,7 @@ const subscribe = async ({
   userId,
   channel,
   timestamp,
+  query,
 }: SubscribeParams): Promise<SubscribeResponse> => {
   const url = subscribeURLbuildr();
 
@@ -20,13 +21,13 @@ const subscribe = async ({
       {
         email,
         username,
-        userId,
         channel,
         timestamp,
+        query,
       },
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       }
     );
