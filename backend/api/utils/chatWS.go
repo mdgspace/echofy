@@ -53,7 +53,7 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 	userAgent := c.Request().UserAgent()
 	ws.WriteMessage(websocket.TextMessage, []byte("Welcome to MDG Chat!"))
 	if userID == "" || !db.CheckValidUserID(userID) {
-		if channel == "public" || channel == "chatbot" {
+		if channel == "public" {
 			userID = channel + name + strconv.Itoa(int(time.Now().Unix()))
 		} else if channel == "private" {
 			userID = SendMsgAsBot(globals.GetChannelID("private"), name+" has joined private chat", "")
@@ -67,8 +67,6 @@ func ChatUserHandler(c echo.Context, name string, channel string, userID string)
 		go PublicChatsHandler(c, name, userID, ws)
 	} else if channel == "private" {
 		go PrivateChatsHandler(c, name, userID, ws)
-	} else if channel == "chatbot" {
-		go ChatBotChatHandler(c, c.FormValue("topic"), name, userID, ws)
 	} else {
 		SendBadRequestMessage(c, "Invalid channel name")
 	}
@@ -174,48 +172,6 @@ func PublicChatsHandler(c echo.Context, name string, userID string, ws *websocke
 	return nil
 }
 
-// handler for chats with chatbot
-func ChatBotChatHandler(c echo.Context, chatTopic, name, userID string, ws *websocket.Conn) {
-	defer ws.Close()
-	if !checkValidBotTopic(chatTopic) {
-		ws.WriteMessage(websocket.TextMessage, []byte("Invalid chat topic"))
-		return
-	}
-	sesID, err := initNewSessionClient(userID)
-	if err != nil || sesID == "" {
-		ws.WriteMessage(websocket.TextMessage, []byte("Internal Server Error"))
-		logging.LogException(err)
-		return
-	}
-	defer closeSessionClient(sesID)
-	for {
-		_, msg, err := ws.ReadMessage()
-		if err != nil {
-			logging.LogException(err)
-			SendInternalServerErrorCloseMessage(c, "Internal Server Error while reading the message from websocket connection")
-			CloseWebsocketAndClean(ws, "chatbot", userID)
-			return
-		}
-		parsedMsg := parseIncomingWSMessage(msg)
-		if parsedMsg != "" {
-			ws.WriteMessage(websocket.TextMessage, []byte("You: "+parsedMsg))
-			answer, err := retrieveTextQueryResponse(sesID, parsedMsg, chatTopic)
-			if err != nil {
-				if err.Error() == globals.ChatbotNoAnswerFound {
-					err = ws.WriteMessage(websocket.TextMessage, []byte("No answers found for that query, please try again or proceed to public/private slack chat"))
-				}
-			} else {
-				err = ws.WriteMessage(websocket.TextMessage, []byte(answer))
-			}
-			if err != nil {
-				CloseWebsocketAndClean(ws, "chatbot", userID)
-				if err != websocket.ErrCloseSent {
-					logging.LogException(err)
-				}
-			}
-		}
-	}
-}
 
 // close websocket and remove it from wherever it is stored (golang slices)
 func CloseWebsocketAndClean(ws *websocket.Conn, channelName, userID string) {

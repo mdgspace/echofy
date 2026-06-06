@@ -44,7 +44,6 @@ func initializeSlackEnv() (string, string) {
 
 func main() {
 	godotenv.Load(".env")
-	utils.InitDialogflowConfig(os.Getenv("GCP_PROJECT_ID"))
 	sentryDSN := os.Getenv("SENTRY_DSN")
 	if sentryDSN != "" {
 		logging.Init(sentryDSN)
