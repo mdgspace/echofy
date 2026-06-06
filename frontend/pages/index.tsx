@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Box from "../components/mdgBox";
 import { useState } from "react";
 import ChatBot from "../assets/chatbot.svg";
 import SlackLogo from "../assets/slack.svg";
@@ -37,16 +36,11 @@ export default function Home() {
   return (
     <>
       <div className="main bg-white w-full bg-contain">
-        <div className="grid grid-cols-24 w-full mt-2 h-[95vh]">
-          <div className="flex flex-col items-center col-span-7 bg-white max-md:hidden">
-            <div className="flex flex-col items-center p-2 bg-white-primary rounded-xl w-[95%]">
-              <Box channel="public" />
-            </div>
-          </div>
+        <div className="flex flex-col justify-center items-center w-full mt-2 h-[95vh]">
           {isModalOpen && (
             <LoginModal onClose={closeModal} redirect={redirect} />
           )}
-          <div className="col-span-17 flex flex-col justify-center items-center bg-light-grey max-md:col-span-24 rounded-xl mr-[1vw]">
+          <div className="flex flex-col justify-center items-center w-full h-full bg-light-grey rounded-xl">
             <div className="w-1/2">
               <div className="flex flex-col justify-center items-center ">
                 <div className="flex flex-col justify-center items-center gap-6 ">
