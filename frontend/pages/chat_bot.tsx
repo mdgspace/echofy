@@ -34,6 +34,22 @@ export default function Home() {
     router,
   });
 
+  const handleRetry = (index: number) => {
+    let lastUserMessage = "";
+    for (let i = index - 1; i >= 0; i--) {
+      if (messages[i].isSent) {
+        lastUserMessage = messages[i].text;
+        break;
+      }
+    }
+    
+    if (lastUserMessage && socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ prompt: lastUserMessage }));
+    } else {
+      console.error("WebSocket is not connected or no previous user message.");
+    }
+  };
+
   useEffect(() => {
     if (unreadCount > 0 && notificationsEnabled) {
       document.title = `(${unreadCount}) New Messages - MDGSpace Chat`;
@@ -61,6 +77,7 @@ export default function Home() {
               <ChatContainer
                 messages={messages}
                 messagesEndRef={messagesEndRef}
+                onRetry={handleRetry}
               />
             </div>
 

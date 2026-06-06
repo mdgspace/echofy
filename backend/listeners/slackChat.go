@@ -53,7 +53,10 @@ func MsgListener(ctx context.Context) {
 					} else {
 						sender := utils.GetSlackUserInfo(s.User)
 						msg := models.Message{Text: s.Text, Sender: sender.Profile.DisplayName, ImageUrl: sender.Profile.ImageOriginal, Timestamp: string(s.TimeStamp)}
-						db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "") //empty userID for messages sent by Slack users
+						err := db.AddMsgToDB(msg, s.Channel, s.ThreadTimeStamp, "")
+						if err != nil {
+							fmt.Println("Failed to save Slack message to DB:", err)
+						}
 						utils.SendMsgToFrontend(msg, s.Channel, s.ThreadTimeStamp)
 					}
 				}
@@ -66,7 +69,10 @@ func MsgListener(ctx context.Context) {
 				if callback.Type == slack.InteractionTypeMessageAction {
 					if callback.CallbackID == "delete_message" {
 						utils.DeleteMsg(callback.Channel.ID, callback.Message.Timestamp, callback.TriggerID)
-						db.RemoveMsgFromDB(callback.Channel.ID, callback.Message.Timestamp)
+						err := db.RemoveMsgFromDB(callback.Channel.ID, callback.Message.Timestamp)
+						if err != nil {
+							fmt.Println("Failed to delete message from DB:", err)
+						}
 						utils.SendMsgDeleteSignal(callback.Channel.ID, callback.Message.Timestamp)
 					}
 					if callback.CallbackID == "email_respond" {
@@ -92,7 +98,7 @@ func MsgListener(ctx context.Context) {
 							if result == "mail sent successfully" {
 								message := fmt.Sprintf("Email sent successfully to %v", email)
 								utils.SendMsgAsBot(channelId, message, timestamp)
-								db.RemoveUserEmail(userName)
+								_ = db.RemoveUserEmail(userName)
 							} else {
 								message := fmt.Sprintf("Error sending email to %v", email)
 								utils.SendMsgAsBot(channelId, message, timestamp)
@@ -120,8 +126,13 @@ func MsgListener(ctx context.Context) {
 						PlayStoreLink: projectPlayStoreLink,
 					}
 
-					db.UpsertProject(project)
+					err := db.UpsertProject(project)
+					if err != nil {
+						fmt.Println("Failed to upsert project:", err)
+						utils.SendMsgAsBot(callback.Channel.ID, "Failed to add project: "+err.Error(), "")
+					} else {
 						utils.SendMsgAsBot(callback.Channel.ID, "Project added successfully", "")
+					}
 					}
 				}
 			case socketmode.EventTypeSlashCommand:

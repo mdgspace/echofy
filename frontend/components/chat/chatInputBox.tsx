@@ -12,12 +12,20 @@ const ChatInputBox: React.FC<ChatInputBoxProps> = ({ socketRef, onSend }) => {
 
   const handleSendClick = () => {
     const socket = socketRef.current;
+    console.log("Attempting to send message:", newMessage);
+    console.log("Current socket object:", socket);
+    if (socket) {
+      console.log("WebSocket readyState:", socket.readyState, "(OPEN is", WebSocket.OPEN, ")");
+    }
+    
     if (socket && socket.readyState === WebSocket.OPEN) {
+      console.log("Invoking onSend and socket.send...");
       onSend?.(newMessage);
-      socket.send(JSON.stringify({ prompt: newMessage }));
+      socket.send(JSON.stringify({ prompt: newMessage })); 
       setNewMessage("");
+      console.log("Sent successfully.");
     } else {
-      console.error("WebSocket is not connected.");
+      console.error("WebSocket is not connected. Failed to send:", newMessage);
     }
   };
 

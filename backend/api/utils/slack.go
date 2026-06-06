@@ -19,6 +19,10 @@ func InitClient(token, appToken string) {
 }
 
 func SendMsgAsBot(channelToken, msg, tstamp string) (timestamp string) {
+	if Client == nil {
+		fmt.Println("Slack client not initialized — cannot send bot message")
+		return ""
+	}
 	var ts string
 	var perr error
 	if tstamp != "" {
@@ -41,6 +45,10 @@ func SendMsgAsBot(channelToken, msg, tstamp string) (timestamp string) {
 }
 
 func SendMsg(channelToken, msg, userName, tstamp string) (timestamp string) {
+	if Client == nil {
+		fmt.Println("Slack client not initialized — cannot send message")
+		return ""
+	}
 	var ts string
 	var perr error
 	if tstamp != "" {
@@ -60,17 +68,21 @@ func SendMsg(channelToken, msg, userName, tstamp string) (timestamp string) {
 	if perr != nil {
 		fmt.Println("Exception while posting message to slack as a user: ", perr)
 		logging.LogException(perr)
-		panic(perr)
+		return ""
 	}
 	return ts
 }
 
 func GetSlackUserInfo(userID string) *slack.User {
+	if Client == nil {
+		fmt.Println("Slack client not initialized — cannot fetch user info")
+		return &slack.User{}
+	}
 	user, err := Client.GetUserInfo(userID)
 	if err != nil {
 		fmt.Println("Error while fetching user info: ", err)
 		logging.LogException(err)
-		panic(err)
+		return &slack.User{}
 	}
 	return user
 }

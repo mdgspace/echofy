@@ -98,6 +98,7 @@ export interface MailProps {
   export interface ChatContainerProps {
     messages: Message[]; // Assuming messages are serialized JSON strings
     messagesEndRef: React.RefObject<HTMLDivElement>; // Ref to scroll to the bottom
+    onRetry?: (index: number) => void;
   }
   
 
@@ -221,6 +222,7 @@ export interface LeaveChatURLParams {
 export interface ChatContainerProps {
   messages: Message[]; // An array of message objects
   messagesEndRef: React.RefObject<HTMLDivElement>; // A ref for auto-scrolling to the bottom of the chat
+  onRetry?: (index: number) => void;
 }
 
 export interface AvatarListProps {

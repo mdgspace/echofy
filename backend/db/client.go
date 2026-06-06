@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -23,39 +24,51 @@ func Init() {
 
 func redisInit(portNumber, dbNumber int, password string) {
 	ctx = context.Background()
+	host := os.Getenv("REDIS_HOST")
+	if host == "" {
+		host = "localhost"
+	}
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("redis:%v", portNumber), //port number can be changed as per our wish
+		Addr:     fmt.Sprintf("%s:%v", host, portNumber),
 		Password: password,
 		DB:       dbNumber,
 	})
 }
 
+func Ping() bool {
+	_, err := redisClient.Ping(ctx).Result()
+	return err == nil
+}
+
 /*
 to add a new message to the database
 */
-func AddMsgToDB(message models.Message, channelID, threadTS, userID string) {
+func AddMsgToDB(message models.Message, channelID, threadTS, userID string) error {
 	marshalled, err := json.Marshal(message)
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
 	_, err = redisClient.Set(ctx, fmt.Sprintf("%v:%v:%v:%v", globals.FindChannelNameIfValidToken(channelID), userID, message.Timestamp, threadTS), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func RemoveMsgFromDB(channelID, timestamp string) {
-	// get keys by matching pattern
-	// since we will have one key only, delete it
+func RemoveMsgFromDB(channelID, timestamp string) error {
 	iter, _ := redisClient.Keys(ctx, fmt.Sprintf("%v:*%v:*", globals.FindChannelNameIfValidToken(channelID), timestamp)).Result()
+	if len(iter) == 0 {
+		return nil
+	}
 	_, err := redisClient.Del(ctx, iter[0]).Result()
 	if err != nil {
 		fmt.Println("Error while deleting message: ", err)
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 /*
@@ -65,8 +78,7 @@ func RemoveMsgFromDB(channelID, timestamp string) {
 
 Returns a string of marshalled messages
 */
-func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) (map[string]string, map[string]string) {
-	// iterate over all message keys and get their values
+func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) (map[string]string, map[string]string, error) {
 	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("private:*:%v", arrivalTimeStamp), numKeys).Iterator()
@@ -81,9 +93,9 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) (map[string]string,
 	}
 	if err := iter.Err(); err != nil {
 		logging.LogException(err)
-		panic(err)
+		return nil, nil, err
 	}
-	return currUserSentMsg, otherUserSentMsg
+	return currUserSentMsg, otherUserSentMsg, nil
 }
 
 /*
@@ -91,8 +103,7 @@ func RetrieveAllMessagesPrivateUser(arrivalTimeStamp string) (map[string]string,
 
 returns a string of marshalled messages
 */
-func RetrieveAllMessagesPublicChannel(userID string) (map[string]string, map[string]string) {
-	// iterate over all message keys and get their values
+func RetrieveAllMessagesPublicChannel(userID string) (map[string]string, map[string]string, error) {
 	currUserSentMsg, otherUserSentMsg := make(map[string]string), make(map[string]string)
 	numKeys, _ := redisClient.DBSize(ctx).Result()
 	iter := redisClient.Scan(ctx, 0, fmt.Sprintf("%v:*", "public"), numKeys).Iterator()
@@ -107,38 +118,41 @@ func RetrieveAllMessagesPublicChannel(userID string) (map[string]string, map[str
 	}
 	if err := iter.Err(); err != nil {
 		logging.LogException(err)
-		panic(err)
+		return nil, nil, err
 	}
-	return currUserSentMsg, otherUserSentMsg
+	return currUserSentMsg, otherUserSentMsg, nil
 }
 
 // function to add user to the db
-func AddUserEntry(name, userID string) {
-	_, err := redisClient.Set(ctx, fmt.Sprintf("active:%v", userID), name, 24*7*time.Hour).Result() // key = userID, value = name
+func AddUserEntry(name, userID string) error {
+	_, err := redisClient.Set(ctx, fmt.Sprintf("active:%v", userID), name, 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // to set ttl of the user credentials to next 7 days
-func ChangeActiveUserToInactive(userID string) {
+func ChangeActiveUserToInactive(userID string) error {
 	redisClient.Rename(ctx, fmt.Sprintf("active:%v", userID), fmt.Sprintf("inactive:%v", userID))
 	_, err := redisClient.Expire(ctx, fmt.Sprintf("inactive:%v", userID), 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // to set inactive user as active again
-func ChangeInactiveUserToActive(userID string) {
+func ChangeInactiveUserToActive(userID string) error {
 	redisClient.Rename(ctx, fmt.Sprintf("inactive:%v", userID), fmt.Sprintf("active:%v", userID))
 	_, err := redisClient.Expire(ctx, fmt.Sprintf("active:%v", userID), 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // function to check if a userID is valid or not
@@ -206,19 +220,20 @@ func CheckUserIDBanned(userID string) bool {
 }
 
 // remove a user from database
-func RemoveUser(userID string) {
+func RemoveUser(userID string) error {
 	if CheckValidUserID(userID) {
 		_, err := redisClient.Del(ctx, fmt.Sprintf("active:%v", userID)).Result()
 		if err != nil {
 			logging.LogException(err)
-			panic(err)
+			return err
 		}
 		_, err = redisClient.Del(ctx, fmt.Sprintf("inactive:%v", userID)).Result()
 		if err != nil {
 			logging.LogException(err)
-			panic(err)
+			return err
 		}
 	}
+	return nil
 }
 
 // to fetch all user names
@@ -302,11 +317,9 @@ func GetBannedUserId(username string) string {
 func BanUserInDB(username string) {
 	userID := GetUserID(username)
 	RemoveUser(userID)
-	// in case user is not unbanned manually after 7 days, he/she is unbanned automatically
-	_, err := redisClient.Set(ctx, fmt.Sprintf("banned:%v", userID), username, 24*7*time.Hour).Result() // key = userID, value = name
+	_, err := redisClient.Set(ctx, fmt.Sprintf("banned:%v", userID), username, 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
 	}
 }
 
@@ -315,7 +328,6 @@ func UnbanUserInDB(username string) {
 	_, err := redisClient.Del(ctx, fmt.Sprintf("banned:%v", userID)).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
 	}
 }
 
@@ -332,7 +344,7 @@ func CheckIfUserIDExists(username, userID string) bool {
 	return name != username
 }
 
-func AddUserInfoToDb(username string, userId string, userAgent string, ip string, channel string) {
+func AddUserInfoToDb(username string, userId string, userAgent string, ip string, channel string) error {
 	location := customutils.GetUserLocation(ip)
 	browser, os := customutils.GetBrowserAndOS(userAgent)
 	info := models.UserInfo{
@@ -347,42 +359,44 @@ func AddUserInfoToDb(username string, userId string, userAgent string, ip string
 	marshalled, errm := json.Marshal(info)
 	if errm != nil {
 		logging.LogException(errm)
-		panic(errm)
+		return errm
 	}
 	_, err := redisClient.Set(ctx, fmt.Sprintf("info:%v", userId), marshalled, 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func GetUserInfo(userId string) string {
-	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()	
-    var _info models.UserInfo
-    err := json.Unmarshal([]byte(info), &_info)
-	if(err != nil){
+func GetUserInfo(userId string) (string, error) {
+	info, _ := redisClient.Get(ctx, fmt.Sprintf("info:%v", userId)).Result()
+	var _info models.UserInfo
+	err := json.Unmarshal([]byte(info), &_info)
+	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return "", err
 	}
 	formattedInfo := fmt.Sprintf(
-        "UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
-        _info.UserID,
-        _info.Username,
-        _info.IP,
-        _info.Location,
-        _info.OS,
-        _info.Agent,
-        _info.Channel,
-    )
-	return formattedInfo
+		"UserID: %s\nName: %s\nIP: %s\nLocation: %s\nOS: %s\nAgent: %s\nChatChannel: %s",
+		_info.UserID,
+		_info.Username,
+		_info.IP,
+		_info.Location,
+		_info.OS,
+		_info.Agent,
+		_info.Channel,
+	)
+	return formattedInfo, nil
 }
 
-func AddUserEmailToDb(username string, email string) {
+func AddUserEmailToDb(username string, email string) error {
 	_, err := redisClient.Set(ctx, fmt.Sprintf("email:%v", username), email, 24*7*time.Hour).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func GetUserEmail(username string) string {
@@ -390,12 +404,13 @@ func GetUserEmail(username string) string {
 	return email
 }
 
-func RemoveUserEmail(username string) {
+func RemoveUserEmail(username string) error {
 	_, err := redisClient.Del(ctx, fmt.Sprintf("email:%v", username)).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 func CheckEmailExists(email string) bool {
@@ -408,13 +423,12 @@ func CheckEmailExists(email string) bool {
 	return false
 }
 
-func UpsertProject(project models.Project) {
+func UpsertProject(project models.Project) error {
 	if !isValidProjectCategory(project.Category) {
 		err := fmt.Errorf("invalid project category: %s", project.Category)
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
-	// using hset adds project if it doesn't exist, else updates it
 	_, err := redisClient.HSet(redisClient.Context(), "project:"+project.Name, map[string]interface{}{
 		"projectCategory":         string(project.Category),
 		"projectShortDescription": string(project.ShortDesc),
@@ -427,8 +441,9 @@ func UpsertProject(project models.Project) {
 	}).Result()
 	if err != nil {
 		logging.LogException(err)
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // func GetProject(client *redis.Client, projectName string) models.Project {
