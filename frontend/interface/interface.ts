@@ -42,10 +42,12 @@ export interface Project {
     onChange: (value: string) => void;
   }
 
-export interface NavbarProps{
-    currentPage: string;
-    currentTopic:string;
-  }
+export interface NavbarProps {
+    label: string;
+    logo: string | any;
+    showMailButton?: boolean;
+    onMailClick?: () => void;
+}
 
 export interface ModalProps {
     isOpen: boolean;
@@ -277,6 +279,7 @@ export interface SubscribeParams {
   userId: string;
   channel: string;
   timestamp: number;
+  query?: string;
 }
 
 // Define an interface for the environment variables

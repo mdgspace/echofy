@@ -3,6 +3,7 @@ package api
 import (
 	"strings"
 	"regexp"
+	"fmt"
 
 	"bot/api/utils"
 	customutils "bot/customUtils"
@@ -104,41 +105,66 @@ func LeaveChat() echo.HandlerFunc {
 
 func Subscribe() echo.HandlerFunc {
 	return func(c echo.Context) (err error) {
-		email := c.FormValue("email")
-		userId := c.FormValue("userId")
-		username := c.FormValue("username")
-		ts := string(c.FormValue("timestamp"))
-		channel := c.FormValue("channel")
+		type SubscribeRequest struct {
+			Email     string      `json:"email"`
+			Username  string      `json:"username"`
+			Channel   string      `json:"channel"`
+			Query     string      `json:"query"`
+			Timestamp interface{} `json:"timestamp"`
+		}
+		var req SubscribeRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(400, map[string]string{"message": "Invalid JSON data"})
+		}
+
+		email := req.Email
+		username := req.Username
+		channel := req.Channel
+		query := req.Query
+		
+		var ts string
+		switch v := req.Timestamp.(type) {
+		case float64:
+			ts = fmt.Sprintf("%.0f", v)
+		case string:
+			ts = v
+		default:
+			ts = ""
+		}
+
 		if email == "" {
-			return c.String(400, "Email missing")
+			return c.JSON(400, map[string]string{"message": "Email missing"})
 		}
-		if userId == "" {
-			return c.String(400, "User ID missing")
+		if channel == "chatbot" {
+			username = ""
 		}
-		if username == "" {
-			return c.String(400, "Username missing")
+		
+		if username == "" && channel != "chatbot" {
+			return c.JSON(400, map[string]string{"message": "Username missing"})
 		}
 		if ts == "" {
-			return c.String(400, "Timestamp missing")
+			return c.JSON(400, map[string]string{"message": "Timestamp missing"})
 		}
 		if channel == "" || !globals.IsChannelNameValid(channel) {
-			return c.String(400, "Channel missing or wrong channel name")
-		}
-		if !db.CheckIfUserIDExists(username, userId) {
-			return c.String(400, "Wrong user ID")
+			return c.JSON(400, map[string]string{"message": "Channel missing or wrong channel name"})
 		}
 		if !customutils.ValidateEmail(email) {
-			return c.String(400, "Invalid email")
-		}
-		if db.GetUserEmail(username) != "" {
-			return c.String(409, "email already exists for this user")
-		}
-		if db.CheckEmailExists(email) {
-			return c.String(409, "email already exists")
+			return c.JSON(400, map[string]string{"message": "Invalid email"})
 		}
 		_ = db.AddUserEmailToDb(username, email)
-		utils.SendMsgAsBot(globals.GetChannelID(channel), "User "+username+" has asked for a response on his email "+email+"", ts)
-		return c.String(200, "Subscribed")
+		
+		var msg string
+		if username != "" {
+			msg = "User " + username + " has asked for a response on his email " + email
+		} else {
+			msg = "A user has asked for a response on their email " + email
+		}
+		if query != "" {
+			msg += "\n\nQuery:\n" + query
+		}
+		
+		utils.SendMsgAsBot(globals.GetChannelID("admin"), msg, "")
+		return c.JSON(200, map[string]string{"message": "Subscribed"})
 	}
 }
 
